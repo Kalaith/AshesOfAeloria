@@ -1,20 +1,72 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { GameState, Resources, CommanderClass, Race } from '../types/game';
-import { 
-  createCommander, 
-  canAffordCommander, 
-  generateInitialMap, 
-  calculateIncome, 
+import type {
+  GameState,
+  Resources,
+  CommanderClass,
+  Race,
+  Technology,
+  Faction,
+  Season,
+  Weather,
+  VictoryType,
+  NodeType,
+  WorldState,
+  WeatherSystem,
+  Calendar,
+  FactionData,
+  DiplomaticRelations,
+  Market,
+  ResearchSystem,
+  ExplorationData,
+  CorruptionData,
+  CulturalRenaissance,
+  EnvironmentalRestoration,
+  GameStatistics,
+  VictoryProgress,
+  LegacyData,
+  Achievement,
+  GameEvent,
+  NarrativeState,
+  PopulationCenter,
+  TradeNetwork,
+  PoliticalSituation,
+  MilitaryIntelligence,
+  HistoricalRecord
+} from '../types/game';
+import {
+  createCommander,
+  canAffordCommander,
+  generateInitialMap,
+  calculateIncome,
   canAttackNode as gameLogicCanAttackNode,
   resolveBattle,
   updateNodeAfterBattle,
   calculateEffectiveGarrison,
-  calculateCommanderBonus
+  calculateCommanderBonus,
+  generateInitialWorldState,
+  generateInitialFactions,
+  generateInitialResearchSystem,
+  generateInitialMarket,
+  generateInitialWeatherSystem,
+  generateInitialCalendar,
+  generateInitialDiplomacy,
+  generateInitialExploration,
+  generateInitialCorruption,
+  generateInitialCulturalRenaissance,
+  generateInitialEnvironmentalRestoration,
+  generateInitialStatistics,
+  generateInitialVictoryProgress,
+  generateInitialLegacyData,
+  generateInitialNarrativeState,
+  generateInitialPopulationCenters,
+  generateInitialTradeNetworks,
+  generateInitialPoliticalSituation,
+  generateInitialMilitaryIntelligence
 } from '../utils/gameLogic';
 import { GAME_DATA, GAME_CONSTANTS } from '../data/gameData';
 
-// Initial game state with proper typing
+// Initial game state with comprehensive world rebuilding systems
 const getInitialState = (): GameState => {
   // Create initial player and enemy commanders
   const initialCommanders = [
@@ -24,22 +76,31 @@ const getInitialState = (): GameState => {
     createCommander(1000, 'knight', 'orc', 'enemy'),
     createCommander(1001, 'mage', 'orc', 'enemy')
   ];
-  
+
   // Assign commanders to their starting nodes
   initialCommanders[0].assignedNode = 1; // Player knight at starting city
   initialCommanders[1].assignedNode = 7; // Enemy city
   initialCommanders[2].assignedNode = 8; // Enemy fortress
-  
+
+  const initialNodes = generateInitialMap();
+
   return {
     turn: 1,
     phase: 'player',
     resources: {
       gold: 500,
       supplies: 100,
-      mana: 50
+      mana: 50,
+      knowledge: 25,
+      culture: 10,
+      influence: 5,
+      materials: 75,
+      food: 200,
+      energy: 100,
+      artifacts: 0
     },
     commanders: initialCommanders,
-    nodes: generateInitialMap(),
+    nodes: initialNodes,
     selectedNode: null,
     selectedCommander: null,
     gameOver: false,
@@ -48,14 +109,40 @@ const getInitialState = (): GameState => {
       {
         timestamp: Date.now(),
         type: 'info',
-        message: 'Welcome to Ashes of Aeloria! Begin your conquest by recruiting commanders and expanding your territory.'
+        message: 'Welcome to the world of Ashes of Aeloria! The great civilization has fallen, but from its ashes, you will rebuild. Your journey to restore the world begins now.'
       }
-    ]
+    ],
+    globalTechnologies: [],
+    worldState: generateInitialWorldState(),
+    factions: generateInitialFactions(),
+    diplomacy: generateInitialDiplomacy(),
+    market: generateInitialMarket(),
+    calendar: generateInitialCalendar(),
+    weather: generateInitialWeatherSystem(),
+    events: [],
+    eventQueue: [],
+    narrativeState: generateInitialNarrativeState(),
+    achievements: [],
+    statistics: generateInitialStatistics(),
+    victoryProgress: generateInitialVictoryProgress(),
+    legacyData: generateInitialLegacyData(),
+    historicalRecords: [],
+    culturalMovements: [],
+    economicCycles: [],
+    research: generateInitialResearchSystem(),
+    exploration: generateInitialExploration(),
+    magicalCorruption: generateInitialCorruption(),
+    populationCenters: generateInitialPopulationCenters(initialNodes),
+    tradeNetworks: generateInitialTradeNetworks(),
+    politicalSituation: generateInitialPoliticalSituation(),
+    militaryIntelligence: generateInitialMilitaryIntelligence(),
+    culturalRenaissance: generateInitialCulturalRenaissance(),
+    environmentalRestoration: generateInitialEnvironmentalRestoration()
   };
 };
 
 interface GameStore extends GameState {
-  // Actions
+  // Core Game Actions
   selectCommander: (id: number | null) => void;
   selectNode: (id: number | null) => void;
   addCommander: (className: CommanderClass, race: Race) => boolean;
@@ -75,6 +162,104 @@ interface GameStore extends GameState {
   attackNode: (nodeId: number) => void;
   canAttackNode: (nodeId: number) => boolean;
   addBattleLogEntry: (type: 'info' | 'combat' | 'victory' | 'defeat' | 'recruitment', message: string) => void;
+
+  // World Rebuilding Actions
+  constructBuilding: (nodeId: number, buildingType: string) => boolean;
+  demolishBuilding: (nodeId: number, buildingId: string) => boolean;
+  upgradeBuilding: (nodeId: number, buildingId: string) => boolean;
+  managePopulation: (nodeId: number, action: string, amount?: number) => boolean;
+  resettlePopulation: (fromNodeId: number, toNodeId: number, amount: number) => boolean;
+
+  // Technology and Research Actions
+  startResearch: (technology: Technology) => boolean;
+  cancelResearch: (projectId: string) => boolean;
+  prioritizeResearch: (projectId: string, priority: number) => void;
+  assignResearchers: (projectId: string, researchers: number) => boolean;
+  recoverAncientKnowledge: (artifactId: string) => boolean;
+  shareKnowledge: (faction: Faction, technology: Technology) => boolean;
+
+  // Exploration and Discovery Actions
+  launchExpedition: (target: string, leaderId: number, members: number[]) => boolean;
+  exploreRuin: (ruinId: string, explorerId: number) => boolean;
+  studyArtifact: (artifactId: string, scholarId: number) => boolean;
+  contactHiddenSociety: (societyId: string, diplomatId: number) => boolean;
+  investigateMystery: (mysteryId: string, investigatorId: number) => boolean;
+  scoutNode: (nodeId: number, scoutId: number) => boolean;
+
+  // Diplomatic Actions
+  initiateDiplomacy: (faction: Faction, type: string) => boolean;
+  acceptProposal: (negotiationId: string, proposalId: string) => boolean;
+  rejectProposal: (negotiationId: string, proposalId: string) => boolean;
+  makeDiplomaticOffer: (faction: Faction, terms: string[]) => boolean;
+  declareWar: (faction: Faction) => boolean;
+  seekPeace: (faction: Faction) => boolean;
+  formAlliance: (faction: Faction) => boolean;
+  breakAlliance: (faction: Faction) => boolean;
+
+  // Economic Actions
+  establishTradeRoute: (fromNodeId: number, toNodeId: number, goods: string[]) => boolean;
+  cancelTradeRoute: (routeId: string) => boolean;
+  adjustTariffs: (routeId: string, tariff: number) => void;
+  investInMarket: (resource: string, amount: number) => boolean;
+  buyFromMarket: (resource: string, amount: number) => boolean;
+  sellToMarket: (resource: string, amount: number) => boolean;
+  recruitMerchant: (nodeId: number, specialization: string[]) => boolean;
+
+  // Environmental Actions
+  startRestorationProject: (type: string, nodeId: number) => boolean;
+  assignSpecialistsToRestoration: (projectId: string, specialists: number[]) => boolean;
+  cleanCorruption: (nodeId: number, method: string) => boolean;
+  plantForests: (nodeId: number, area: number) => boolean;
+  purifyWater: (nodeId: number) => boolean;
+  reintroduceSpecies: (nodeId: number, species: string) => boolean;
+
+  // Cultural Actions
+  commissionArtwork: (nodeId: number, artistId: string, type: string) => boolean;
+  organizeFestival: (nodeId: number, festivalType: string) => boolean;
+  preserveTradition: (traditionId: string) => boolean;
+  promotePhilosophy: (schoolId: string, nodeId: number) => boolean;
+  buildMonument: (nodeId: number, type: string) => boolean;
+  establishLibrary: (nodeId: number) => boolean;
+
+  // Military Actions
+  recruitTroops: (nodeId: number, type: string, amount: number) => boolean;
+  disbandTroops: (commanderId: number, type: string, amount: number) => boolean;
+  trainTroops: (commanderId: number, trainingType: string) => boolean;
+  deploySpies: (targetFaction: Faction, spyId: number) => boolean;
+  gatherIntelligence: (targetNodeId: number, agentId: number) => boolean;
+  sabotage: (targetNodeId: number, agentId: number, target: string) => boolean;
+
+  // Event Actions
+  respondToEvent: (eventId: string, choiceId: string) => void;
+  triggerEvent: (eventType: string, conditions?: any) => boolean;
+  processRandomEvents: () => void;
+  processSeasonalEvents: () => void;
+
+  // Quest Actions
+  acceptQuest: (questId: string) => boolean;
+  completeQuest: (questId: string) => boolean;
+  abandonQuest: (questId: string) => boolean;
+  updateQuestProgress: (questId: string, objectiveId: string, progress: number) => void;
+
+  // Achievement Actions
+  checkAchievements: () => void;
+  unlockAchievement: (achievementId: string) => boolean;
+
+  // Victory Actions
+  checkVictoryConditions: () => boolean;
+  declareVictory: (victoryType: VictoryType) => void;
+
+  // Legacy Actions
+  saveRunToLegacy: () => void;
+  applyLegacyBonuses: () => void;
+
+  // Utility Actions
+  processWeatherEffects: () => void;
+  advanceCalendar: () => void;
+  updateStatistics: () => void;
+  generateHistoricalRecord: (type: string, description: string, participants: string[]) => void;
+  saveGameState: () => void;
+  loadGameState: (saveData: Partial<GameState>) => void;
 }
 
 export const useGameStore = create<GameStore>()(
@@ -86,6 +271,332 @@ export const useGameStore = create<GameStore>()(
       // Actions
       selectCommander: (id) => set({ selectedCommander: id }),
       selectNode: (id) => set({ selectedNode: id }),
+
+      // World Rebuilding Implementation
+      constructBuilding: (nodeId, buildingType) => {
+        const state = get();
+        const node = state.nodes.find(n => n.id === nodeId);
+        if (!node || node.owner !== 'player') return false;
+
+        // Implementation for building construction
+        // This would check costs, prerequisites, etc.
+        return true;
+      },
+
+      demolishBuilding: (nodeId, buildingId) => {
+        const state = get();
+        const node = state.nodes.find(n => n.id === nodeId);
+        if (!node || node.owner !== 'player') return false;
+
+        // Implementation for building demolition
+        return true;
+      },
+
+      upgradeBuilding: (nodeId, buildingId) => {
+        const state = get();
+        const node = state.nodes.find(n => n.id === nodeId);
+        if (!node || node.owner !== 'player') return false;
+
+        // Implementation for building upgrades
+        return true;
+      },
+
+      managePopulation: (nodeId, action, amount = 0) => {
+        const state = get();
+        const node = state.nodes.find(n => n.id === nodeId);
+        if (!node || node.owner !== 'player') return false;
+
+        // Implementation for population management
+        return true;
+      },
+
+      resettlePopulation: (fromNodeId, toNodeId, amount) => {
+        const state = get();
+        const fromNode = state.nodes.find(n => n.id === fromNodeId);
+        const toNode = state.nodes.find(n => n.id === toNodeId);
+        if (!fromNode || !toNode || fromNode.owner !== 'player' || toNode.owner !== 'player') return false;
+
+        // Implementation for population resettlement
+        return true;
+      },
+
+      // Technology and Research Implementation
+      startResearch: (technology) => {
+        const state = get();
+        if (state.research.completedTechnologies.includes(technology)) return false;
+        if (state.research.activeProjects.some(p => p.technology === technology)) return false;
+
+        const techInfo = GAME_DATA.technologies[technology];
+        if (!techInfo) return false;
+
+        // Check prerequisites
+        const hasPrerequisites = techInfo.prerequisites.every(prereq =>
+          state.research.completedTechnologies.includes(prereq)
+        );
+        if (!hasPrerequisites) return false;
+
+        // Check research cost
+        if (state.resources.knowledge < techInfo.researchCost) return false;
+
+        const newProject = {
+          id: `research_${Date.now()}`,
+          technology,
+          progress: 0,
+          totalRequired: techInfo.researchCost,
+          researchers: 1,
+          priority: 1,
+          startedTurn: state.turn
+        };
+
+        set((state) => ({
+          research: {
+            ...state.research,
+            activeProjects: [...state.research.activeProjects, newProject]
+          },
+          resources: {
+            ...state.resources,
+            knowledge: state.resources.knowledge - techInfo.researchCost
+          }
+        }));
+
+        get().addBattleLogEntry('info', `Started research on ${techInfo.name}`);
+        return true;
+      },
+
+      cancelResearch: (projectId) => {
+        const state = get();
+        const project = state.research.activeProjects.find(p => p.id === projectId);
+        if (!project) return false;
+
+        const techInfo = GAME_DATA.technologies[project.technology];
+        const refund = Math.floor(techInfo.researchCost * 0.5); // 50% refund
+
+        set((state) => ({
+          research: {
+            ...state.research,
+            activeProjects: state.research.activeProjects.filter(p => p.id !== projectId)
+          },
+          resources: {
+            ...state.resources,
+            knowledge: state.resources.knowledge + refund
+          }
+        }));
+
+        get().addBattleLogEntry('info', `Cancelled research on ${techInfo.name} (${refund} knowledge refunded)`);
+        return true;
+      },
+
+      prioritizeResearch: (projectId, priority) => {
+        set((state) => ({
+          research: {
+            ...state.research,
+            activeProjects: state.research.activeProjects.map(p =>
+              p.id === projectId ? { ...p, priority } : p
+            )
+          }
+        }));
+      },
+
+      assignResearchers: (projectId, researchers) => {
+        const state = get();
+        const project = state.research.activeProjects.find(p => p.id === projectId);
+        if (!project) return false;
+
+        // Check if we have enough available researchers
+        const totalResearchers = state.research.scholarNetwork.scholars.length;
+        const usedResearchers = state.research.activeProjects.reduce((sum, p) => sum + p.researchers, 0);
+        const availableResearchers = totalResearchers - usedResearchers + project.researchers;
+
+        if (researchers > availableResearchers) return false;
+
+        set((state) => ({
+          research: {
+            ...state.research,
+            activeProjects: state.research.activeProjects.map(p =>
+              p.id === projectId ? { ...p, researchers } : p
+            )
+          }
+        }));
+
+        return true;
+      },
+
+      recoverAncientKnowledge: (artifactId) => {
+        // Implementation for recovering knowledge from artifacts
+        return true;
+      },
+
+      shareKnowledge: (faction, technology) => {
+        // Implementation for knowledge sharing with factions
+        return true;
+      },
+
+      // Exploration Implementation (placeholder methods)
+      launchExpedition: (target, leaderId, members) => true,
+      exploreRuin: (ruinId, explorerId) => true,
+      studyArtifact: (artifactId, scholarId) => true,
+      contactHiddenSociety: (societyId, diplomatId) => true,
+      investigateMystery: (mysteryId, investigatorId) => true,
+      scoutNode: (nodeId, scoutId) => true,
+
+      // Diplomatic Implementation (placeholder methods)
+      initiateDiplomacy: (faction, type) => true,
+      acceptProposal: (negotiationId, proposalId) => true,
+      rejectProposal: (negotiationId, proposalId) => true,
+      makeDiplomaticOffer: (faction, terms) => true,
+      declareWar: (faction) => true,
+      seekPeace: (faction) => true,
+      formAlliance: (faction) => true,
+      breakAlliance: (faction) => true,
+
+      // Economic Implementation (placeholder methods)
+      establishTradeRoute: (fromNodeId, toNodeId, goods) => true,
+      cancelTradeRoute: (routeId) => true,
+      adjustTariffs: (routeId, tariff) => {},
+      investInMarket: (resource, amount) => true,
+      buyFromMarket: (resource, amount) => true,
+      sellToMarket: (resource, amount) => true,
+      recruitMerchant: (nodeId, specialization) => true,
+
+      // Environmental Implementation (placeholder methods)
+      startRestorationProject: (type, nodeId) => true,
+      assignSpecialistsToRestoration: (projectId, specialists) => true,
+      cleanCorruption: (nodeId, method) => true,
+      plantForests: (nodeId, area) => true,
+      purifyWater: (nodeId) => true,
+      reintroduceSpecies: (nodeId, species) => true,
+
+      // Cultural Implementation (placeholder methods)
+      commissionArtwork: (nodeId, artistId, type) => true,
+      organizeFestival: (nodeId, festivalType) => true,
+      preserveTradition: (traditionId) => true,
+      promotePhilosophy: (schoolId, nodeId) => true,
+      buildMonument: (nodeId, type) => true,
+      establishLibrary: (nodeId) => true,
+
+      // Military Implementation (placeholder methods)
+      recruitTroops: (nodeId, type, amount) => true,
+      disbandTroops: (commanderId, type, amount) => true,
+      trainTroops: (commanderId, trainingType) => true,
+      deploySpies: (targetFaction, spyId) => true,
+      gatherIntelligence: (targetNodeId, agentId) => true,
+      sabotage: (targetNodeId, agentId, target) => true,
+
+      // Event Implementation (placeholder methods)
+      respondToEvent: (eventId, choiceId) => {},
+      triggerEvent: (eventType, conditions) => true,
+      processRandomEvents: () => {},
+      processSeasonalEvents: () => {},
+
+      // Quest Implementation (placeholder methods)
+      acceptQuest: (questId) => true,
+      completeQuest: (questId) => true,
+      abandonQuest: (questId) => true,
+      updateQuestProgress: (questId, objectiveId, progress) => {},
+
+      // Achievement Implementation
+      checkAchievements: () => {
+        // Implementation for checking and unlocking achievements
+      },
+
+      unlockAchievement: (achievementId) => {
+        const state = get();
+        if (state.achievements.some(a => a.id === achievementId && a.completed)) return false;
+
+        set((state) => ({
+          achievements: state.achievements.map(a =>
+            a.id === achievementId
+              ? { ...a, completed: true, completionDate: Date.now() }
+              : a
+          )
+        }));
+
+        get().addBattleLogEntry('info', `Achievement unlocked: ${achievementId}`);
+        return true;
+      },
+
+      // Victory Implementation
+      checkVictoryConditions: () => {
+        // Implementation for checking victory conditions
+        return false;
+      },
+
+      declareVictory: (victoryType) => {
+        set((state) => ({
+          gameOver: true,
+          winner: 'player'
+        }));
+
+        get().addBattleLogEntry('victory', `Victory achieved through ${victoryType}!`);
+      },
+
+      // Legacy Implementation
+      saveRunToLegacy: () => {
+        // Implementation for saving current run to legacy data
+      },
+
+      applyLegacyBonuses: () => {
+        // Implementation for applying legacy bonuses
+      },
+
+      // Utility Implementation
+      processWeatherEffects: () => {
+        const state = get();
+        const currentWeather = state.weather.currentWeather;
+        const weatherPattern = GAME_DATA.weatherPatterns[currentWeather];
+
+        if (weatherPattern) {
+          // Apply weather effects to resources, movement, etc.
+          weatherPattern.effects.forEach(effect => {
+            // Process each weather effect
+          });
+        }
+      },
+
+      advanceCalendar: () => {
+        set((state) => {
+          const newCalendar = { ...state.calendar };
+          newCalendar.currentDay++;
+          newCalendar.daysSinceStart++;
+
+          // Advance month/season logic would go here
+
+          return { calendar: newCalendar };
+        });
+      },
+
+      updateStatistics: () => {
+        // Implementation for updating game statistics
+      },
+
+      generateHistoricalRecord: (type, description, participants) => {
+        const state = get();
+        const record = {
+          id: `record_${Date.now()}`,
+          turn: state.turn,
+          type,
+          title: `${type} - Turn ${state.turn}`,
+          description,
+          participants,
+          location: [],
+          significance: 1,
+          consequences: [],
+          sources: ['Player Action'],
+          accuracy: 100
+        };
+
+        set((state) => ({
+          historicalRecords: [...state.historicalRecords, record]
+        }));
+      },
+
+      saveGameState: () => {
+        // Implementation for manual save
+      },
+
+      loadGameState: (saveData) => {
+        set((state) => ({ ...state, ...saveData }));
+      },
       addCommander: (className, race) => {
         const state = get();
         if (canAffordCommander(state.resources, className)) {
@@ -591,7 +1102,25 @@ export const useGameStore = create<GameStore>()(
         nodes: state.nodes,
         gameOver: state.gameOver,
         winner: state.winner,
-        battleLog: state.battleLog.slice(-20) // Only keep last 20 battle log entries
+        battleLog: state.battleLog.slice(-20),
+        globalTechnologies: state.globalTechnologies,
+        worldState: state.worldState,
+        factions: state.factions,
+        diplomacy: state.diplomacy,
+        market: state.market,
+        calendar: state.calendar,
+        weather: state.weather,
+        research: state.research,
+        exploration: state.exploration,
+        magicalCorruption: state.magicalCorruption,
+        populationCenters: state.populationCenters,
+        culturalRenaissance: state.culturalRenaissance,
+        environmentalRestoration: state.environmentalRestoration,
+        achievements: state.achievements,
+        statistics: state.statistics,
+        victoryProgress: state.victoryProgress,
+        legacyData: state.legacyData,
+        historicalRecords: state.historicalRecords.slice(-50) // Keep last 50 historical records
       }),
       migrate: (persistedState: any, version: number) => {
         // Handle migration between versions if needed
