@@ -3,7 +3,15 @@ import { useGameLogic } from '../../hooks/useGameLogic';
 import { useGameStore } from '../../stores/useGameStore';
 import { Button } from '../ui/Button';
 
-export const GameHeader: React.FC = () => {
+interface GameHeaderProps {
+  currentView?: 'game' | 'campaign';
+  onViewChange?: (view: 'game' | 'campaign') => void;
+}
+
+export const GameHeader: React.FC<GameHeaderProps> = ({
+  currentView = 'game',
+  onViewChange
+}) => {
   const { turn } = useGameLogic();
   const resetGame = useGameStore(state => state.resetGame);
   const repairMapConnections = useGameStore(state => state.repairMapConnections);
@@ -29,21 +37,51 @@ export const GameHeader: React.FC = () => {
   return (
     <>
       <header className="bg-white border-b border-gray-200 px-4 lg:px-6 py-3 lg:py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center shadow-sm gap-2 sm:gap-0">
-        <h1 className="text-xl lg:text-2xl font-bold text-blue-600 m-0">⚔️ Ashes of Aeloria</h1>
+        <div className="flex items-center space-x-4">
+          <h1 className="text-xl lg:text-2xl font-bold text-blue-600 m-0">⚔️ Ashes of Aeloria</h1>
+          {onViewChange && (
+            <div className="flex bg-gray-100 rounded-lg overflow-hidden">
+              <button
+                onClick={() => onViewChange('game')}
+                className={`px-3 py-1.5 text-sm font-medium transition-colors ${
+                  currentView === 'game'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                🎯 Battle
+              </button>
+              <button
+                onClick={() => onViewChange('campaign')}
+                className={`px-3 py-1.5 text-sm font-medium transition-colors ${
+                  currentView === 'campaign'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                📖 Campaign
+              </button>
+            </div>
+          )}
+        </div>
         <div className="flex gap-3 lg:gap-6 items-center">
-          <span className="font-medium px-3 lg:px-4 py-1.5 lg:py-2 bg-blue-100 text-blue-800 rounded-md text-sm lg:text-base">Turn: {turn}</span>
-          <span className="font-medium px-3 lg:px-4 py-1.5 lg:py-2 bg-blue-100 text-blue-800 rounded-md text-sm lg:text-base">Phase: Player</span>
-          <Button 
-            variant="secondary" 
-            size="sm"
-            onClick={handleRepairConnections}
-            className="text-xs lg:text-sm"
-            title="Fix map connections if they appear broken"
-          >
-            🔧 Repair Map
-          </Button>
-          <Button 
-            variant="secondary" 
+          {currentView === 'game' && (
+            <>
+              <span className="font-medium px-3 lg:px-4 py-1.5 lg:py-2 bg-blue-100 text-blue-800 rounded-md text-sm lg:text-base">Turn: {turn}</span>
+              <span className="font-medium px-3 lg:px-4 py-1.5 lg:py-2 bg-blue-100 text-blue-800 rounded-md text-sm lg:text-base">Phase: Player</span>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleRepairConnections}
+                className="text-xs lg:text-sm"
+                title="Fix map connections if they appear broken"
+              >
+                🔧 Repair Map
+              </Button>
+            </>
+          )}
+          <Button
+            variant="secondary"
             size="sm"
             onClick={handleResetClick}
             className="text-xs lg:text-sm"
