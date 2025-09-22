@@ -14,15 +14,15 @@ export interface ChapterCardProps {
 
 const getChapterStateStyles = (isActive: boolean, isCompleted: boolean, isUnlocked: boolean): string => {
   if (isActive) {
-    return 'border-yellow-400 bg-yellow-50 ring-2 ring-yellow-200';
+    return 'border-ember bg-ember/20 ring-2 ring-ember/50 animate-ember-glow';
   }
   if (isCompleted) {
-    return 'border-green-400 bg-green-50';
+    return 'border-forest bg-forest/20 animate-forge-flicker';
   }
   if (isUnlocked) {
-    return 'border-blue-400 bg-blue-50 hover:border-blue-500 hover:shadow-md';
+    return 'border-bronze bg-bronze/20 hover:border-ember hover:bg-ember/10 hover:animate-ember-glow';
   }
-  return 'border-gray-300 bg-gray-100 opacity-50';
+  return 'border-iron bg-iron/20 opacity-50';
 };
 
 const getChapterStateLabel = (isActive: boolean, isCompleted: boolean): string | null => {
@@ -31,16 +31,16 @@ const getChapterStateLabel = (isActive: boolean, isCompleted: boolean): string |
   return null;
 };
 
-const renderStarRating = (rating: number): JSX.Element[] => {
+const renderStarRating = (rating: number): React.JSX.Element[] => {
   return Array.from({ length: GAME_BALANCE.UI.MAX_STAR_RATING }, (_, i) => (
     <span
       key={i}
       className={`text-sm ${
-        i < rating ? 'text-yellow-400' : 'text-gray-300'
+        i < rating ? 'text-ember animate-ember-glow' : 'text-iron-light'
       }`}
       aria-hidden="true"
     >
-      ★
+      ⚔
     </span>
   ));
 };
@@ -81,15 +81,15 @@ export const ChapterCard = memo<ChapterCardProps>(({
       aria-pressed={isActive}
       aria-disabled={!isUnlocked}
       className={`
-        p-6 rounded-lg border-2 transition-all duration-300 outline-none
-        focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+        p-6 rounded-lg border-2 transition-all duration-300 outline-none bg-metal-texture
+        focus:ring-2 focus:ring-ember focus:ring-offset-2
         ${stateStyles}
-        ${isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed'}
+        ${isUnlocked ? 'cursor-pointer hover:animate-battle-shake' : 'cursor-not-allowed'}
       `}
     >
       {/* Header Section */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-xl font-bold text-gray-800 flex-1 mr-2">
+        <h3 className="text-xl font-frontier font-bold text-parchment-light flex-1 mr-2 text-battle-worn">
           {chapter.title}
         </h3>
 
@@ -101,8 +101,8 @@ export const ChapterCard = memo<ChapterCardProps>(({
 
           {/* Status Badge */}
           {stateLabel && (
-            <span className={`text-sm font-medium px-2 py-1 rounded ${
-              isCompleted ? 'text-green-600 bg-green-100' : 'text-yellow-600 bg-yellow-100'
+            <span className={`text-sm font-frontier font-bold px-3 py-1 rounded border-2 ${
+              isCompleted ? 'text-parchment-light bg-forest border-forest-dark' : 'text-iron-dark bg-ember border-ember-dark'
             }`}>
               {stateLabel}
             </span>
@@ -111,12 +111,12 @@ export const ChapterCard = memo<ChapterCardProps>(({
       </div>
 
       {/* Subtitle */}
-      <p className="text-gray-600 italic mb-2 text-sm">
+      <p className="text-parchment italic mb-2 text-sm font-parchment">
         {chapter.subtitle}
       </p>
 
       {/* Description */}
-      <p className="text-gray-700 mb-4 text-sm leading-relaxed">
+      <p className="text-parchment-light mb-4 text-sm leading-relaxed font-parchment">
         {chapter.description}
       </p>
 
@@ -124,12 +124,12 @@ export const ChapterCard = memo<ChapterCardProps>(({
       {isActive && progress > 0 && (
         <div className="mb-3">
           <div className="flex justify-between items-center mb-1">
-            <span className="text-xs font-medium text-gray-600">Progress</span>
-            <span className="text-xs text-gray-600">{Math.round(progress * 100)}%</span>
+            <span className="text-xs font-frontier font-bold text-parchment">Progress</span>
+            <span className="text-xs text-parchment font-parchment">{Math.round(progress * 100)}%</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-iron-dark rounded-full h-3 border border-bronze">
             <div
-              className="bg-yellow-400 h-2 rounded-full transition-all duration-300"
+              className="bg-ember h-3 rounded-full transition-all duration-500 animate-ember-glow"
               style={{ width: `${progress * 100}%` }}
               role="progressbar"
               aria-valuenow={Math.round(progress * 100)}
@@ -143,12 +143,12 @@ export const ChapterCard = memo<ChapterCardProps>(({
       {/* Chapter Details Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
         <div>
-          <span className="font-semibold text-gray-700">Theme:</span>
-          <span className="ml-1 text-gray-600">{chapter.theme}</span>
+          <span className="font-frontier font-bold text-bronze">Theme:</span>
+          <span className="ml-1 text-parchment font-parchment">{chapter.theme}</span>
         </div>
         <div>
-          <span className="font-semibold text-gray-700">Est. Turns:</span>
-          <span className="ml-1 text-gray-600">
+          <span className="font-frontier font-bold text-bronze">Est. Turns:</span>
+          <span className="ml-1 text-parchment font-parchment">
             {chapter.estimatedTurns[0]}-{chapter.estimatedTurns[1]}
           </span>
         </div>
@@ -156,9 +156,9 @@ export const ChapterCard = memo<ChapterCardProps>(({
 
       {/* Prerequisites (if locked) */}
       {!isUnlocked && chapter.prerequisites.length > 0 && (
-        <div className="mt-3 p-2 bg-red-50 border border-red-200 rounded">
-          <span className="text-red-700 text-sm font-semibold">Prerequisites:</span>
-          <div className="text-red-600 text-sm mt-1">
+        <div className="mt-3 p-3 bg-blood/20 border-2 border-blood rounded border-battle">
+          <span className="text-blood text-sm font-frontier font-bold">Prerequisites:</span>
+          <div className="text-blood-light text-sm mt-1 font-parchment">
             {chapter.prerequisites.map((prereq, index) => (
               <span key={prereq}>
                 {prereq.replace(/_/g, ' ')}

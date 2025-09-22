@@ -6,13 +6,13 @@
 import React, { useState } from 'react';
 import { GameLayout } from '../components/layout/GameLayout';
 import { GameHeader } from '../components/layout/GameHeader';
+import { MissionSelectionCanvas } from '../components/game/MissionSelectionCanvas';
 import { GameCanvas } from '../components/game/GameCanvas';
 import { EnhancedLeftPanel } from '../components/features/EnhancedLeftPanel';
 import { EnhancedRightPanel } from '../components/features/EnhancedRightPanel';
 import { GameOverModal } from '../components/features/GameOverModal';
 import { RecruitmentModal } from '../components/game/RecruitmentModal';
 import { HelpModal } from '../components/game/HelpModal';
-import { CampaignPage } from '../components/game/CampaignPage';
 import { ToastContainer } from '../components/ui/Toast';
 import { useGameLogic } from '../hooks/useGameLogic';
 import { useNotifications } from '../hooks/useNotifications';
@@ -23,7 +23,7 @@ import { useModals } from '../hooks/useModals';
  * Separated from App for cleaner Provider wrapping
  */
 export const GamePage: React.FC = () => {
-  const [currentView, setCurrentView] = useState<'game' | 'campaign'>('game');
+  const [gameMode, setGameMode] = useState<'mission-select' | 'active-mission'>('mission-select');
   const { gameOver, winner } = useGameLogic();
   const { notifications, removeNotification } = useNotifications();
   const {
@@ -34,20 +34,24 @@ export const GamePage: React.FC = () => {
     closeHelp
   } = useModals();
 
-  const handleViewChange = (view: 'game' | 'campaign') => {
-    setCurrentView(view);
+  const handleMissionStart = (missionId: string) => {
+    // TODO: Initialize mission with specific parameters
+    console.log('Starting mission:', missionId);
+    setGameMode('active-mission');
   };
 
-  if (currentView === 'campaign') {
+  const handleReturnToMissionSelect = () => {
+    setGameMode('mission-select');
+  };
+
+  // Mission Selection Mode: Clean interface without battle UI
+  if (gameMode === 'mission-select') {
     return (
       <>
         <div className="h-screen flex flex-col">
-          <GameHeader
-            currentView={currentView}
-            onViewChange={handleViewChange}
-          />
+          <GameHeader />
           <div className="flex-1 overflow-hidden">
-            <CampaignPage />
+            <MissionSelectionCanvas onMissionStart={handleMissionStart} />
           </div>
         </div>
 
@@ -60,13 +64,14 @@ export const GamePage: React.FC = () => {
     );
   }
 
+  // Active Mission Mode: Full battle interface
   return (
     <>
       <GameLayout
         header={
           <GameHeader
-            currentView={currentView}
-            onViewChange={handleViewChange}
+            showMissionSelect={true}
+            onReturnToMissionSelect={handleReturnToMissionSelect}
           />
         }
         leftPanel={

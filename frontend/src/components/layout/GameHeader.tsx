@@ -4,13 +4,13 @@ import { useGameStore } from '../../stores/useGameStore';
 import { Button } from '../ui/Button';
 
 interface GameHeaderProps {
-  currentView?: 'game' | 'campaign';
-  onViewChange?: (view: 'game' | 'campaign') => void;
+  showMissionSelect?: boolean;
+  onReturnToMissionSelect?: () => void;
 }
 
 export const GameHeader: React.FC<GameHeaderProps> = ({
-  currentView = 'game',
-  onViewChange
+  showMissionSelect = false,
+  onReturnToMissionSelect
 }) => {
   const { turn } = useGameLogic();
   const resetGame = useGameStore(state => state.resetGame);
@@ -36,57 +36,39 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
 
   return (
     <>
-      <header className="bg-white border-b border-gray-200 px-4 lg:px-6 py-3 lg:py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center shadow-sm gap-2 sm:gap-0">
+      <header className="bg-bronze-texture border-b-4 border-bronze px-4 lg:px-6 py-3 lg:py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
         <div className="flex items-center space-x-4">
-          <h1 className="text-xl lg:text-2xl font-bold text-blue-600 m-0">⚔️ Ashes of Aeloria</h1>
-          {onViewChange && (
-            <div className="flex bg-gray-100 rounded-lg overflow-hidden">
-              <button
-                onClick={() => onViewChange('game')}
-                className={`px-3 py-1.5 text-sm font-medium transition-colors ${
-                  currentView === 'game'
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-600 hover:text-gray-800'
-                }`}
-              >
-                🎯 Battle
-              </button>
-              <button
-                onClick={() => onViewChange('campaign')}
-                className={`px-3 py-1.5 text-sm font-medium transition-colors ${
-                  currentView === 'campaign'
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-600 hover:text-gray-800'
-                }`}
-              >
-                📖 Campaign
-              </button>
-            </div>
-          )}
+          <h1 className="text-xl lg:text-2xl font-frontier font-bold text-parchment-light m-0 text-ember-glow animate-war-banner">⚔ Ashes of Aeloria Campaign</h1>
         </div>
         <div className="flex gap-3 lg:gap-6 items-center">
-          {currentView === 'game' && (
-            <>
-              <span className="font-medium px-3 lg:px-4 py-1.5 lg:py-2 bg-blue-100 text-blue-800 rounded-md text-sm lg:text-base">Turn: {turn}</span>
-              <span className="font-medium px-3 lg:px-4 py-1.5 lg:py-2 bg-blue-100 text-blue-800 rounded-md text-sm lg:text-base">Phase: Player</span>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={handleRepairConnections}
-                className="text-xs lg:text-sm"
-                title="Fix map connections if they appear broken"
-              >
-                🔧 Repair Map
-              </Button>
-            </>
+          {showMissionSelect && onReturnToMissionSelect && (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={onReturnToMissionSelect}
+              className="text-xs lg:text-sm"
+            >
+              🗺️ Mission Select
+            </Button>
           )}
+          <span className="font-frontier font-bold px-3 lg:px-4 py-1.5 lg:py-2 bg-metal-texture text-parchment-light rounded-md text-sm lg:text-base border-2 border-iron">Turn: {turn}</span>
+          <span className="font-frontier font-bold px-3 lg:px-4 py-1.5 lg:py-2 bg-metal-texture text-parchment-light rounded-md text-sm lg:text-base border-2 border-iron">Phase: Player</span>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleRepairConnections}
+            className="text-xs lg:text-sm"
+            title="Fix map connections if they appear broken"
+          >
+            🔧 Repair Map
+          </Button>
           <Button
             variant="secondary"
             size="sm"
             onClick={handleResetClick}
             className="text-xs lg:text-sm"
           >
-            🔄 Reset Game
+            🔄 Reset Campaign
           </Button>
         </div>
       </header>
@@ -94,21 +76,21 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
       {/* Reset Confirmation Modal */}
       {showResetConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-6 lg:p-8 rounded-lg border border-gray-200 text-center w-full max-w-sm shadow-lg">
-            <h2 className="text-xl lg:text-2xl mb-4">🔄 Reset Game</h2>
-            <p className="mb-6 text-gray-600 leading-normal text-sm lg:text-base">
-              Are you sure you want to reset the game? All progress will be lost and the game will start fresh.
+          <div className="bg-parchment p-6 lg:p-8 rounded-lg border-4 border-bronze bg-metal-texture text-center w-full max-w-sm">
+            <h2 className="text-xl lg:text-2xl mb-4 font-frontier font-bold text-iron-dark text-battle-worn">🔄 Reset Campaign</h2>
+            <p className="mb-6 text-iron leading-normal text-sm lg:text-base font-parchment">
+              Are you sure you want to reset the campaign? All progress will be lost and you will start from the first mission.
             </p>
             <div className="flex gap-3 justify-center">
-              <Button 
-                variant="secondary" 
+              <Button
+                variant="secondary"
                 onClick={handleCancelReset}
                 className="flex-1"
               >
                 Cancel
               </Button>
-              <Button 
-                variant="primary" 
+              <Button
+                variant="attack"
                 onClick={handleConfirmReset}
                 className="flex-1"
               >

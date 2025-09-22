@@ -1,3 +1,313 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Uncial+Antiqua&family=Pirata+One&family=Creepster&family=IM+Fell+English:ital,wght@0,400;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
 
-/* All styles are now implemented using inline Tailwind CSS classes in components */
+/* Utility Classes for Frontier War Theme */
+.bg-iron { background-color: #2B2B2C; }
+.bg-iron-light { background-color: #6C6C6C; }
+.bg-iron-dark { background-color: #1E1E20; }
+
+.bg-bronze { background-color: #7B4F2E; }
+.bg-bronze-light { background-color: #B8723F; }
+.bg-bronze-dark { background-color: #5D3A22; }
+
+.bg-blood { background-color: #A93226; }
+.bg-blood-light { background-color: #DC143C; }
+.bg-blood-dark { background-color: #8B0000; }
+
+.bg-ember { background-color: #E67E22; }
+.bg-ember-light { background-color: #F39C12; }
+.bg-ember-dark { background-color: #D35400; }
+
+.bg-parchment { background-color: #D7C7A0; }
+.bg-parchment-light { background-color: #EDEADE; }
+.bg-parchment-dark { background-color: #C7B299; }
+
+.bg-mana { background-color: #3498DB; }
+.bg-mana-light { background-color: #5DADE2; }
+.bg-mana-dark { background-color: #2874A6; }
+
+.bg-crystal { background-color: #1ABC9C; }
+.bg-crystal-light { background-color: #48C9B0; }
+.bg-crystal-dark { background-color: #148F77; }
+
+.bg-forest { background-color: #228B22; }
+.bg-forest-light { background-color: #32CD32; }
+.bg-forest-dark { background-color: #006400; }
+
+.bg-amber { background-color: #FFC107; }
+.bg-amber-light { background-color: #FFD54F; }
+.bg-amber-dark { background-color: #FF8F00; }
+
+.text-iron { color: #2B2B2C; }
+.text-iron-light { color: #6C6C6C; }
+.text-iron-dark { color: #1E1E20; }
+
+.text-bronze { color: #7B4F2E; }
+.text-bronze-light { color: #B8723F; }
+.text-bronze-dark { color: #5D3A22; }
+
+.text-blood { color: #A93226; }
+.text-blood-light { color: #DC143C; }
+.text-blood-dark { color: #8B0000; }
+
+.text-ember { color: #E67E22; }
+.text-ember-light { color: #F39C12; }
+.text-ember-dark { color: #D35400; }
+
+.text-parchment { color: #D7C7A0; }
+.text-parchment-light { color: #EDEADE; }
+.text-parchment-dark { color: #C7B299; }
+
+.text-mana { color: #3498DB; }
+.text-mana-light { color: #5DADE2; }
+.text-mana-dark { color: #2874A6; }
+
+.text-crystal { color: #1ABC9C; }
+.text-crystal-light { color: #48C9B0; }
+.text-crystal-dark { color: #148F77; }
+
+.text-forest { color: #228B22; }
+.text-forest-light { color: #32CD32; }
+.text-forest-dark { color: #006400; }
+
+.text-amber { color: #FFC107; }
+.text-amber-light { color: #FFD54F; }
+.text-amber-dark { color: #FF8F00; }
+
+.border-iron { border-color: #2B2B2C; }
+.border-iron-light { border-color: #6C6C6C; }
+.border-iron-dark { border-color: #1E1E20; }
+
+.border-bronze { border-color: #7B4F2E; }
+.border-bronze-light { border-color: #B8723F; }
+.border-bronze-dark { border-color: #5D3A22; }
+
+.border-blood { border-color: #A93226; }
+.border-blood-light { border-color: #DC143C; }
+.border-blood-dark { border-color: #8B0000; }
+
+.border-ember { border-color: #E67E22; }
+.border-ember-light { border-color: #F39C12; }
+.border-ember-dark { border-color: #D35400; }
+
+.border-parchment { border-color: #D7C7A0; }
+.border-parchment-light { border-color: #EDEADE; }
+.border-parchment-dark { border-color: #C7B299; }
+
+.border-mana { border-color: #3498DB; }
+.border-mana-light { border-color: #5DADE2; }
+.border-mana-dark { border-color: #2874A6; }
+
+.border-crystal { border-color: #1ABC9C; }
+.border-crystal-light { border-color: #48C9B0; }
+.border-crystal-dark { border-color: #148F77; }
+
+.border-forest { border-color: #228B22; }
+.border-forest-light { border-color: #32CD32; }
+.border-forest-dark { border-color: #006400; }
+
+.border-amber { border-color: #FFC107; }
+.border-amber-light { border-color: #FFD54F; }
+.border-amber-dark { border-color: #FF8F00; }
+
+.font-frontier { font-family: 'Cinzel Decorative', 'Uncial Antiqua', serif; }
+.font-rugged { font-family: 'Pirata One', 'Creepster', fantasy; }
+.font-parchment { font-family: 'IM Fell English', 'Libre Baskerville', serif; }
+.font-fantasy { font-family: 'Cinzel', serif; }
+
+.animate-ember-glow { animation: ember-glow 2s ease-in-out infinite alternate; }
+.animate-battle-shake { animation: battle-shake 0.5s ease-in-out; }
+.animate-forge-flicker { animation: forge-flicker 1.5s linear infinite; }
+.animate-war-banner { animation: war-banner 4s ease-in-out infinite; }
+
+@keyframes ember-glow {
+  0% { box-shadow: 0 0 5px #E67E22, 0 0 10px #E67E22; }
+  100% { box-shadow: 0 0 10px #E67E22, 0 0 20px #E67E22, 0 0 30px #E67E22; }
+}
+
+@keyframes battle-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+@keyframes forge-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes war-banner {
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1deg); }
+}
+
+/* Frontier War Campaign Theme - Custom CSS Variables and Effects */
+:root {
+  /* Material texture shadows for depth */
+  --shadow-stone: 0 4px 8px rgba(43, 43, 44, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --shadow-metal: 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  --shadow-ember: 0 0 20px rgba(230, 126, 34, 0.4);
+  --shadow-blood: 0 0 15px rgba(169, 50, 38, 0.3);
+
+  /* Texture patterns */
+  --texture-stone: linear-gradient(135deg, #2B2B2C 0%, #1E1E20 25%, #2B2B2C 50%, #1E1E20 75%, #2B2B2C 100%);
+  --texture-metal: linear-gradient(180deg, #6C6C6C 0%, #2B2B2C 50%, #1E1E20 100%);
+  --texture-bronze: linear-gradient(45deg, #7B4F2E 0%, #B8723F 25%, #7B4F2E 50%, #5D3A22 75%, #7B4F2E 100%);
+}
+
+/* Battle-worn text effects */
+.text-battle-worn {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8),
+               0 0 4px rgba(169, 50, 38, 0.3);
+}
+
+.text-ember-glow {
+  text-shadow: 0 0 10px #E67E22,
+               0 0 20px #E67E22,
+               0 0 30px #E67E22;
+}
+
+.text-forge-steel {
+  background: linear-gradient(135deg, #6C6C6C, #2B2B2C, #6C6C6C);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.5));
+}
+
+/* Material texture classes */
+.bg-stone-texture {
+  background: var(--texture-stone);
+  box-shadow: var(--shadow-stone);
+}
+
+.bg-metal-texture {
+  background: var(--texture-metal);
+  box-shadow: var(--shadow-metal);
+}
+
+.bg-bronze-texture {
+  background: var(--texture-bronze);
+  box-shadow: var(--shadow-metal);
+}
+
+/* War-themed borders */
+.border-battle {
+  border-image: linear-gradient(45deg, #7B4F2E, #A93226, #7B4F2E) 1;
+  border-width: 2px;
+  border-style: solid;
+}
+
+.border-forge {
+  border: 2px solid #6C6C6C;
+  box-shadow: inset 0 0 0 1px #2B2B2C,
+              0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Weathered paper effect */
+.bg-parchment {
+  background:
+    radial-gradient(ellipse 800px 600px at 50% 40%, rgba(237, 234, 222, 0.9) 0%, transparent 40%),
+    radial-gradient(ellipse 1000px 400px at 20% 80%, rgba(199, 178, 153, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse 600px 800px at 80% 20%, rgba(215, 199, 160, 0.4) 0%, transparent 40%),
+    linear-gradient(135deg, #D7C7A0 0%, #EDEADE 25%, #C7B299 50%, #D7C7A0 75%, #EDEADE 100%);
+  position: relative;
+}
+
+.bg-parchment::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    radial-gradient(circle at 12% 23%, rgba(123, 79, 46, 0.12) 1px, transparent 2px),
+    radial-gradient(circle at 87% 67%, rgba(169, 50, 38, 0.08) 0.5px, transparent 1.5px),
+    radial-gradient(circle at 43% 89%, rgba(30, 30, 32, 0.1) 1.2px, transparent 2.5px),
+    radial-gradient(circle at 78% 11%, rgba(123, 79, 46, 0.06) 0.8px, transparent 2px),
+    radial-gradient(circle at 21% 71%, rgba(199, 178, 153, 0.15) 0.7px, transparent 1.8px),
+    radial-gradient(circle at 56% 34%, rgba(169, 50, 38, 0.05) 1.1px, transparent 2.2px),
+    radial-gradient(circle at 91% 45%, rgba(30, 30, 32, 0.08) 0.9px, transparent 1.9px),
+    radial-gradient(circle at 33% 56%, rgba(123, 79, 46, 0.09) 0.6px, transparent 1.7px);
+  background-size:
+    347px 423px, 567px 389px, 423px 567px, 389px 347px,
+    503px 431px, 431px 503px, 367px 521px, 521px 367px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.bg-parchment::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    linear-gradient(45deg, transparent 40%, rgba(199, 178, 153, 0.05) 50%, transparent 60%),
+    linear-gradient(-45deg, transparent 30%, rgba(215, 199, 160, 0.08) 50%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Worn button effects */
+.btn-frontier {
+  background: var(--texture-bronze);
+  color: #EDEADE;
+  font-family: var(--font-family-frontier);
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  box-shadow: var(--shadow-metal);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-frontier:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-metal), var(--shadow-ember);
+}
+
+.btn-frontier:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.btn-frontier::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-frontier:hover::before {
+  left: 100%;
+}
+
+/* Scrollbar styling for war theme */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--texture-stone);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--texture-bronze);
+  border-radius: 6px;
+  border: 2px solid #2B2B2C;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #B8723F, #7B4F2E);
+}

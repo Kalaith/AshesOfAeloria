@@ -14,17 +14,17 @@ interface ToastProps {
 }
 
 const NOTIFICATION_ICONS: Record<NotificationType, string> = {
-  success: '✅',
-  error: '❌',
+  success: '⚔️',
+  error: '💀',
   warning: '⚠️',
-  info: 'ℹ️'
+  info: '📜'
 };
 
 const NOTIFICATION_COLORS: Record<NotificationType, string> = {
-  success: 'bg-green-50 border-green-200 text-green-800',
-  error: 'bg-red-50 border-red-200 text-red-800',
-  warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-  info: 'bg-blue-50 border-blue-200 text-blue-800'
+  success: 'bg-forest/20 border-forest text-forest',
+  error: 'bg-blood/20 border-blood text-blood',
+  warning: 'bg-amber/20 border-amber text-amber',
+  info: 'bg-crystal/20 border-crystal text-crystal'
 };
 
 export const Toast: React.FC<ToastProps> = ({ notification, onClose }) => {
@@ -46,7 +46,7 @@ export const Toast: React.FC<ToastProps> = ({ notification, onClose }) => {
 
   return (
     <div className={`
-      flex items-center justify-between p-4 mb-3 border rounded-lg shadow-lg
+      flex items-center justify-between p-4 mb-3 border-2 rounded-lg shadow-lg bg-bronze-texture
       ${NOTIFICATION_COLORS[type]}
       animate-in slide-in-from-right duration-300
     `}>
@@ -54,16 +54,16 @@ export const Toast: React.FC<ToastProps> = ({ notification, onClose }) => {
         <span className="mr-3 text-lg">
           {NOTIFICATION_ICONS[type]}
         </span>
-        <span className="text-sm font-medium">
+        <span className="text-sm font-frontier font-bold">
           {message}
         </span>
       </div>
-      
+
       <Button
         variant="ghost"
         size="xs"
         onClick={handleClose}
-        className="!p-1 !min-h-0 hover:bg-transparent hover:text-gray-600"
+        className="!p-1 !min-h-0 hover:bg-transparent hover:text-parchment-dark font-frontier font-bold"
         aria-label="Close notification"
       >
         ✕

@@ -17,12 +17,12 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 const VARIANT_CLASSES = {
-  primary: 'bg-blue-600 hover:bg-blue-700 text-white border-transparent focus:ring-blue-500',
-  secondary: 'bg-gray-600 hover:bg-gray-700 text-white border-transparent focus:ring-gray-500',
-  success: 'bg-green-600 hover:bg-green-700 text-white border-transparent focus:ring-green-500',
-  danger: 'bg-red-600 hover:bg-red-700 text-white border-transparent focus:ring-red-500',
-  warning: 'bg-yellow-600 hover:bg-yellow-700 text-white border-transparent focus:ring-yellow-500',
-  ghost: 'bg-transparent hover:bg-gray-100 text-gray-700 border-gray-300 focus:ring-gray-500'
+  primary: 'bg-bronze text-parchment-light border-bronze hover:bg-bronze-light hover:animate-ember-glow focus:ring-ember',
+  secondary: 'bg-iron text-parchment-light border-iron hover:bg-iron-light hover:animate-forge-flicker focus:ring-bronze',
+  success: 'bg-forest text-parchment-light border-forest hover:bg-forest-light hover:animate-forge-flicker focus:ring-forest',
+  danger: 'bg-blood text-parchment-light border-blood hover:bg-blood-light hover:animate-battle-shake focus:ring-blood',
+  warning: 'bg-amber text-iron-dark border-amber hover:bg-amber-light hover:animate-ember-glow focus:ring-amber',
+  ghost: 'bg-transparent hover:bg-bronze/10 text-parchment-dark border-bronze/30 focus:ring-bronze'
 } as const;
 
 const SIZE_CLASSES = {
@@ -45,7 +45,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
   children,
   ...props
 }, ref) => {
-  const baseClasses = 'inline-flex items-center justify-center border font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseClasses = 'inline-flex items-center justify-center border-2 font-frontier font-bold rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variantClasses = VARIANT_CLASSES[variant];
   const sizeClasses = SIZE_CLASSES[size];

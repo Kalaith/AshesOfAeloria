@@ -38,51 +38,51 @@ export const RecruitmentModal: React.FC<RecruitmentModalProps> = ({ isOpen, onCl
 
   const footer = (
     <>
-      <Button variant="secondary" onClick={handleCancel} fullWidth className="sm:w-auto">
-        Cancel
+      <Button variant="secondary" onClick={handleCancel} fullWidth className="sm:w-auto font-frontier font-bold">
+        Withdraw Offer
       </Button>
-      <Button 
-        variant="primary" 
+      <Button
+        variant="recruit"
         onClick={handleConfirmRecruitment}
         disabled={!selectedClass || !selectedRace || !canAfford}
         fullWidth
-        className="sm:w-auto"
+        className="sm:w-auto font-frontier font-bold"
       >
-        Recruit ({selectedClass ? GAME_DATA.commanderClasses[selectedClass].cost : '-'} Gold)
+        Enlist War Leader ({selectedClass ? GAME_DATA.commanderClasses[selectedClass].cost : '-'} 🪙)
       </Button>
     </>
   );
 
   return (
-    <Modal 
-      isOpen={isOpen} 
-      onClose={onClose} 
-      title="Recruit Commander"
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="⚔ Enlist War Leader"
       footer={footer}
     >
       <div className="space-y-4 lg:space-y-6">
         <div>
-          <h4 className="text-sm lg:text-md font-semibold text-gray-800 mb-3">Select Class:</h4>
+          <h4 className="text-sm lg:text-md font-frontier font-bold text-iron-dark mb-3 text-battle-worn">⚔ Choose War Leader Class:</h4>
           <div className="grid grid-cols-1 gap-2">
             {Object.entries(GAME_DATA.commanderClasses).map(([key, classData]) => (
               <div
                 key={key}
-                className={`p-3 border rounded cursor-pointer transition-all duration-200 flex items-center gap-3 ${
-                  selectedClass === key 
-                    ? 'border-blue-500 bg-blue-500 text-white' 
-                    : 'border-gray-200 hover:border-blue-500 hover:bg-blue-50'
+                className={`p-3 border-2 rounded cursor-pointer transition-all duration-300 flex items-center gap-3 ${
+                  selectedClass === key
+                    ? 'border-ember bg-ember/20 text-parchment-light animate-ember-glow'
+                    : 'border-bronze bg-bronze/10 hover:border-ember hover:bg-ember/10'
                 }`}
                 onClick={() => setSelectedClass(key as CommanderClass)}
               >
                 <div className="text-lg lg:text-xl w-6 lg:w-8 text-center flex-shrink-0">{classData.icon}</div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm lg:text-base">{classData.name}</div>
-                  <div className={`text-xs lg:text-sm mt-1 ${selectedClass === key ? 'opacity-80' : 'text-gray-600'}`}>
+                  <div className="font-frontier font-bold text-sm lg:text-base">{classData.name}</div>
+                  <div className={`text-xs lg:text-sm mt-1 font-parchment ${selectedClass === key ? 'text-parchment' : 'text-parchment-dark'}`}>
                     {classData.description}
                   </div>
                 </div>
-                <div className="text-sm font-medium">
-                  Cost: {classData.cost} gold
+                <div className="text-sm font-frontier font-bold text-amber">
+                  Cost: {classData.cost} 🪙
                 </div>
               </div>
             ))}
@@ -90,22 +90,22 @@ export const RecruitmentModal: React.FC<RecruitmentModalProps> = ({ isOpen, onCl
         </div>
         
         <div>
-          <h4 className="text-sm lg:text-md font-semibold text-gray-800 mb-3">Select Race:</h4>
+          <h4 className="text-sm lg:text-md font-frontier font-bold text-iron-dark mb-3 text-battle-worn">🏺 Choose Bloodline Heritage:</h4>
           <div className="grid grid-cols-1 gap-2">
             {Object.entries(GAME_DATA.races).map(([key, raceData]) => (
               <div
                 key={key}
-                className={`p-3 border rounded cursor-pointer transition-all duration-200 flex items-center gap-3 ${
-                  selectedRace === key 
-                    ? 'border-blue-500 bg-blue-500 text-white' 
-                    : 'border-gray-200 hover:border-blue-500 hover:bg-blue-50'
+                className={`p-3 border-2 rounded cursor-pointer transition-all duration-300 flex items-center gap-3 ${
+                  selectedRace === key
+                    ? 'border-crystal bg-crystal/20 text-parchment-light animate-forge-flicker'
+                    : 'border-bronze bg-bronze/10 hover:border-crystal hover:bg-crystal/10'
                 }`}
                 onClick={() => setSelectedRace(key as Race)}
               >
                 <div className="text-lg lg:text-xl w-6 lg:w-8 text-center flex-shrink-0">{raceData.icon}</div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm lg:text-base">{raceData.name}</div>
-                  <div className={`text-xs lg:text-sm mt-1 ${selectedRace === key ? 'opacity-80' : 'text-gray-600'}`}>
+                  <div className="font-frontier font-bold text-sm lg:text-base">{raceData.name}</div>
+                  <div className={`text-xs lg:text-sm mt-1 font-parchment ${selectedRace === key ? 'text-parchment' : 'text-parchment-dark'}`}>
                     {raceData.bonus}
                   </div>
                 </div>
@@ -114,41 +114,41 @@ export const RecruitmentModal: React.FC<RecruitmentModalProps> = ({ isOpen, onCl
           </div>
         </div>
 
-        <div className="bg-gray-50 p-3 lg:p-4 rounded border border-gray-200">
+        <div className="bg-bronze-texture p-3 lg:p-4 rounded-lg border-2 border-bronze">
           {selectedClass && selectedRace ? (
             <div className="space-y-2 lg:space-y-3">
-              <h4 className="text-sm lg:text-md font-semibold text-gray-800">Commander Summary:</h4>
+              <h4 className="text-sm lg:text-md font-frontier font-bold text-parchment-light text-battle-worn">⚔ War Leader Dossier:</h4>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Name:</span>
-                  <span className="font-medium">
+                  <span className="text-parchment-dark font-parchment">🎭 Identity:</span>
+                  <span className="font-frontier font-bold text-parchment-light">
                     {GAME_DATA.races[selectedRace].name} {GAME_DATA.commanderClasses[selectedClass].name}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Health:</span>
-                  <span className="font-medium">{GAME_DATA.commanderClasses[selectedClass].baseHealth}</span>
+                  <span className="text-parchment-dark font-parchment">🩸 Battle Endurance:</span>
+                  <span className="font-frontier font-bold text-forest">{GAME_DATA.commanderClasses[selectedClass].baseHealth}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Attack:</span>
-                  <span className="font-medium">{GAME_DATA.commanderClasses[selectedClass].baseAttack}</span>
+                  <span className="text-parchment-dark font-parchment">⚔ Battle Prowess:</span>
+                  <span className="font-frontier font-bold text-blood">{GAME_DATA.commanderClasses[selectedClass].baseAttack}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Defense:</span>
-                  <span className="font-medium">{GAME_DATA.commanderClasses[selectedClass].baseDefense}</span>
+                  <span className="text-parchment-dark font-parchment">🛡 Tactical Defense:</span>
+                  <span className="font-frontier font-bold text-mana">{GAME_DATA.commanderClasses[selectedClass].baseDefense}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Special:</span>
-                  <span className="font-medium">{GAME_DATA.commanderClasses[selectedClass].specialAbility}</span>
+                  <span className="text-parchment-dark font-parchment">✨ War Specialty:</span>
+                  <span className="font-frontier font-bold text-crystal">{GAME_DATA.commanderClasses[selectedClass].specialAbility}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Racial Bonus:</span>
-                  <span className="font-medium">{GAME_DATA.races[selectedRace].bonus}</span>
+                  <span className="text-parchment-dark font-parchment">🏺 Heritage Blessing:</span>
+                  <span className="font-frontier font-bold text-amber">{GAME_DATA.races[selectedRace].bonus}</span>
                 </div>
               </div>
             </div>
           ) : (
-            <p className="text-gray-500 text-center">Select a class and race to see details</p>
+            <p className="text-parchment-dark text-center font-parchment italic">Select war leader class and bloodline heritage to view combat profile</p>
           )}
         </div>
       </div>

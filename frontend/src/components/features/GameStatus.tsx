@@ -18,19 +18,19 @@ interface GameStatusProps {
 
 const PHASE_INFO: Record<Phase, { label: string; color: string; icon: string }> = {
   player: {
-    label: 'Your Turn',
-    color: 'text-green-600 bg-green-50 border-green-200',
-    icon: '👑'
+    label: 'Your Command',
+    color: 'text-forest bg-forest/20 border-forest',
+    icon: '⚔'
   },
   enemy: {
-    label: 'Enemy Turn',
-    color: 'text-red-600 bg-red-50 border-red-200',
-    icon: '⚔️'
+    label: 'Enemy Assault',
+    color: 'text-blood bg-blood/20 border-blood',
+    icon: '🛡'
   },
   upkeep: {
-    label: 'Upkeep Phase',
-    color: 'text-blue-600 bg-blue-50 border-blue-200',
-    icon: '⚙️'
+    label: 'Supply & Logistics',
+    color: 'text-amber bg-amber/20 border-amber',
+    icon: '⚙'
   }
 };
 
@@ -46,18 +46,18 @@ export const GameStatus: React.FC<GameStatusProps> = ({
   return (
     <Card className={`p-4 ${className}`}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-bold text-gray-800">Game Status</h3>
-        <div className="text-sm text-gray-600">
+        <h3 className="text-lg font-frontier font-bold text-iron-dark text-battle-worn">⚡ Campaign Status</h3>
+        <div className="text-sm font-frontier font-bold text-bronze bg-bronze/20 px-2 py-1 rounded border border-bronze">
           Turn {turn}
         </div>
       </div>
-      
+
       <div className={`
-        flex items-center justify-center p-3 rounded-lg border mb-4
+        flex items-center justify-center p-3 rounded-lg border-2 mb-4 font-frontier font-bold
         ${phaseInfo.color}
       `}>
         <span className="text-lg mr-2">{phaseInfo.icon}</span>
-        <span className="font-semibold">{phaseInfo.label}</span>
+        <span className="font-bold">{phaseInfo.label}</span>
       </div>
 
       {phase === 'player' && (
@@ -66,21 +66,22 @@ export const GameStatus: React.FC<GameStatusProps> = ({
           fullWidth
           onClick={onEndTurn}
           disabled={!canEndTurn}
-          rightIcon="⏭️"
+          rightIcon="⚡"
+          className="font-frontier font-bold"
         >
-          End Turn
+          Conclude Turn
         </Button>
       )}
-      
+
       {phase === 'enemy' && (
-        <div className="text-center text-sm text-gray-600">
-          Enemy is making their moves...
+        <div className="text-center text-sm font-parchment text-iron animate-forge-flicker">
+          Enemy forces are maneuvering across the battlefield...
         </div>
       )}
-      
+
       {phase === 'upkeep' && (
-        <div className="text-center text-sm text-gray-600">
-          Processing turn end events...
+        <div className="text-center text-sm font-parchment text-iron animate-forge-flicker">
+          Processing supply lines and reinforcements...
         </div>
       )}
     </Card>

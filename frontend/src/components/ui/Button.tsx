@@ -15,14 +15,14 @@ export const Button: React.FC<ButtonProps> = ({
   children, 
   ...props 
 }) => {
-  const baseClasses = 'inline-flex items-center justify-center font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation';
-  
+  const baseClasses = 'inline-flex items-center justify-center font-frontier font-bold rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation border-2 bg-bronze-texture';
+
   const variantClasses = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
-    secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
-    outline: 'border-2 border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500',
-    attack: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
-    recruit: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500'
+    primary: 'bg-bronze text-parchment-light border-bronze hover:bg-bronze-light hover:animate-ember-glow focus:ring-ember',
+    secondary: 'bg-iron text-parchment border-iron-light hover:bg-iron-light hover:border-bronze focus:ring-bronze',
+    outline: 'border-bronze text-bronze bg-transparent hover:bg-bronze hover:text-parchment-light focus:ring-bronze',
+    attack: 'bg-blood text-parchment-light border-blood-dark hover:bg-blood-light hover:animate-battle-shake focus:ring-blood',
+    recruit: 'bg-forest text-parchment-light border-forest-dark hover:bg-forest-light hover:animate-forge-flicker focus:ring-forest'
   };
   
   const sizeClasses = {

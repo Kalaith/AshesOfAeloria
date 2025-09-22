@@ -56,11 +56,11 @@ export const EnhancedInfoPanel: React.FC = () => {
   if (!nodeInfo && !commanderInfo) {
     return (
       <Card className="p-4">
-        <h3 className="text-lg font-bold mb-4 text-gray-800">Information</h3>
+        <h3 className="text-lg font-frontier font-bold mb-4 text-iron-dark text-battle-worn">🗺 Battlefield Intelligence</h3>
         <div className="text-center py-8">
           <div className="text-4xl mb-4">🎯</div>
-          <p className="text-gray-600 text-sm">
-            Select a node or commander to view detailed information and available actions.
+          <p className="text-parchment-dark text-sm font-parchment">
+            Choose a stronghold or war leader to view tactical details and command options.
           </p>
         </div>
       </Card>

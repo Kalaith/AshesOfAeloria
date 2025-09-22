@@ -48,18 +48,18 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
 
   const getImportanceColor = (importance: string) => {
     switch (importance) {
-      case 'critical': return 'border-red-500 bg-red-50';
-      case 'high': return 'border-orange-500 bg-orange-50';
-      case 'medium': return 'border-yellow-500 bg-yellow-50';
-      default: return 'border-gray-500 bg-gray-50';
+      case 'critical': return 'border-blood bg-blood/20';
+      case 'high': return 'border-ember bg-ember/20';
+      case 'medium': return 'border-amber bg-amber/20';
+      default: return 'border-bronze bg-bronze/20';
     }
   };
 
   const getMoralityColor = (morality: string) => {
     switch (morality) {
-      case 'good': return 'bg-green-100 text-green-800 border-green-300';
-      case 'evil': return 'bg-red-100 text-red-800 border-red-300';
-      default: return 'bg-gray-100 text-gray-800 border-gray-300';
+      case 'good': return 'bg-forest/20 text-forest border-forest';
+      case 'evil': return 'bg-blood/20 text-blood border-blood';
+      default: return 'bg-bronze/20 text-parchment-dark border-bronze';
     }
   };
 
@@ -70,48 +70,48 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
   const selectedChoiceData = event.choices.find(c => c.id === selectedChoice);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-      <div className={`bg-white rounded-lg max-w-4xl w-full max-h-screen overflow-y-auto border-4 ${getImportanceColor(event.importance)}`}>
+    <div className="fixed inset-0 bg-iron-dark bg-opacity-90 flex items-center justify-center z-50 p-4">
+      <div className={`bg-parchment rounded-lg max-w-4xl w-full max-h-screen overflow-y-auto border-4 ${getImportanceColor(event.importance)}`}>
         <div className="p-8">
           {/* Header */}
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">{event.title}</h1>
+              <h1 className="text-3xl font-frontier font-bold text-iron-dark mb-2 text-battle-worn">📜 {event.title}</h1>
               <div className="flex items-center space-x-4">
-                <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${
-                  event.importance === 'critical' ? 'bg-red-100 text-red-800 border-red-300' :
-                  event.importance === 'high' ? 'bg-orange-100 text-orange-800 border-orange-300' :
-                  event.importance === 'medium' ? 'bg-yellow-100 text-yellow-800 border-yellow-300' :
-                  'bg-gray-100 text-gray-800 border-gray-300'
+                <span className={`px-3 py-1 rounded-full text-sm font-frontier font-bold border-2 ${
+                  event.importance === 'critical' ? 'bg-blood/20 text-blood border-blood' :
+                  event.importance === 'high' ? 'bg-ember/20 text-ember border-ember' :
+                  event.importance === 'medium' ? 'bg-amber/20 text-amber border-amber' :
+                  'bg-bronze/20 text-parchment-dark border-bronze'
                 }`}>
-                  {event.importance.toUpperCase()} EVENT
+                  ⚔ {event.importance.toUpperCase()} CAMPAIGN EVENT
                 </span>
                 {event.unique && (
-                  <span className="px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-800 border border-purple-300">
-                    UNIQUE
+                  <span className="px-3 py-1 rounded-full text-sm font-frontier font-bold bg-crystal/20 text-crystal border-2 border-crystal">
+                    ✨ LEGENDARY
                   </span>
                 )}
               </div>
             </div>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
+              className="text-parchment-dark hover:text-iron-dark text-2xl font-frontier font-bold"
             >
-              ×
+              ✕
             </button>
           </div>
 
           {/* Event Description */}
-          <div className="mb-8">
+          <div className="mb-8 p-4 bg-bronze-texture rounded-lg border-2 border-bronze">
             <div className="prose prose-lg max-w-none">
-              <p className="text-gray-700 leading-relaxed text-lg">{event.description}</p>
+              <p className="text-parchment-dark leading-relaxed text-lg font-parchment">{event.description}</p>
             </div>
           </div>
 
           {!showConsequences ? (
             /* Choice Selection */
             <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">Choose Your Response</h2>
+              <h2 className="text-2xl font-frontier font-bold text-iron-dark mb-4 text-battle-worn">⚔ Choose Your War Response</h2>
               {event.choices.map((choice) => {
                 const meetsRequirements = choice.requirements.every(req => {
                   // In a real implementation, this would check actual game state
@@ -122,27 +122,27 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
                   <div
                     key={choice.id}
                     onClick={() => meetsRequirements && handleChoiceSelection(choice)}
-                    className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
+                    className={`p-6 border-2 rounded-lg cursor-pointer transition-all duration-300 ${
                       selectedChoice === choice.id
-                        ? 'border-blue-500 bg-blue-50'
+                        ? 'border-crystal bg-crystal/20 animate-forge-flicker'
                         : meetsRequirements
-                        ? 'border-gray-300 hover:border-gray-400 bg-white'
-                        : 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
+                        ? 'border-bronze hover:border-crystal bg-bronze-texture hover:bg-crystal/10'
+                        : 'border-iron bg-iron/20 opacity-60 cursor-not-allowed'
                     }`}
                   >
                     <div className="flex justify-between items-start mb-3">
-                      <h3 className="text-xl font-bold text-gray-800">{choice.text}</h3>
+                      <h3 className="text-xl font-frontier font-bold text-iron-dark">{choice.text}</h3>
                       <div className="flex items-center space-x-2">
-                        <span className={`px-2 py-1 rounded text-sm font-semibold border ${getMoralityColor(choice.morality)}`}>
+                        <span className={`px-2 py-1 rounded text-sm font-frontier font-bold border-2 ${getMoralityColor(choice.morality)}`}>
                           {choice.morality.toUpperCase()}
                         </span>
-                        <span className="text-yellow-500 text-sm" title={`Difficulty: ${choice.difficulty}/5`}>
+                        <span className="text-amber text-sm font-frontier font-bold" title={`Difficulty: ${choice.difficulty}/5`}>
                           {getDifficultyStars(choice.difficulty)}
                         </span>
                       </div>
                     </div>
 
-                    <p className="text-gray-700 mb-4">{choice.description}</p>
+                    <p className="text-parchment-dark mb-4 font-parchment">{choice.description}</p>
 
                     {choice.requirements.length > 0 && (
                       <div className="mb-3">

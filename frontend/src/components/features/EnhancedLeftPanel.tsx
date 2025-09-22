@@ -54,22 +54,24 @@ export const EnhancedLeftPanel: React.FC<EnhancedLeftPanelProps> = ({
       {/* Quick Actions */}
       <div className="space-y-2">
         <Button
-          variant="primary"
+          variant="recruit"
           fullWidth
           onClick={onRecruitClick}
-          leftIcon="⚔️"
+          leftIcon="⚔"
           disabled={!canPerformActions}
+          className="font-frontier font-bold"
         >
-          Recruit Commander
+          Recruit War Leader
         </Button>
-        
+
         <Button
-          variant="secondary"
+          variant="outline"
           fullWidth
           onClick={onHelpClick}
-          leftIcon="❓"
+          leftIcon="📜"
+          className="font-frontier font-bold"
         >
-          Help & Guide
+          War Manual & Strategy
         </Button>
       </div>
     </div>

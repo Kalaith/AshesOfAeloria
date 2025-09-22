@@ -6,7 +6,7 @@ import './styles/globals.css';
 function App() {
   return (
     <GameProvider>
-      <div className="h-screen bg-gray-50 text-gray-900 flex flex-col overflow-hidden">
+      <div className="h-screen bg-stone-texture text-parchment-light flex flex-col overflow-hidden font-parchment">
         <GamePage />
       </div>
     </GameProvider>

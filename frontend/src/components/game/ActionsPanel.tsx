@@ -17,21 +17,23 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ onHelpClick }) => {
 
   return (
     <Card className="space-y-3 lg:space-y-4">
-      <h3 className="text-base lg:text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">Actions</h3>
-      <Button 
-        variant="secondary" 
-        fullWidth 
+      <h3 className="text-base lg:text-lg font-frontier font-bold text-iron-dark border-b-2 border-bronze pb-2 text-battle-worn">⚔ War Council</h3>
+      <Button
+        variant={phase === 'player' ? 'primary' : 'secondary'}
+        fullWidth
         onClick={handleEndTurn}
         disabled={phase !== 'player'}
+        className="font-frontier font-bold"
       >
-        {phase === 'player' ? 'End Turn' : 'Enemy Turn...'}
+        {phase === 'player' ? '⚡ End Campaign Turn' : '⏳ Enemy Forces Moving...'}
       </Button>
-      <Button 
-        variant="outline" 
-        fullWidth 
+      <Button
+        variant="outline"
+        fullWidth
         onClick={onHelpClick}
+        className="font-frontier font-bold"
       >
-        Help & Rules
+        📜 Battle Manual & Tactics
       </Button>
     </Card>
   );
