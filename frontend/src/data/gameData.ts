@@ -1,4 +1,5 @@
 import type { GameData } from '../types/game';
+import { GAME_BALANCE } from '../constants/gameBalance';
 
 export const GAME_DATA: GameData = {
   nodeTypes: {
@@ -6,50 +7,50 @@ export const GAME_DATA: GameData = {
       name: "City",
       color: "#4CAF50",
       icon: "🏰",
-      goldGeneration: 100,
-      suppliesGeneration: 50,
-      manaGeneration: 0,
-      defensiveBonus: 1.0,
+      goldGeneration: GAME_BALANCE.NODE_GENERATION.CITY.gold,
+      suppliesGeneration: GAME_BALANCE.NODE_GENERATION.CITY.supplies,
+      manaGeneration: GAME_BALANCE.NODE_GENERATION.CITY.mana,
+      defensiveBonus: GAME_BALANCE.NODE_GENERATION.CITY.defensiveBonus,
       description: "Generates gold and supplies, enables troop recruitment"
     },
     resource: {
       name: "Resource Node",
       color: "#FF9800",
       icon: "⛏️",
-      goldGeneration: 50,
-      suppliesGeneration: 100,
-      manaGeneration: 25,
-      defensiveBonus: 0.8,
+      goldGeneration: GAME_BALANCE.NODE_GENERATION.RESOURCE.gold,
+      suppliesGeneration: GAME_BALANCE.NODE_GENERATION.RESOURCE.supplies,
+      manaGeneration: GAME_BALANCE.NODE_GENERATION.RESOURCE.mana,
+      defensiveBonus: GAME_BALANCE.NODE_GENERATION.RESOURCE.defensiveBonus,
       description: "Provides valuable resources for your empire"
     },
     fortress: {
       name: "Fortress",
       color: "#9E9E9E",
       icon: "🛡️",
-      goldGeneration: 25,
-      suppliesGeneration: 25,
-      manaGeneration: 0,
-      defensiveBonus: 2.0,
+      goldGeneration: GAME_BALANCE.NODE_GENERATION.FORTRESS.gold,
+      suppliesGeneration: GAME_BALANCE.NODE_GENERATION.FORTRESS.supplies,
+      manaGeneration: GAME_BALANCE.NODE_GENERATION.FORTRESS.mana,
+      defensiveBonus: GAME_BALANCE.NODE_GENERATION.FORTRESS.defensiveBonus,
       description: "Defensive stronghold with high garrison value"
     },
     shrine: {
       name: "Shrine",
       color: "#9C27B0",
       icon: "✨",
-      goldGeneration: 0,
-      suppliesGeneration: 0,
-      manaGeneration: 100,
-      defensiveBonus: 1.2,
+      goldGeneration: GAME_BALANCE.NODE_GENERATION.SHRINE.gold,
+      suppliesGeneration: GAME_BALANCE.NODE_GENERATION.SHRINE.supplies,
+      manaGeneration: GAME_BALANCE.NODE_GENERATION.SHRINE.mana,
+      defensiveBonus: GAME_BALANCE.NODE_GENERATION.SHRINE.defensiveBonus,
       description: "Ancient site that provides magical power"
     },
     stronghold: {
       name: "Enemy Stronghold",
       color: "#F44336",
       icon: "💀",
-      goldGeneration: 150,
-      suppliesGeneration: 75,
-      manaGeneration: 50,
-      defensiveBonus: 2.5,
+      goldGeneration: GAME_BALANCE.NODE_GENERATION.STRONGHOLD.gold,
+      suppliesGeneration: GAME_BALANCE.NODE_GENERATION.STRONGHOLD.supplies,
+      manaGeneration: GAME_BALANCE.NODE_GENERATION.STRONGHOLD.mana,
+      defensiveBonus: GAME_BALANCE.NODE_GENERATION.STRONGHOLD.defensiveBonus,
       description: "Heavily fortified enemy position"
     }
   },
@@ -58,41 +59,41 @@ export const GAME_DATA: GameData = {
       name: "Knight",
       icon: "⚔️",
       description: "Heavily armored tank unit with high defense",
-      baseHealth: 120,
-      baseAttack: 80,
-      baseDefense: 100,
+      baseHealth: GAME_BALANCE.COMMANDER_STATS.KNIGHT.baseHealth,
+      baseAttack: GAME_BALANCE.COMMANDER_STATS.KNIGHT.baseAttack,
+      baseDefense: GAME_BALANCE.COMMANDER_STATS.KNIGHT.baseDefense,
       specialAbility: "Shield Wall - Increases army defense by 50%",
-      cost: 200
+      cost: GAME_BALANCE.COMMANDER_STATS.KNIGHT.cost
     },
     mage: {
       name: "Mage",
       icon: "🔮",
       description: "Magical supporter with area-of-effect abilities",
-      baseHealth: 80,
-      baseAttack: 120,
-      baseDefense: 60,
+      baseHealth: GAME_BALANCE.COMMANDER_STATS.MAGE.baseHealth,
+      baseAttack: GAME_BALANCE.COMMANDER_STATS.MAGE.baseAttack,
+      baseDefense: GAME_BALANCE.COMMANDER_STATS.MAGE.baseDefense,
       specialAbility: "Fireball - Deals AOE damage to enemy army",
-      cost: 250
+      cost: GAME_BALANCE.COMMANDER_STATS.MAGE.cost
     },
     ranger: {
       name: "Ranger",
       icon: "🏹",
       description: "Scout and skirmisher with mobility bonuses",
-      baseHealth: 100,
-      baseAttack: 100,
-      baseDefense: 80,
+      baseHealth: GAME_BALANCE.COMMANDER_STATS.RANGER.baseHealth,
+      baseAttack: GAME_BALANCE.COMMANDER_STATS.RANGER.baseAttack,
+      baseDefense: GAME_BALANCE.COMMANDER_STATS.RANGER.baseDefense,
       specialAbility: "Stealth - Can scout enemy nodes without detection",
-      cost: 180
+      cost: GAME_BALANCE.COMMANDER_STATS.RANGER.cost
     },
     warlord: {
       name: "Warlord",
       icon: "👑",
       description: "Leader that provides army-wide bonuses",
-      baseHealth: 110,
-      baseAttack: 90,
-      baseDefense: 90,
+      baseHealth: GAME_BALANCE.COMMANDER_STATS.WARLORD.baseHealth,
+      baseAttack: GAME_BALANCE.COMMANDER_STATS.WARLORD.baseAttack,
+      baseDefense: GAME_BALANCE.COMMANDER_STATS.WARLORD.baseDefense,
       specialAbility: "Rally - Increases entire army combat effectiveness",
-      cost: 300
+      cost: GAME_BALANCE.COMMANDER_STATS.WARLORD.cost
     }
   },
   races: {

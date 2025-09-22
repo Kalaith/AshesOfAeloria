@@ -1,80 +1,50 @@
-import React, { useState } from 'react';
-import { useGameStore } from '../../stores/useGameStore';
-import { CAMPAIGN_CHAPTERS, RESEARCH_TREE, getChapterById, getAvailableResearchNodes } from '../../data/campaignData';
+import React, { useState, useCallback } from 'react';
+import { CAMPAIGN_CHAPTERS } from '../../data/campaignData';
+import { ChapterCard } from '../campaign/ChapterCard';
+import { useCampaignLogic } from '../../hooks/useCampaignLogic';
+import { validateChapterId } from '../../validators/gameValidators';
 import type { CampaignChapter, ChapterEvent, ResearchNode } from '../../data/campaignData';
 
 export const CampaignPage: React.FC = () => {
   const [selectedChapter, setSelectedChapter] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'research' | 'events'>('overview');
-  const gameState = useGameStore();
 
-  const currentChapter = selectedChapter ? getChapterById(selectedChapter) : null;
-  const availableResearch = getAvailableResearchNodes(
-    gameState.completedResearch || [],
-    gameState.completedChapters || []
-  );
+  const {
+    currentChapter,
+    availableResearch,
+    isChapterUnlocked,
+    isChapterCompleted,
+    isChapterActive,
+    getChapterProgress
+  } = useCampaignLogic(selectedChapter);
 
-  const renderChapterCard = (chapter: CampaignChapter) => {
-    const isUnlocked = chapter.prerequisites.every(prereq =>
-      gameState.completedChapters?.includes(prereq)
-    ) || chapter.prerequisites.length === 0;
-    const isCompleted = gameState.completedChapters?.includes(chapter.id);
-    const isActive = gameState.currentChapter === chapter.id;
+  const handleChapterSelection = useCallback((chapterId: string) => {
+    const validation = validateChapterId(chapterId);
+    if (validation.success) {
+      setSelectedChapter(chapterId);
+    } else {
+      console.error('Invalid chapter selection:', validation.error);
+    }
+  }, []);
+
+  const renderChapterCard = useCallback((chapter: CampaignChapter) => {
+    const isUnlocked = isChapterUnlocked(chapter);
+    const isCompleted = isChapterCompleted(chapter);
+    const isActive = isChapterActive(chapter);
+    const progress = getChapterProgress(chapter);
 
     return (
-      <div
+      <ChapterCard
         key={chapter.id}
-        onClick={() => setSelectedChapter(chapter.id)}
-        className={`p-6 rounded-lg border-2 cursor-pointer transition-all ${
-          isActive
-            ? 'border-yellow-400 bg-yellow-50'
-            : isCompleted
-            ? 'border-green-400 bg-green-50'
-            : isUnlocked
-            ? 'border-blue-400 bg-blue-50 hover:border-blue-500'
-            : 'border-gray-300 bg-gray-100 opacity-50'
-        }`}
-      >
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xl font-bold text-gray-800">{chapter.title}</h3>
-          <div className="flex items-center space-x-2">
-            <div className="flex">
-              {[...Array(5)].map((_, i) => (
-                <span
-                  key={i}
-                  className={`text-sm ${
-                    i < chapter.starRating ? 'text-yellow-400' : 'text-gray-300'
-                  }`}
-                >
-                  ★
-                </span>
-              ))}
-            </div>
-            {isCompleted && <span className="text-green-600 text-sm">✓ Completed</span>}
-            {isActive && <span className="text-yellow-600 text-sm">● Active</span>}
-          </div>
-        </div>
-
-        <p className="text-gray-600 italic mb-2">{chapter.subtitle}</p>
-        <p className="text-gray-700 mb-3">{chapter.description}</p>
-
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <span className="font-semibold">Theme:</span> {chapter.theme}
-          </div>
-          <div>
-            <span className="font-semibold">Estimated Turns:</span> {chapter.estimatedTurns[0]}-{chapter.estimatedTurns[1]}
-          </div>
-        </div>
-
-        {!isUnlocked && (
-          <div className="mt-3 text-red-600 text-sm">
-            <span className="font-semibold">Prerequisites:</span> {chapter.prerequisites.join(', ')}
-          </div>
-        )}
-      </div>
+        chapter={chapter}
+        isUnlocked={isUnlocked}
+        isCompleted={isCompleted}
+        isActive={isActive}
+        progress={progress}
+        onClick={handleChapterSelection}
+      />
     );
-  };
+  }, [isChapterUnlocked, isChapterCompleted, isChapterActive, getChapterProgress, handleChapterSelection]);
 
   const renderVictoryConditions = (chapter: CampaignChapter) => (
     <div className="space-y-3">
