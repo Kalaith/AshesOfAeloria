@@ -65,6 +65,7 @@ import {
   generateInitialMilitaryIntelligence
 } from '../utils/gameLogic';
 import { GAME_DATA, GAME_CONSTANTS } from '../data/gameData';
+import { StoryEventSystem } from '../systems/StoryEventSystem';
 
 // Initial game state with comprehensive world rebuilding systems
 const getInitialState = (): GameState => {
@@ -238,6 +239,7 @@ interface GameStore extends GameState {
   triggerEvent: (eventType: string, conditions?: any) => boolean;
   processRandomEvents: () => void;
   processSeasonalEvents: () => void;
+  processStoryEvents: () => void;
 
   // Quest Actions
   acceptQuest: (questId: string) => boolean;
@@ -487,10 +489,28 @@ export const useGameStore = create<GameStore>()(
       sabotage: (targetNodeId, agentId, target) => true,
 
       // Event Implementation (placeholder methods)
-      respondToEvent: (eventId, choiceId) => {},
+      respondToEvent: (eventId, choiceId) => {
+        const state = get();
+        const storyEventSystem = new StoryEventSystem(state);
+        storyEventSystem.processEventChoice(eventId, choiceId);
+
+        // Update the game state with any changes made by the event system
+        set({ ...state });
+      },
       triggerEvent: (eventType, conditions) => true,
       processRandomEvents: () => {},
       processSeasonalEvents: () => {},
+      processStoryEvents: () => {
+        const state = get();
+        const storyEventSystem = new StoryEventSystem(state);
+        const newEvents = storyEventSystem.processTurnEvents();
+
+        if (newEvents.length > 0) {
+          set((state) => ({
+            events: [...state.events, ...newEvents]
+          }));
+        }
+      },
 
       // Quest Implementation (placeholder methods)
       acceptQuest: (questId) => true,
@@ -754,10 +774,15 @@ export const useGameStore = create<GameStore>()(
       updateResources: (newResources) => set((state) => ({ 
         resources: { ...state.resources, ...newResources } 
       })),
-      nextTurn: () => set((state) => ({ 
-        turn: state.turn + 1,
-        phase: 'player' as const
-      })),
+      nextTurn: () => {
+        set((state) => ({
+          turn: state.turn + 1,
+          phase: 'player' as const
+        }));
+
+        // Process story events for the new turn
+        get().processStoryEvents();
+      },
       endTurn: () => {
         set({ phase: 'enemy' as const });
         // Process enemy turn after a short delay for better UX

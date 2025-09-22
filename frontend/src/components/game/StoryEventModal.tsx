@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useGameStore } from '../../stores/useGameStore';
-import type { ChapterEvent, EventChoice } from '../../data/campaignData';
+import type { GameEvent, EventChoice } from '../../types/game.d.js';
 
 interface StoryEventModalProps {
-  event: ChapterEvent;
+  event: GameEvent | null;
   isOpen: boolean;
   onClose: () => void;
-  onChoiceSelected: (choiceId: string) => void;
+  onChoiceSelected: (eventId: string, choiceId: string) => void;
 }
 
 export const StoryEventModal: React.FC<StoryEventModalProps> = ({
@@ -19,16 +19,15 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
   const [showConsequences, setShowConsequences] = useState(false);
   const gameState = useGameStore();
 
-  if (!isOpen) return null;
+  if (!isOpen || !event) return null;
 
   const handleChoiceSelection = (choice: EventChoice) => {
     setSelectedChoice(choice.id);
 
     // Check if player meets requirements
     const meetsRequirements = choice.requirements.every(req => {
-      // This would check against actual game state
-      // For now, we'll assume requirements are met
-      return true;
+      // Check against actual game state
+      return checkRequirement(req, gameState);
     });
 
     if (!meetsRequirements) {
@@ -40,133 +39,194 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
   };
 
   const confirmChoice = () => {
-    if (selectedChoice) {
-      onChoiceSelected(selectedChoice);
+    if (selectedChoice && event) {
+      onChoiceSelected(event.id, selectedChoice);
+      setSelectedChoice(null);
+      setShowConsequences(false);
       onClose();
     }
   };
 
-  const getImportanceColor = (importance: string) => {
-    switch (importance) {
-      case 'critical': return 'border-blood bg-blood/20';
-      case 'high': return 'border-ember bg-ember/20';
-      case 'medium': return 'border-amber bg-amber/20';
-      default: return 'border-bronze bg-bronze/20';
+  const checkRequirement = (requirement: string, gameState: any): boolean => {
+    // Parse requirements like "flag:authoritative_leader", "reputation:ember_keepers:>=:20"
+    const parts = requirement.split(':');
+
+    switch (parts[0]) {
+      case 'flag':
+        return gameState.narrativeState?.narrativeFlags?.[parts[1]] || false;
+
+      case 'reputation':
+        const faction = parts[1];
+        const operator = parts[2];
+        const value = parseInt(parts[3]);
+        const reputation = gameState.diplomacy?.playerFactionRelations?.[faction] || 0;
+
+        switch (operator) {
+          case '>=': return reputation >= value;
+          case '<=': return reputation <= value;
+          case '>': return reputation > value;
+          case '<': return reputation < value;
+          case '==': return reputation === value;
+          default: return false;
+        }
+
+      case 'resources':
+        const resource = parts[1];
+        const resOperator = parts[2];
+        const resValue = parseInt(parts[3]);
+        const currentRes = gameState.resources?.[resource] || 0;
+
+        switch (resOperator) {
+          case '>=': return currentRes >= resValue;
+          case '<=': return currentRes <= resValue;
+          case '>': return currentRes > resValue;
+          case '<': return currentRes < resValue;
+          case '==': return currentRes === resValue;
+          default: return false;
+        }
+
+      case 'technology':
+        return gameState.globalTechnologies?.includes(parts[1]) || false;
+
+      case 'scholars':
+        const requiredScholars = parseInt(parts[1]);
+        const currentScholars = gameState.research?.scholarNetwork?.scholars?.length || 0;
+        return currentScholars >= requiredScholars;
+
+      default:
+        return true; // Unknown requirements default to true
     }
   };
 
-  const getMoralityColor = (morality: string) => {
-    switch (morality) {
-      case 'good': return 'bg-forest/20 text-forest border-forest';
-      case 'evil': return 'bg-blood/20 text-blood border-blood';
-      default: return 'bg-bronze/20 text-parchment-dark border-bronze';
+  const getImportanceColor = (importance: number) => {
+    if (importance >= 80) return 'border-blood-red bg-blood-red/20';
+    if (importance >= 60) return 'border-ember-orange bg-ember-orange/20';
+    if (importance >= 40) return 'border-amber-gold bg-amber-gold/20';
+    return 'border-aged-steel bg-aged-steel/20';
+  };
+
+  const getEventTypeColor = (type: string) => {
+    switch (type) {
+      case 'scripted': return 'bg-amber-gold/20 text-amber-gold border-amber-gold';
+      case 'random': return 'bg-crystal-teal/20 text-crystal-teal border-crystal-teal';
+      case 'consequence': return 'bg-blood-red/20 text-blood-red border-blood-red';
+      default: return 'bg-aged-steel/20 text-parchment-light border-aged-steel';
     }
   };
 
-  const getDifficultyStars = (difficulty: number) => {
-    return '★'.repeat(difficulty) + '☆'.repeat(5 - difficulty);
+  const getChoiceRequirementsStatus = (choice: EventChoice) => {
+    const meetsAll = choice.requirements.every(req => checkRequirement(req, gameState));
+    return {
+      meetsAll,
+      requirements: choice.requirements.map(req => ({
+        text: req,
+        met: checkRequirement(req, gameState)
+      }))
+    };
   };
 
   const selectedChoiceData = event.choices.find(c => c.id === selectedChoice);
+  const selectedChoiceStatus = selectedChoiceData ? getChoiceRequirementsStatus(selectedChoiceData) : null;
 
   return (
-    <div className="fixed inset-0 bg-iron-dark bg-opacity-90 flex items-center justify-center z-50 p-4">
-      <div className={`bg-parchment rounded-lg max-w-4xl w-full max-h-screen overflow-y-auto border-4 ${getImportanceColor(event.importance)}`}>
+    <div className="fixed inset-0 bg-charcoal bg-opacity-90 flex items-center justify-center z-50 p-4">
+      <div className={`bg-stone-900 rounded-lg max-w-4xl w-full max-h-screen overflow-y-auto border-4 ${getImportanceColor(event.importance)}`}>
         <div className="p-8">
           {/* Header */}
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h1 className="text-3xl font-frontier font-bold text-iron-dark mb-2 text-battle-worn">📜 {event.title}</h1>
+              <h1 className="text-3xl font-bold text-parchment-light mb-2">📜 {event.title}</h1>
               <div className="flex items-center space-x-4">
-                <span className={`px-3 py-1 rounded-full text-sm font-frontier font-bold border-2 ${
-                  event.importance === 'critical' ? 'bg-blood/20 text-blood border-blood' :
-                  event.importance === 'high' ? 'bg-ember/20 text-ember border-ember' :
-                  event.importance === 'medium' ? 'bg-amber/20 text-amber border-amber' :
-                  'bg-bronze/20 text-parchment-dark border-bronze'
-                }`}>
-                  ⚔ {event.importance.toUpperCase()} CAMPAIGN EVENT
+                <span className={`px-3 py-1 rounded-full text-sm font-bold border-2 ${getEventTypeColor(event.type)}`}>
+                  ⚔ {event.type.toUpperCase()} EVENT
                 </span>
-                {event.unique && (
-                  <span className="px-3 py-1 rounded-full text-sm font-frontier font-bold bg-crystal/20 text-crystal border-2 border-crystal">
-                    ✨ LEGENDARY
+                {event.importance >= 80 && (
+                  <span className="px-3 py-1 rounded-full text-sm font-bold bg-crystal-teal/20 text-crystal-teal border-2 border-crystal-teal">
+                    ✨ CRITICAL
                   </span>
                 )}
+              </div>
+              <div className="text-sm text-stone-400 mt-2">
+                Turn {event.turn} • Importance: {event.importance}/100
               </div>
             </div>
             <button
               onClick={onClose}
-              className="text-parchment-dark hover:text-iron-dark text-2xl font-frontier font-bold"
+              className="text-stone-400 hover:text-parchment-light text-2xl font-bold transition-colors"
             >
               ✕
             </button>
           </div>
 
           {/* Event Description */}
-          <div className="mb-8 p-4 bg-bronze-texture rounded-lg border-2 border-bronze">
+          <div className="mb-8 p-6 bg-charcoal/40 rounded-lg border-2 border-aged-steel/30">
             <div className="prose prose-lg max-w-none">
-              <p className="text-parchment-dark leading-relaxed text-lg font-parchment">{event.description}</p>
+              <p className="text-parchment-light leading-relaxed text-lg">{event.description}</p>
             </div>
           </div>
 
           {!showConsequences ? (
             /* Choice Selection */
             <div className="space-y-4">
-              <h2 className="text-2xl font-frontier font-bold text-iron-dark mb-4 text-battle-worn">⚔ Choose Your War Response</h2>
+              <h2 className="text-2xl font-bold text-parchment-light mb-4">⚔ Choose Your Response</h2>
               {event.choices.map((choice) => {
-                const meetsRequirements = choice.requirements.every(req => {
-                  // In a real implementation, this would check actual game state
-                  return true; // For now, assume all requirements are met
-                });
+                const status = getChoiceRequirementsStatus(choice);
 
                 return (
                   <div
                     key={choice.id}
-                    onClick={() => meetsRequirements && handleChoiceSelection(choice)}
+                    onClick={() => status.meetsAll && handleChoiceSelection(choice)}
                     className={`p-6 border-2 rounded-lg cursor-pointer transition-all duration-300 ${
                       selectedChoice === choice.id
-                        ? 'border-crystal bg-crystal/20 animate-forge-flicker'
-                        : meetsRequirements
-                        ? 'border-bronze hover:border-crystal bg-bronze-texture hover:bg-crystal/10'
-                        : 'border-iron bg-iron/20 opacity-60 cursor-not-allowed'
+                        ? 'border-crystal-teal bg-crystal-teal/20'
+                        : status.meetsAll
+                        ? 'border-aged-steel hover:border-crystal-teal bg-charcoal/20 hover:bg-crystal-teal/10'
+                        : 'border-stone-600 bg-stone-800/20 opacity-60 cursor-not-allowed'
                     }`}
                   >
                     <div className="flex justify-between items-start mb-3">
-                      <h3 className="text-xl font-frontier font-bold text-iron-dark">{choice.text}</h3>
+                      <h3 className="text-xl font-bold text-parchment-light">{choice.text}</h3>
                       <div className="flex items-center space-x-2">
-                        <span className={`px-2 py-1 rounded text-sm font-frontier font-bold border-2 ${getMoralityColor(choice.morality)}`}>
-                          {choice.morality.toUpperCase()}
-                        </span>
-                        <span className="text-amber text-sm font-frontier font-bold" title={`Difficulty: ${choice.difficulty}/5`}>
-                          {getDifficultyStars(choice.difficulty)}
-                        </span>
+                        {status.meetsAll ? (
+                          <span className="px-2 py-1 rounded text-sm font-bold border-2 bg-forest-green/20 text-forest-green border-forest-green">
+                            AVAILABLE
+                          </span>
+                        ) : (
+                          <span className="px-2 py-1 rounded text-sm font-bold border-2 bg-blood-red/20 text-blood-red border-blood-red">
+                            LOCKED
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    <p className="text-parchment-dark mb-4 font-parchment">{choice.description}</p>
+                    <p className="text-stone-300 mb-4">{choice.description}</p>
 
                     {choice.requirements.length > 0 && (
                       <div className="mb-3">
-                        <span className="text-sm font-semibold text-gray-600 mb-2 block">Requirements:</span>
+                        <span className="text-sm font-semibold text-stone-400 mb-2 block">Requirements:</span>
                         <div className="flex flex-wrap gap-1">
-                          {choice.requirements.map((req, index) => (
+                          {status.requirements.map((req, index) => (
                             <span
                               key={index}
                               className={`px-2 py-1 rounded text-xs ${
-                                meetsRequirements
-                                  ? 'bg-green-100 text-green-800'
-                                  : 'bg-red-100 text-red-800'
+                                req.met
+                                  ? 'bg-forest-green/20 text-forest-green'
+                                  : 'bg-blood-red/20 text-blood-red'
                               }`}
                             >
-                              {req}
+                              {req.text} {req.met ? '✓' : '✗'}
                             </span>
                           ))}
                         </div>
                       </div>
                     )}
 
-                    {!meetsRequirements && (
-                      <div className="text-red-600 text-sm font-semibold">
-                        You do not meet the requirements for this choice.
+                    {/* Consequences Preview */}
+                    {choice.consequences.length > 0 && (
+                      <div className="mt-3 text-xs text-stone-400">
+                        <span className="font-medium">Effects: </span>
+                        {choice.consequences.slice(0, 2).map(c => c.description).join(', ')}
+                        {choice.consequences.length > 2 && '...'}
                       </div>
                     )}
                   </div>
@@ -176,28 +236,28 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
           ) : (
             /* Consequences Preview */
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-800">Consequences</h2>
-              {selectedChoiceData && (
-                <div className="p-6 border-2 border-blue-500 bg-blue-50 rounded-lg">
-                  <h3 className="text-xl font-bold mb-2">You chose: {selectedChoiceData.text}</h3>
-                  <p className="text-gray-700 mb-4">{selectedChoiceData.description}</p>
+              <h2 className="text-2xl font-bold text-parchment-light">Consequences</h2>
+              {selectedChoiceData && selectedChoiceStatus?.meetsAll && (
+                <div className="p-6 border-2 border-crystal-teal bg-crystal-teal/10 rounded-lg">
+                  <h3 className="text-xl font-bold mb-2 text-parchment-light">You chose: {selectedChoiceData.text}</h3>
+                  <p className="text-stone-300 mb-4">{selectedChoiceData.description}</p>
 
                   <div className="space-y-3">
-                    <h4 className="font-bold text-gray-800">This will result in:</h4>
+                    <h4 className="font-bold text-parchment-light">This will result in:</h4>
                     {selectedChoiceData.consequences.map((consequence, index) => (
-                      <div key={index} className="flex items-center space-x-3 p-3 bg-white rounded border">
+                      <div key={index} className="flex items-center space-x-3 p-3 bg-charcoal/40 rounded border border-aged-steel/30">
                         <div className={`w-3 h-3 rounded-full ${
-                          consequence.value > 0 ? 'bg-green-500' : 'bg-red-500'
+                          consequence.value > 0 ? 'bg-forest-green' : 'bg-blood-red'
                         }`} />
                         <div className="flex-1">
-                          <div className="font-semibold text-gray-800">
+                          <div className="font-semibold text-parchment-light">
                             {consequence.type}: {consequence.target}
                           </div>
-                          <div className="text-gray-600">
+                          <div className="text-stone-300">
                             {consequence.description} ({consequence.value > 0 ? '+' : ''}{consequence.value})
                           </div>
                           {consequence.permanent && (
-                            <div className="text-purple-600 text-sm font-semibold">
+                            <div className="text-amber-gold text-sm font-semibold">
                               Permanent Effect
                             </div>
                           )}
@@ -219,13 +279,13 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
                     setShowConsequences(false);
                     setSelectedChoice(null);
                   }}
-                  className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded font-semibold transition-colors"
+                  className="px-6 py-3 bg-stone-600 hover:bg-stone-500 text-parchment-light rounded font-semibold transition-colors"
                 >
                   Back to Choices
                 </button>
                 <button
                   onClick={confirmChoice}
-                  className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold transition-colors"
+                  className="px-6 py-3 bg-ember-orange hover:bg-amber-gold text-deep-iron rounded font-semibold transition-colors"
                 >
                   Confirm Decision
                 </button>
@@ -236,8 +296,8 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
                 disabled={!selectedChoice}
                 className={`px-6 py-3 rounded font-semibold transition-colors ${
                   selectedChoice
-                    ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    ? 'bg-ember-orange hover:bg-amber-gold text-deep-iron'
+                    : 'bg-stone-600 text-stone-400 cursor-not-allowed'
                 }`}
               >
                 Preview Consequences
