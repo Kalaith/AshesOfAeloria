@@ -3,7 +3,7 @@
  * Clean, modular architecture following frontend standards
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GameLayout } from '../components/layout/GameLayout';
 import { GameHeader } from '../components/layout/GameHeader';
 import { MissionSelectionCanvas } from '../components/game/MissionSelectionCanvas';
@@ -15,6 +15,7 @@ import { RecruitmentModal } from '../components/game/RecruitmentModal';
 import { HelpModal } from '../components/game/HelpModal';
 import { ToastContainer } from '../components/ui/Toast';
 import { useGameLogic } from '../hooks/useGameLogic';
+import { useGameStore } from '../stores/useGameStore';
 import { useNotifications } from '../hooks/useNotifications';
 import { useModals } from '../hooks/useModals';
 
@@ -25,6 +26,10 @@ import { useModals } from '../hooks/useModals';
 export const GamePage: React.FC = () => {
   const [gameMode, setGameMode] = useState<'mission-select' | 'active-mission'>('mission-select');
   const { gameOver, winner } = useGameLogic();
+  const initializeMission = useGameStore(state => state.initializeMission);
+  const endMission = useGameStore(state => state.endMission);
+  const missionStarted = useGameStore(state => state.missionStarted);
+  const currentMission = useGameStore(state => state.currentMission);
   const { notifications, removeNotification } = useNotifications();
   const {
     modals,
@@ -35,14 +40,31 @@ export const GamePage: React.FC = () => {
   } = useModals();
 
   const handleMissionStart = (missionId: string) => {
-    // TODO: Initialize mission with specific parameters
     console.log('Starting mission:', missionId);
+    // Initialize the mission with campaign-specific parameters
+    initializeMission(missionId);
     setGameMode('active-mission');
   };
 
   const handleReturnToMissionSelect = () => {
+    endMission();
     setGameMode('mission-select');
   };
+
+  const handleRestartMission = () => {
+    if (currentMission) {
+      initializeMission(currentMission);
+    }
+  };
+
+  // Restore game mode based on persisted mission state
+  useEffect(() => {
+    if (missionStarted && currentMission) {
+      setGameMode('active-mission');
+    } else {
+      setGameMode('mission-select');
+    }
+  }, [missionStarted, currentMission]);
 
   // Mission Selection Mode: Clean interface without battle UI
   if (gameMode === 'mission-select') {
@@ -72,6 +94,8 @@ export const GamePage: React.FC = () => {
           <GameHeader
             showMissionSelect={true}
             onReturnToMissionSelect={handleReturnToMissionSelect}
+            currentMission={currentMission}
+            onRestartMission={handleRestartMission}
           />
         }
         leftPanel={

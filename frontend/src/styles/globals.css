@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Uncial+Antiqua&family=Pirata+One&family=Creepster&family=IM+Fell+English:ital,wght@0,400;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
 
 /* Utility Classes for Frontier War Theme */
 .bg-iron { background-color: #2B2B2C; }
@@ -39,8 +38,8 @@
 .bg-amber-dark { background-color: #FF8F00; }
 
 .text-iron { color: #2B2B2C; }
-.text-iron-light { color: #6C6C6C; }
-.text-iron-dark { color: #1E1E20; }
+.text-iron-light { color: #4A4A4A; }
+.text-iron-dark { color: #1A1A1C; }
 
 .text-bronze { color: #7B4F2E; }
 .text-bronze-light { color: #B8723F; }
@@ -54,9 +53,9 @@
 .text-ember-light { color: #F39C12; }
 .text-ember-dark { color: #D35400; }
 
-.text-parchment { color: #D7C7A0; }
-.text-parchment-light { color: #EDEADE; }
-.text-parchment-dark { color: #C7B299; }
+.text-parchment { color: #8B7355; }
+.text-parchment-light { color: #A68B5B; }
+.text-parchment-dark { color: #5D4E37; }
 
 .text-mana { color: #3498DB; }
 .text-mana-light { color: #5DADE2; }

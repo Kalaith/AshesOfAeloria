@@ -168,6 +168,8 @@ export interface GameState {
   gameOver: boolean;
   winner: Owner | null;
   battleLog: BattleLogEntry[];
+  currentMission: string | null;
+  missionStarted: boolean;
   globalTechnologies: Technology[];
   worldState: WorldState;
   factions: FactionData[];

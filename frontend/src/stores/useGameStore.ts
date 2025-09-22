@@ -105,6 +105,8 @@ const getInitialState = (): GameState => {
     selectedCommander: null,
     gameOver: false,
     winner: null,
+    currentMission: null,
+    missionStarted: false,
     battleLog: [
       {
         timestamp: Date.now(),
@@ -162,6 +164,8 @@ interface GameStore extends GameState {
   attackNode: (nodeId: number) => void;
   canAttackNode: (nodeId: number) => boolean;
   addBattleLogEntry: (type: 'info' | 'combat' | 'victory' | 'defeat' | 'recruitment', message: string) => void;
+  initializeMission: (campaignId: string) => void;
+  endMission: () => void;
 
   // World Rebuilding Actions
   constructBuilding: (nodeId: number, buildingType: string) => boolean;
@@ -1070,7 +1074,7 @@ export const useGameStore = create<GameStore>()(
       repairMapConnections: () => {
         const state = get();
         const originalMap = generateInitialMap();
-        
+
         set((state) => ({
           nodes: state.nodes.map(node => {
             const originalNode = originalMap.find(n => n.id === node.id);
@@ -1088,6 +1092,98 @@ export const useGameStore = create<GameStore>()(
             message: 'Map connections repaired!'
           }]
         }));
+      },
+      initializeMission: (campaignId: string) => {
+        // Reset to initial state for new mission
+        const initialState = getInitialState();
+
+        // Set campaign-specific modifications based on campaignId
+        let missionResources = { ...initialState.resources };
+        let missionMessage = `Mission started: ${campaignId}`;
+
+        // Apply campaign-specific starting conditions
+        switch (campaignId) {
+          case 'chapter_1_awakening':
+            missionResources = {
+              ...missionResources,
+              gold: 300,
+              supplies: 75,
+              mana: 25
+            };
+            missionMessage = 'The Awakening begins! Rally the survivors and reclaim your homeland.';
+            break;
+          case 'chapter_2_reclamation':
+            missionResources = {
+              ...missionResources,
+              gold: 500,
+              supplies: 150,
+              mana: 75,
+              knowledge: 50
+            };
+            missionMessage = 'The Reclamation starts! Use your growing knowledge to expand your territory.';
+            break;
+          case 'chapter_3_alliance':
+            missionResources = {
+              ...missionResources,
+              gold: 750,
+              supplies: 200,
+              mana: 100,
+              knowledge: 100,
+              influence: 25
+            };
+            missionMessage = 'Forge alliances! Diplomacy and influence will be key to success.';
+            break;
+          case 'chapter_4_purification':
+            missionResources = {
+              ...missionResources,
+              gold: 1000,
+              supplies: 250,
+              mana: 150,
+              knowledge: 150,
+              culture: 50,
+              materials: 150
+            };
+            missionMessage = 'The Purification begins! Cleanse the corruption and restore the land.';
+            break;
+          case 'chapter_5_ascension':
+            missionResources = {
+              ...missionResources,
+              gold: 1500,
+              supplies: 300,
+              mana: 200,
+              knowledge: 200,
+              culture: 100,
+              influence: 75,
+              materials: 200,
+              artifacts: 5
+            };
+            missionMessage = 'The final Ascension! Use all your power to rebuild Aeloria completely.';
+            break;
+          default:
+            missionMessage = `Started mission: ${campaignId}`;
+        }
+
+        set(() => ({
+          ...initialState,
+          resources: missionResources,
+          currentMission: campaignId,
+          missionStarted: true,
+          battleLog: [
+            {
+              timestamp: Date.now(),
+              type: 'info',
+              message: missionMessage
+            }
+          ]
+        }));
+
+        get().addBattleLogEntry('info', 'Campaign mission initialized! Build your forces and begin your conquest!');
+      },
+      endMission: () => {
+        set((state) => ({
+          currentMission: null,
+          missionStarted: false
+        }));
       }
     }),
     {
@@ -1102,6 +1198,8 @@ export const useGameStore = create<GameStore>()(
         nodes: state.nodes,
         gameOver: state.gameOver,
         winner: state.winner,
+        currentMission: state.currentMission,
+        missionStarted: state.missionStarted,
         battleLog: state.battleLog.slice(-20),
         globalTechnologies: state.globalTechnologies,
         worldState: state.worldState,

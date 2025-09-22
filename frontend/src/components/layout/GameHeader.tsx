@@ -2,20 +2,26 @@ import React, { useState } from 'react';
 import { useGameLogic } from '../../hooks/useGameLogic';
 import { useGameStore } from '../../stores/useGameStore';
 import { Button } from '../ui/Button';
+import { GameplayTestPanel } from '../testing/GameplayTestPanel';
 
 interface GameHeaderProps {
   showMissionSelect?: boolean;
   onReturnToMissionSelect?: () => void;
+  currentMission?: string | null;
+  onRestartMission?: () => void;
 }
 
 export const GameHeader: React.FC<GameHeaderProps> = ({
   showMissionSelect = false,
-  onReturnToMissionSelect
+  onReturnToMissionSelect,
+  currentMission,
+  onRestartMission
 }) => {
   const { turn } = useGameLogic();
   const resetGame = useGameStore(state => state.resetGame);
   const repairMapConnections = useGameStore(state => state.repairMapConnections);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showTestPanel, setShowTestPanel] = useState(false);
 
   const handleResetClick = () => {
     setShowResetConfirm(true);
@@ -51,6 +57,17 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
               🗺️ Mission Select
             </Button>
           )}
+          {currentMission && onRestartMission && (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={onRestartMission}
+              className="text-xs lg:text-sm"
+              title="Restart the current mission with fresh resources"
+            >
+              🔄 Restart Mission
+            </Button>
+          )}
           <span className="font-frontier font-bold px-3 lg:px-4 py-1.5 lg:py-2 bg-metal-texture text-parchment-light rounded-md text-sm lg:text-base border-2 border-iron">Turn: {turn}</span>
           <span className="font-frontier font-bold px-3 lg:px-4 py-1.5 lg:py-2 bg-metal-texture text-parchment-light rounded-md text-sm lg:text-base border-2 border-iron">Phase: Player</span>
           <Button
@@ -61,6 +78,15 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
             title="Fix map connections if they appear broken"
           >
             🔧 Repair Map
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setShowTestPanel(true)}
+            className="text-xs lg:text-sm"
+            title="Open gameplay testing panel"
+          >
+            🤖 Balance Tests
           </Button>
           <Button
             variant="secondary"
@@ -96,6 +122,29 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
               >
                 Reset
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Testing Panel Modal */}
+      {showTestPanel && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
+          <div className="bg-parchment rounded-lg border-4 border-bronze bg-metal-texture w-full max-w-6xl h-[90vh] flex flex-col">
+            <div className="flex justify-between items-center p-6 border-b-2 border-bronze">
+              <h2 className="text-xl lg:text-2xl font-frontier font-bold text-iron-dark text-battle-worn">
+                🤖 Gameplay Balance Testing
+              </h2>
+              <Button
+                variant="secondary"
+                onClick={() => setShowTestPanel(false)}
+                className="font-frontier font-bold"
+              >
+                ✕ Close
+              </Button>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <GameplayTestPanel />
             </div>
           </div>
         </div>
