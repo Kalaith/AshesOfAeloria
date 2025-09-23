@@ -49,9 +49,9 @@
 .text-blood-light { color: #DC143C; }
 .text-blood-dark { color: #8B0000; }
 
-.text-ember { color: #E67E22; }
-.text-ember-light { color: #F39C12; }
-.text-ember-dark { color: #D35400; }
+.text-ember { color: #FF6B35; }
+.text-ember-light { color: #FF8C42; }
+.text-ember-dark { color: #CC4125; }
 
 .text-parchment { color: #8B7355; }
 .text-parchment-light { color: #A68B5B; }
@@ -117,7 +117,6 @@
 .animate-ember-glow { animation: ember-glow 2s ease-in-out infinite alternate; }
 .animate-battle-shake { animation: battle-shake 0.5s ease-in-out; }
 .animate-forge-flicker { animation: forge-flicker 1.5s linear infinite; }
-.animate-war-banner { animation: war-banner 4s ease-in-out infinite; }
 
 @keyframes ember-glow {
   0% { box-shadow: 0 0 5px #E67E22, 0 0 10px #E67E22; }
@@ -135,10 +134,6 @@
   50% { opacity: 0.7; }
 }
 
-@keyframes war-banner {
-  0%, 100% { transform: rotate(-1deg); }
-  50% { transform: rotate(1deg); }
-}
 
 /* Frontier War Campaign Theme - Custom CSS Variables and Effects */
 :root {
@@ -154,16 +149,15 @@
   --texture-bronze: linear-gradient(45deg, #7B4F2E 0%, #B8723F 25%, #7B4F2E 50%, #5D3A22 75%, #7B4F2E 100%);
 }
 
-/* Battle-worn text effects */
+/* Battle-worn text effects with enhanced contrast */
 .text-battle-worn {
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8),
-               0 0 4px rgba(169, 50, 38, 0.3);
+  color: #1A1A1C;
+  font-weight: bold;
 }
 
 .text-ember-glow {
-  text-shadow: 0 0 10px #E67E22,
-               0 0 20px #E67E22,
-               0 0 30px #E67E22;
+  color: #FFF4E6;
+  font-weight: bold;
 }
 
 .text-forge-steel {
@@ -309,4 +303,78 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(45deg, #B8723F, #7B4F2E);
+}
+
+/* Enhanced text contrast and readability utilities */
+.text-high-contrast {
+  color: #1A1A1C;
+  font-weight: 600;
+}
+
+.text-dark-enhanced {
+  color: #1A1A1C;
+  font-weight: 600;
+}
+
+.text-light-enhanced {
+  color: #EDEADE;
+  font-weight: 600;
+}
+
+/* Card background enhancements for better text visibility */
+.bg-card-enhanced {
+  background: rgba(237, 234, 222, 0.95);
+  backdrop-filter: blur(2px);
+  border: 2px solid rgba(123, 79, 46, 0.6);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.bg-resource-item {
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(123, 79, 46, 0.5);
+  backdrop-filter: blur(1px);
+}
+
+/* Commander card improvements */
+.commander-card-enhanced {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(123, 79, 46, 0.5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.commander-card-enhanced.selected {
+  background: rgba(52, 152, 219, 0.15);
+  border-color: #3498DB;
+  box-shadow: 0 0 12px rgba(52, 152, 219, 0.4);
+}
+
+/* Tab button improvements */
+.tab-button-enhanced {
+  background: rgba(255, 255, 255, 0.2);
+  color: #1A1A1C;
+  font-weight: 600;
+  border: 1px solid rgba(123, 79, 46, 0.3);
+}
+
+.tab-button-enhanced.active {
+  background: rgba(255, 255, 255, 0.9);
+  color: #1A1A1C;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Text contrast fixes for bronze backgrounds */
+.text-on-bronze {
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
+.text-ember-enhanced {
+  color: #FFF4E6;
+  font-weight: bold;
+}
+
+.text-bronze-contrast {
+  color: #FFF8DC;
+  font-weight: 600;
 }

@@ -44,10 +44,10 @@ export const GameStatus: React.FC<GameStatusProps> = ({
   const phaseInfo = PHASE_INFO[phase];
 
   return (
-    <Card className={`p-4 ${className}`}>
+    <Card className={`bg-card-enhanced p-4 ${className}`}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-frontier font-bold text-iron-dark text-battle-worn">⚡ Campaign Status</h3>
-        <div className="text-sm font-frontier font-bold text-bronze bg-bronze/20 px-2 py-1 rounded border border-bronze">
+        <h3 className="text-lg font-frontier font-bold text-battle-worn">⚡ Campaign Status</h3>
+        <div className="text-sm font-frontier font-bold text-dark-enhanced bg-bronze/30 px-2 py-1 rounded border border-bronze">
           Turn {turn}
         </div>
       </div>
@@ -74,13 +74,13 @@ export const GameStatus: React.FC<GameStatusProps> = ({
       )}
 
       {phase === 'enemy' && (
-        <div className="text-center text-sm font-parchment text-iron animate-forge-flicker">
+        <div className="text-center text-sm font-parchment text-dark-enhanced animate-forge-flicker">
           Enemy forces are maneuvering across the battlefield...
         </div>
       )}
 
       {phase === 'upkeep' && (
-        <div className="text-center text-sm font-parchment text-iron animate-forge-flicker">
+        <div className="text-center text-sm font-parchment text-dark-enhanced animate-forge-flicker">
           Processing supply lines and reinforcements...
         </div>
       )}

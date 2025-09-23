@@ -15,14 +15,14 @@ export const Button: React.FC<ButtonProps> = ({
   children, 
   ...props 
 }) => {
-  const baseClasses = 'inline-flex items-center justify-center font-frontier font-bold rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation border-2 bg-bronze-texture';
+  const baseClasses = 'inline-flex items-center justify-center font-frontier font-bold rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation border-2';
 
   const variantClasses = {
-    primary: 'bg-bronze text-parchment-light border-bronze hover:bg-bronze-light hover:animate-ember-glow focus:ring-ember',
-    secondary: 'bg-iron text-parchment border-iron-light hover:bg-iron-light hover:border-bronze focus:ring-bronze',
-    outline: 'border-bronze text-bronze bg-transparent hover:bg-bronze hover:text-parchment-light focus:ring-bronze',
-    attack: 'bg-blood text-parchment-light border-blood-dark hover:bg-blood-light hover:animate-battle-shake focus:ring-blood',
-    recruit: 'bg-forest text-parchment-light border-forest-dark hover:bg-forest-light hover:animate-forge-flicker focus:ring-forest'
+    primary: 'bg-mana text-light-enhanced border-mana hover:bg-mana-light hover:animate-ember-glow focus:ring-mana',
+    secondary: 'bg-iron text-light-enhanced border-iron hover:bg-iron-light focus:ring-iron',
+    outline: 'border-mana text-mana bg-transparent hover:bg-mana hover:text-light-enhanced focus:ring-mana',
+    attack: 'bg-blood text-light-enhanced border-blood hover:bg-blood-light hover:animate-battle-shake focus:ring-blood',
+    recruit: 'bg-forest text-light-enhanced border-forest hover:bg-forest-light hover:animate-forge-flicker focus:ring-forest'
   };
   
   const sizeClasses = {

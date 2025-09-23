@@ -67,12 +67,12 @@ export const EnhancedCommandersPanel: React.FC = () => {
     const playerNodes = getPlayerNodes();
 
     return (
-      <div 
+      <div
         key={commander.id}
-        className={`p-3 border rounded-lg cursor-pointer transition-all duration-200 ${
-          isSelected 
-            ? 'border-blue-500 bg-blue-50' 
-            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+        className={`p-3 border rounded-lg cursor-pointer transition-all duration-200 commander-card-enhanced ${
+          isSelected
+            ? 'selected'
+            : 'hover:border-bronze hover:shadow-lg'
         }`}
         onClick={() => handleCommanderSelect(commander.id)}
       >
@@ -80,10 +80,10 @@ export const EnhancedCommandersPanel: React.FC = () => {
         <div className="flex items-center gap-2 mb-2">
           <span className="text-lg">{commanderClass.icon}</span>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium text-gray-900 truncate">
+            <div className="text-sm font-medium text-dark-enhanced truncate">
               {commander.name}
             </div>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-dark-enhanced opacity-80">
               Level {commander.level} • {race.name} {commanderClass.name}
             </div>
           </div>
@@ -96,7 +96,7 @@ export const EnhancedCommandersPanel: React.FC = () => {
 
         {/* Health Bar */}
         <div className="mb-2">
-          <div className="flex justify-between text-xs text-gray-600 mb-1">
+          <div className="flex justify-between text-xs text-dark-enhanced opacity-80 mb-1">
             <span>Health</span>
             <span>{commander.health}/{commander.maxHealth}</span>
           </div>
@@ -110,7 +110,7 @@ export const EnhancedCommandersPanel: React.FC = () => {
 
         {/* Assignment Info */}
         {assignedNode && (
-          <div className="text-xs text-gray-600 mb-2">
+          <div className="text-xs text-dark-enhanced opacity-80 mb-2">
             Assigned to {GAME_DATA.nodeTypes[assignedNode.type].name}
           </div>
         )}
@@ -164,32 +164,28 @@ export const EnhancedCommandersPanel: React.FC = () => {
   };
 
   return (
-    <Card className="p-4">
+    <Card className="bg-card-enhanced p-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-bold text-gray-800">Commanders</h3>
-        <div className="text-sm text-gray-600">
+        <h3 className="text-lg font-bold text-battle-worn">Commanders</h3>
+        <div className="text-sm text-dark-enhanced opacity-80">
           {filteredCommanders.length} {activeTab}
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex mb-4 bg-gray-100 rounded-lg p-1">
+      <div className="flex mb-4 bg-bronze/10 rounded-lg p-1">
         <button
           onClick={() => setActiveTab('player')}
-          className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-            activeTab === 'player'
-              ? 'bg-white text-gray-900 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
+          className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors tab-button-enhanced ${
+            activeTab === 'player' ? 'active' : ''
           }`}
         >
           Your Commanders
         </button>
         <button
           onClick={() => setActiveTab('enemy')}
-          className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-            activeTab === 'enemy'
-              ? 'bg-white text-gray-900 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
+          className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors tab-button-enhanced ${
+            activeTab === 'enemy' ? 'active' : ''
           }`}
         >
           Enemy Forces

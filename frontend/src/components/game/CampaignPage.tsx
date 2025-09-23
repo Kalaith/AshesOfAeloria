@@ -192,7 +192,7 @@ export const CampaignPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-stone-texture text-parchment-light p-6 font-parchment">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-frontier font-bold mb-2 text-center text-ember-glow animate-war-banner">
+        <h1 className="text-4xl font-frontier font-bold mb-2 text-center text-ember-enhanced">
           The Chronicles of Redemption
         </h1>
         <p className="text-center text-parchment mb-8 font-frontier text-lg text-battle-worn">

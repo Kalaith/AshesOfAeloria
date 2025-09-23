@@ -44,7 +44,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
     <>
       <header className="bg-bronze-texture border-b-4 border-bronze px-4 lg:px-6 py-3 lg:py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
         <div className="flex items-center space-x-4">
-          <h1 className="text-xl lg:text-2xl font-frontier font-bold text-parchment-light m-0 text-ember-glow animate-war-banner">⚔ Ashes of Aeloria Campaign</h1>
+          <h1 className="text-xl lg:text-2xl font-frontier font-bold m-0 text-ember-enhanced">⚔ Ashes of Aeloria Campaign</h1>
         </div>
         <div className="flex gap-3 lg:gap-6 items-center">
           {showMissionSelect && onReturnToMissionSelect && (
@@ -68,8 +68,8 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
               🔄 Restart Mission
             </Button>
           )}
-          <span className="font-frontier font-bold px-3 lg:px-4 py-1.5 lg:py-2 bg-metal-texture text-parchment-light rounded-md text-sm lg:text-base border-2 border-iron">Turn: {turn}</span>
-          <span className="font-frontier font-bold px-3 lg:px-4 py-1.5 lg:py-2 bg-metal-texture text-parchment-light rounded-md text-sm lg:text-base border-2 border-iron">Phase: Player</span>
+          <span className="font-frontier font-bold px-3 lg:px-4 py-1.5 lg:py-2 bg-metal-texture text-light-enhanced rounded-md text-sm lg:text-base border-2 border-iron">Turn: {turn}</span>
+          <span className="font-frontier font-bold px-3 lg:px-4 py-1.5 lg:py-2 bg-metal-texture text-light-enhanced rounded-md text-sm lg:text-base border-2 border-iron">Phase: Player</span>
           <Button
             variant="secondary"
             size="sm"

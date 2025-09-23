@@ -17,12 +17,12 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 const VARIANT_CLASSES = {
-  primary: 'bg-bronze text-parchment-light border-bronze hover:bg-bronze-light hover:animate-ember-glow focus:ring-ember',
-  secondary: 'bg-iron text-parchment-light border-iron hover:bg-iron-light hover:animate-forge-flicker focus:ring-bronze',
-  success: 'bg-forest text-parchment-light border-forest hover:bg-forest-light hover:animate-forge-flicker focus:ring-forest',
-  danger: 'bg-blood text-parchment-light border-blood hover:bg-blood-light hover:animate-battle-shake focus:ring-blood',
-  warning: 'bg-amber text-iron-dark border-amber hover:bg-amber-light hover:animate-ember-glow focus:ring-amber',
-  ghost: 'bg-transparent hover:bg-bronze/10 text-parchment-dark border-bronze/30 focus:ring-bronze'
+  primary: 'bg-mana text-light-enhanced border-mana hover:bg-mana-light hover:animate-ember-glow focus:ring-mana',
+  secondary: 'bg-iron text-light-enhanced border-iron hover:bg-iron-light hover:animate-forge-flicker focus:ring-iron',
+  success: 'bg-forest text-light-enhanced border-forest hover:bg-forest-light hover:animate-forge-flicker focus:ring-forest',
+  danger: 'bg-blood text-light-enhanced border-blood hover:bg-blood-light hover:animate-battle-shake focus:ring-blood',
+  warning: 'bg-amber text-dark-enhanced border-amber hover:bg-amber-light hover:animate-ember-glow focus:ring-amber',
+  ghost: 'bg-transparent hover:bg-mana/10 text-dark-enhanced border-mana/30 focus:ring-mana'
 } as const;
 
 const SIZE_CLASSES = {
