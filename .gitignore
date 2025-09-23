@@ -42,3 +42,4 @@ pids
 Thumbs.db
 yarn-debug.log*
 yarn-error.log*
+dist/
