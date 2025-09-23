@@ -30,10 +30,14 @@ The frontend for "Ashes of Aeloria" is built using modern React and TypeScript p
 ### Features
 - **Resource Management**: Manage resources like gold, food, and materials to build and sustain your kingdom.
 - **Tactical Battles**: Engage in strategic battles with commanders and units.
-- **Dynamic Storytelling**: Experience branching narratives based on player choices.
+- **Dynamic Storytelling**: Experience branching narratives with interactive story events and meaningful choices.
 - **Commanders and Units**: Recruit and upgrade commanders and units to strengthen your army.
 - **Game Statistics**: Visual charts and progress tracking.
 - **Modern UI**: Beautiful animations with Framer Motion and Tailwind CSS.
+- **Interactive Canvas**: Grid-based game world with node exploration and mission selection.
+- **Story Event System**: Modal-based story events with consequence-driven choices.
+- **Testing Framework**: Built-in gameplay testing and balance analysis tools.
+- **Error Handling**: Comprehensive error boundaries for graceful failure recovery.
 
 ### Architecture Highlights
 
@@ -62,15 +66,19 @@ The frontend for "Ashes of Aeloria" is built using modern React and TypeScript p
 ### Project Structure
 ```
 src/
+├── ai/                 # AI system components (GameplayTester, AIPlayer, strategy algorithms)
 ├── api/                # API service definitions and types for backend interaction (if applicable)
 ├── components/         # Reusable React components
-│   ├── ui/             # Generic UI components (Button, Modal, Input, etc.)
-│   ├── game/           # Game-specific components (CommandersPanel, ResourcePanel, BattleLog)
-│   └── layout/         # Layout components (Header, Sidebar, MainContent)
+│   ├── ui/             # Generic UI components (Button, Modal, Card, ErrorBoundary, Toast)
+│   ├── game/           # Game-specific components (GameCanvas, StoryEventModal, ResourcePanel)
+│   ├── features/       # Enhanced feature components (NodeInfo, CommanderInfo, GameStatus)
+│   ├── layout/         # Layout components (GameHeader, GameLayout, panels)
+│   ├── campaign/       # Campaign-specific components (ChapterCard, CampaignPage)
+│   └── testing/        # Testing and debugging components (GameplayTestPanel)
 ├── hooks/              # Custom React hooks for encapsulating logic (e.g., useGameLogic, useModals)
-├── stores/             # Zustand state management definitions (e.g., useGameStore)
+├── stores/             # Zustand state management definitions (useGameStore with persistence)
 ├── types/              # TypeScript type definitions for all data structures and interfaces
-├── data/               # Static game data (e.g., gameData.ts, commanders.ts)
+├── data/               # Static game data (e.g., gameData.ts, commanders.ts, story events)
 ├── utils/              # Utility functions and core game logic (e.g., calculations, data transformations)
 ├── assets/             # Static assets like images, icons (if not in public/)
 └── styles/             # Global CSS, Tailwind configuration, and any custom styles
@@ -86,6 +94,26 @@ src/
 - `npm run build` - Build for production
 - `npm run lint` - Run ESLint
 - `npm run preview` - Preview production build
+- `npm run type-check` - Run TypeScript type checking
+
+### Deployment
+The project includes a PowerShell publishing script (`publish.ps1`) that supports:
+- **FTP Deployment**: Automatic production deployment to FTP servers
+- **File System Deployment**: Local deployment for testing
+- **Environment Configuration**: Separate preview and production settings
+- **Build Optimization**: Production builds with proper base paths
+
+Usage:
+```powershell
+# Deploy to FTP (production environment)
+.\publish.ps1 -ftp
+
+# Deploy to local file system (preview environment)
+.\publish.ps1
+
+# Clean deploy with verbose output
+.\publish.ps1 -ftp -Clean -Verbose
+```
 
 ### Contributing
 Contributions are welcome! Please open an issue or submit a pull request for any enhancements or bug fixes.
