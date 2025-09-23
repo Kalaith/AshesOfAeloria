@@ -40,7 +40,7 @@ export const Modal: React.FC<ModalProps> = ({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-4 lg:p-6 border-b-2 border-bronze bg-bronze-texture">
-              <h2 className="text-lg lg:text-xl font-frontier font-bold text-parchment-light pr-4 text-battle-worn">{title}</h2>
+              <h2 className="text-lg lg:text-xl font-frontier font-bold text-on-bronze pr-4">{title}</h2>
               <button
                 className="text-bronze hover:text-ember text-2xl leading-none font-bold focus:outline-none flex-shrink-0 hover:animate-battle-shake"
                 onClick={onClose}

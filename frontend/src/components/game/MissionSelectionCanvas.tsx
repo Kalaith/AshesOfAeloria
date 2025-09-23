@@ -164,10 +164,10 @@ export const MissionSelectionCanvas: React.FC<MissionSelectionCanvasProps> = ({ 
     <div className="h-full flex flex-col bg-stone-texture p-4">
       {/* Header */}
       <div className="mb-6">
-        <h2 className="text-2xl font-frontier font-bold text-iron-dark mb-2 text-battle-worn">
+        <h2 className="text-2xl font-frontier font-bold text-on-dark mb-2">
           🗺️ Campaign Missions
         </h2>
-        <p className="text-parchment-dark font-parchment">
+        <p className="text-on-dark font-parchment">
           Select a mission to begin your campaign through the restoration of Aeloria
         </p>
       </div>

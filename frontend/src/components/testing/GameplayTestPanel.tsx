@@ -187,10 +187,10 @@ Examples:
     <div className="h-full flex flex-col bg-stone-texture p-4">
       {/* Header */}
       <div className="mb-6">
-        <h2 className="text-2xl font-frontier font-bold text-iron-dark mb-2 text-battle-worn">
+        <h2 className="text-2xl font-frontier font-bold text-on-dark mb-2">
           🤖 Gameplay Balance Testing
         </h2>
-        <p className="text-parchment-dark font-parchment">
+        <p className="text-on-dark font-parchment">
           Run automated AI vs AI gameplay tests to validate game balance and identify potential issues
         </p>
       </div>

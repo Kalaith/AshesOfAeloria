@@ -149,9 +149,15 @@
   --texture-bronze: linear-gradient(45deg, #7B4F2E 0%, #B8723F 25%, #7B4F2E 50%, #5D3A22 75%, #7B4F2E 100%);
 }
 
-/* Battle-worn text effects with enhanced contrast */
+/* Battle-worn text effects - context-aware */
 .text-battle-worn {
-  color: #1A1A1C;
+  color: #2B2B2C;
+  font-weight: bold;
+}
+
+/* Battle-worn text for dark backgrounds */
+.text-battle-worn-light {
+  color: #EDEADE;
   font-weight: bold;
 }
 
@@ -305,18 +311,33 @@
   background: linear-gradient(45deg, #B8723F, #7B4F2E);
 }
 
-/* Enhanced text contrast and readability utilities */
-.text-high-contrast {
+/* Context-aware text contrast utilities */
+.text-on-dark {
+  color: #EDEADE;
+  font-weight: 600;
+}
+
+.text-on-light {
   color: #1A1A1C;
   font-weight: 600;
 }
 
-.text-dark-enhanced {
+.text-on-bronze {
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
+.text-on-parchment {
+  color: #2B2B2C;
+  font-weight: 600;
+}
+
+.text-adaptive-dark {
   color: #1A1A1C;
   font-weight: 600;
 }
 
-.text-light-enhanced {
+.text-adaptive-light {
   color: #EDEADE;
   font-weight: 600;
 }
@@ -352,7 +373,7 @@
 /* Tab button improvements */
 .tab-button-enhanced {
   background: rgba(255, 255, 255, 0.2);
-  color: #1A1A1C;
+  color: #EDEADE;
   font-weight: 600;
   border: 1px solid rgba(123, 79, 46, 0.3);
 }
