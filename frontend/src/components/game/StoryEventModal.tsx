@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGameStore } from '../../stores/useGameStore';
-import type { GameEvent, EventChoice } from '../../types/game.d.js';
+import type { GameEvent, EventChoice, GameState } from '../../types/game.d.js';
 
 interface StoryEventModalProps {
   event: GameEvent | null;
@@ -47,7 +47,7 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
     }
   };
 
-  const checkRequirement = (requirement: string, gameState: any): boolean => {
+  const checkRequirement = (requirement: string, gameState: GameState): boolean => {
     // Parse requirements like "flag:authoritative_leader", "reputation:ember_keepers:>=:20"
     const parts = requirement.split(':');
 
@@ -99,18 +99,18 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
   };
 
   const getImportanceColor = (importance: number) => {
-    if (importance >= 80) return 'border-blood-red bg-blood-red/20';
-    if (importance >= 60) return 'border-ember-orange bg-ember-orange/20';
-    if (importance >= 40) return 'border-amber-gold bg-amber-gold/20';
-    return 'border-aged-steel bg-aged-steel/20';
+    if (importance >= 80) return 'border-red-600 bg-red-600/20';
+    if (importance >= 60) return 'border-orange-600 bg-orange-600/20';
+    if (importance >= 40) return 'border-yellow-600 bg-yellow-600/20';
+    return 'border-gray-600 bg-gray-600/20';
   };
 
   const getEventTypeColor = (type: string) => {
     switch (type) {
-      case 'scripted': return 'bg-amber-gold/20 text-amber-gold border-amber-gold';
-      case 'random': return 'bg-crystal-teal/20 text-crystal-teal border-crystal-teal';
-      case 'consequence': return 'bg-blood-red/20 text-blood-red border-blood-red';
-      default: return 'bg-aged-steel/20 text-parchment-light border-aged-steel';
+      case 'scripted': return 'bg-yellow-600/20 text-yellow-600 border-yellow-600';
+      case 'random': return 'bg-blue-600/20 text-blue-600 border-blue-600';
+      case 'consequence': return 'bg-red-600/20 text-red-600 border-red-600';
+      default: return 'bg-gray-600/20 text-gray-300 border-gray-600';
     }
   };
 
@@ -188,11 +188,11 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
                       <h3 className="text-xl font-bold text-parchment-light">{choice.text}</h3>
                       <div className="flex items-center space-x-2">
                         {status.meetsAll ? (
-                          <span className="px-2 py-1 rounded text-sm font-bold border-2 bg-forest-green/20 text-forest-green border-forest-green">
+                          <span className="px-2 py-1 rounded text-sm font-bold border-2 bg-green-600/20 text-green-600 border-green-600">
                             AVAILABLE
                           </span>
                         ) : (
-                          <span className="px-2 py-1 rounded text-sm font-bold border-2 bg-blood-red/20 text-blood-red border-blood-red">
+                          <span className="px-2 py-1 rounded text-sm font-bold border-2 bg-red-600/20 text-red-600 border-red-600">
                             LOCKED
                           </span>
                         )}
@@ -210,8 +210,8 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
                               key={index}
                               className={`px-2 py-1 rounded text-xs ${
                                 req.met
-                                  ? 'bg-forest-green/20 text-forest-green'
-                                  : 'bg-blood-red/20 text-blood-red'
+                                  ? 'bg-green-600/20 text-green-600'
+                                  : 'bg-red-600/20 text-red-600'
                               }`}
                             >
                               {req.text} {req.met ? '✓' : '✗'}
@@ -247,7 +247,7 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
                     {selectedChoiceData.consequences.map((consequence, index) => (
                       <div key={index} className="flex items-center space-x-3 p-3 bg-charcoal/40 rounded border border-aged-steel/30">
                         <div className={`w-3 h-3 rounded-full ${
-                          consequence.value > 0 ? 'bg-forest-green' : 'bg-blood-red'
+                          consequence.value > 0 ? 'bg-green-600' : 'bg-red-600'
                         }`} />
                         <div className="flex-1">
                           <div className="font-semibold text-parchment-light">
@@ -257,7 +257,7 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
                             {consequence.description} ({consequence.value > 0 ? '+' : ''}{consequence.value})
                           </div>
                           {consequence.permanent && (
-                            <div className="text-amber-gold text-sm font-semibold">
+                            <div className="text-yellow-600 text-sm font-semibold">
                               Permanent Effect
                             </div>
                           )}
@@ -285,7 +285,7 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
                 </button>
                 <button
                   onClick={confirmChoice}
-                  className="px-6 py-3 bg-ember-orange hover:bg-amber-gold text-deep-iron rounded font-semibold transition-colors"
+                  className="px-6 py-3 bg-orange-600 hover:bg-yellow-600 text-white rounded font-semibold transition-colors"
                 >
                   Confirm Decision
                 </button>
@@ -296,7 +296,7 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
                 disabled={!selectedChoice}
                 className={`px-6 py-3 rounded font-semibold transition-colors ${
                   selectedChoice
-                    ? 'bg-ember-orange hover:bg-amber-gold text-deep-iron'
+                    ? 'bg-orange-600 hover:bg-yellow-600 text-white'
                     : 'bg-stone-600 text-stone-400 cursor-not-allowed'
                 }`}
               >

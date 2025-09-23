@@ -256,115 +256,78 @@ export const getCommanderById = (commanders: Commander[], id: number): Commander
   return commanders.find(commander => commander.id === id);
 };
 
+// Grid-based map constants - optimized for 800x600 canvas with node-sized cells
+export const GRID_SIZE = 50; // Size of each grid cell (large enough for nodes)
+export const GRID_OFFSET_X = 25; // Starting X offset (reduced to center grid better)
+export const GRID_OFFSET_Y = 25; // Starting Y offset (reduced to center grid better)
+export const GRID_COLS = 15; // Number of grid columns (15 * 50 = 750px + 50px margins = 800px)
+export const GRID_ROWS = 11; // Number of grid rows (11 * 50 = 550px + 50px margins = 600px)
+
+// Helper function to convert grid coordinates to canvas coordinates (center of cell)
+const gridToCanvas = (gridX: number, gridY: number): { x: number, y: number } => {
+  return {
+    x: GRID_OFFSET_X + (gridX * GRID_SIZE) + (GRID_SIZE / 2), // Center in cell
+    y: GRID_OFFSET_Y + (gridY * GRID_SIZE) + (GRID_SIZE / 2)  // Center in cell
+  };
+};
+
 export const generateInitialMap = (): GameNode[] => {
-  const nodes: GameNode[] = [
-    // Player starting city
-    {
-      id: 1,
-      type: 'city',
-      x: 200,
-      y: 300,
-      owner: 'player',
-      starLevel: 1,
-      garrison: 100,
-      connections: [2, 3]
-    },
-    // Neutral resource nodes
-    {
-      id: 2,
-      type: 'resource',
-      x: 350,
-      y: 200,
-      owner: 'neutral',
-      starLevel: 1,
-      garrison: 50,
-      connections: [1, 4, 5]
-    },
-    {
-      id: 3,
-      type: 'resource',
-      x: 350,
-      y: 400,
-      owner: 'neutral',
-      starLevel: 1,
-      garrison: 50,
-      connections: [1, 6]
-    },
-    // Neutral fortress
-    {
-      id: 4,
-      type: 'fortress',
-      x: 500,
-      y: 150,
-      owner: 'neutral',
-      starLevel: 2,
-      garrison: 150,
-      connections: [2, 7]
-    },
-    // Central shrine
-    {
-      id: 5,
-      type: 'shrine',
-      x: 400,
-      y: 300,
-      owner: 'neutral',
-      starLevel: 1,
-      garrison: 75,
-      connections: [2, 6, 7, 8]
-    },
-    {
-      id: 6,
-      type: 'resource',
-      x: 350,
-      y: 500,
-      owner: 'neutral',
-      starLevel: 1,
-      garrison: 50,
-      connections: [3, 5, 9]
-    },
-    // Enemy territory
-    {
-      id: 7,
-      type: 'city',
-      x: 600,
-      y: 200,
-      owner: 'enemy',
-      starLevel: 2,
-      garrison: 120,
-      connections: [4, 5, 8]
-    },
-    {
-      id: 8,
-      type: 'fortress',
-      x: 550,
-      y: 350,
-      owner: 'enemy',
-      starLevel: 2,
-      garrison: 180,
-      connections: [5, 7, 9, 10]
-    },
-    {
-      id: 9,
-      type: 'resource',
-      x: 500,
-      y: 500,
-      owner: 'enemy',
-      starLevel: 1,
-      garrison: 60,
-      connections: [6, 8]
-    },
-    // Enemy stronghold
-    {
-      id: 10,
-      type: 'stronghold',
-      x: 700,
-      y: 300,
-      owner: 'enemy',
-      starLevel: 3,
-      garrison: 250,
-      connections: [8]
-    }
+  // Define nodes using grid coordinates (gridX, gridY) which are then converted to canvas coordinates
+  const gridNodes = [
+    // Player starting area - Left side (columns 1-4)
+    { id: 1, type: 'city', gridX: 2, gridY: 5, owner: 'player', starLevel: 1, garrison: 100 },
+    { id: 2, type: 'resource', gridX: 1, gridY: 3, owner: 'neutral', starLevel: 1, garrison: 50 },
+    { id: 3, type: 'resource', gridX: 3, gridY: 7, owner: 'neutral', starLevel: 1, garrison: 50 },
+
+    // Central contested area (columns 6-9)
+    { id: 4, type: 'fortress', gridX: 7, gridY: 2, owner: 'neutral', starLevel: 2, garrison: 150 },
+    { id: 5, type: 'shrine', gridX: 7, gridY: 5, owner: 'neutral', starLevel: 1, garrison: 75 },
+    { id: 6, type: 'resource', gridX: 6, gridY: 8, owner: 'neutral', starLevel: 1, garrison: 50 },
+    { id: 11, type: 'resource', gridX: 8, gridY: 7, owner: 'neutral', starLevel: 1, garrison: 50 },
+
+    // Enemy territory - Right side (columns 11-14)
+    { id: 7, type: 'city', gridX: 12, gridY: 5, owner: 'enemy', starLevel: 2, garrison: 120 },
+    { id: 8, type: 'fortress', gridX: 11, gridY: 3, owner: 'enemy', starLevel: 2, garrison: 180 },
+    { id: 9, type: 'resource', gridX: 13, gridY: 7, owner: 'enemy', starLevel: 1, garrison: 60 },
+    { id: 10, type: 'stronghold', gridX: 13, gridY: 3, owner: 'enemy', starLevel: 3, garrison: 250 }
   ];
+
+  // Convert grid coordinates to canvas coordinates and add connections
+  const nodes: GameNode[] = gridNodes.map(gridNode => {
+    const canvasPos = gridToCanvas(gridNode.gridX, gridNode.gridY);
+    console.log(`Node ${gridNode.id}: grid(${gridNode.gridX},${gridNode.gridY}) -> canvas(${canvasPos.x},${canvasPos.y})`);
+    return {
+      id: gridNode.id,
+      type: gridNode.type as NodeType,
+      x: canvasPos.x,
+      y: canvasPos.y,
+      owner: gridNode.owner as Owner,
+      starLevel: gridNode.starLevel,
+      garrison: gridNode.garrison,
+      connections: [] // Will be set below
+    };
+  });
+
+  // Define connections based on grid adjacency (horizontal, vertical, and strategic diagonals)
+  // Grid layout: Player area (left), Central (middle), Enemy area (right)
+  const connections: Record<number, number[]> = {
+    1: [2, 3, 5], // Player city (1,2) connects to nearby resources
+    2: [1, 4], // Resource (0,1) connects to player city and northern fortress
+    3: [1, 6], // Resource (2,3) connects to player city and central resource
+    4: [2, 5], // Fortress (4,0) connects to resource and central shrine
+    5: [1, 4, 6, 7, 8], // Central shrine (4,2) - strategic hub
+    6: [3, 5, 11], // Resource (3,4) connects through central area
+    7: [5, 8, 10], // Enemy city (7,2) connects to central and enemy areas
+    8: [5, 7, 9], // Enemy fortress (6,1) controls enemy approach
+    9: [8, 11], // Enemy resource (8,3) connects to fortress and central resource
+    10: [7], // Enemy stronghold (8,1) - isolated stronghold
+    11: [6, 9] // Central resource (5,3) connects both sides
+  };
+
+  // Apply connections to nodes
+  nodes.forEach(node => {
+    node.connections = connections[node.id] || [];
+  });
 
   // Add enhanced node properties for the new system
   return nodes.map(node => ({

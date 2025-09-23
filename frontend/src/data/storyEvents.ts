@@ -5,6 +5,37 @@
 
 import type { EventTemplate, EventCondition, EventChoice, EventEffect, EventConsequence } from '../types/game.d.js';
 
+// Validation function for event data integrity
+export const validateEventTemplate = (eventId: string, template: EventTemplate): boolean => {
+  try {
+    if (!template.title || !template.description || !template.type) {
+      console.error(`Event ${eventId}: Missing required fields`);
+      return false;
+    }
+
+    if (!template.choices || template.choices.length === 0) {
+      console.error(`Event ${eventId}: Must have at least one choice`);
+      return false;
+    }
+
+    for (const choice of template.choices) {
+      if (!choice.id || !choice.text || !choice.description) {
+        console.error(`Event ${eventId}: Choice missing required fields`);
+        return false;
+      }
+
+      if (!choice.consequences || choice.consequences.length === 0) {
+        console.warn(`Event ${eventId}: Choice ${choice.id} has no consequences`);
+      }
+    }
+
+    return true;
+  } catch (error) {
+    console.error(`Event ${eventId}: Validation error`, error);
+    return false;
+  }
+};
+
 // Early game events - establishing the world and introducing core themes
 export const EARLY_GAME_EVENTS: Record<string, EventTemplate> = {
   'awakening_first_contact': {

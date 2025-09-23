@@ -13,7 +13,7 @@ import type {
   EventEffect,
   Faction
 } from '../types/game.d.js';
-import { ALL_STORY_EVENTS, EVENT_PHASE_WEIGHTS } from '../data/storyEvents.js';
+import { ALL_STORY_EVENTS, EVENT_PHASE_WEIGHTS, validateEventTemplate } from '../data/storyEvents.js';
 
 export class StoryEventSystem {
   private gameState: GameState;
@@ -32,8 +32,9 @@ export class StoryEventSystem {
   public processTurnEvents(): GameEvent[] {
     const triggeredEvents: GameEvent[] = [];
 
-    // Update cooldowns
-    this.updateCooldowns();
+    try {
+      // Update cooldowns
+      this.updateCooldowns();
 
     // Check for scripted events first (highest priority)
     const scriptedEvent = this.checkScriptedEvents();
@@ -55,9 +56,13 @@ export class StoryEventSystem {
       if (randomEvent) {
         triggeredEvents.push(randomEvent);
       }
-    }
+      }
 
-    return triggeredEvents;
+      return triggeredEvents;
+    } catch (error) {
+      console.error('Error processing turn events:', error);
+      return []; // Return empty array on error to prevent game breaking
+    }
   }
 
   /**
@@ -194,22 +199,23 @@ export class StoryEventSystem {
           return this.evaluateNumericCondition(this.gameState.turn, condition.operator, condition.value);
 
         case 'nodes_controlled':
-          const playerNodes = this.gameState.nodes.filter(n => n.owner === 'player').length;
+          const playerNodes = this.gameState.nodes?.filter(n => n.owner === 'player').length || 0;
           return this.evaluateNumericCondition(playerNodes, condition.operator, condition.value);
 
         case 'resources_gold':
-          return this.evaluateNumericCondition(this.gameState.resources.gold, condition.operator, condition.value);
+          return this.evaluateNumericCondition(this.gameState.resources?.gold || 0, condition.operator, condition.value);
 
         case 'corruption_level':
-          return this.evaluateNumericCondition(this.gameState.worldState.corruptionLevel, condition.operator, condition.value);
+          return this.evaluateNumericCondition(this.gameState.worldState?.corruptionLevel || 0, condition.operator, condition.value);
 
         case 'reputation':
           const [, faction] = condition.target?.split(':') || [];
+          if (!faction || !this.gameState.diplomacy?.playerFactionRelations) return false;
           const reputation = this.gameState.diplomacy.playerFactionRelations[faction as Faction] || 0;
           return this.evaluateNumericCondition(reputation, condition.operator, condition.value);
 
         case 'technology':
-          return this.gameState.globalTechnologies.includes(condition.value);
+          return this.gameState.globalTechnologies?.includes(condition.value) || false;
 
         case 'flag':
           return this.narrativeFlags.get(condition.target || '') === condition.value;
@@ -218,13 +224,13 @@ export class StoryEventSystem {
           return !this.seenEvents.has(condition.value);
 
         case 'trade_routes':
-          const tradeRoutes = this.gameState.market.tradeRoutes.length;
+          const tradeRoutes = this.gameState.market?.tradeRoutes?.length || 0;
           return this.evaluateNumericCondition(tradeRoutes, condition.operator, condition.value);
 
         case 'population':
           const totalPop = this.gameState.nodes
-            .filter(n => n.owner === 'player')
-            .reduce((sum, n) => sum + n.population.total, 0);
+            ?.filter(n => n.owner === 'player')
+            ?.reduce((sum, n) => sum + (n.population?.total || 0), 0) || 0;
           return this.evaluateNumericCondition(totalPop, condition.operator, condition.value);
 
         default:
@@ -303,13 +309,22 @@ export class StoryEventSystem {
   }
 
   /**
-   * Apply resource changes
+   * Apply resource changes with bounds checking
    */
   private applyResourceChange(consequence: EventConsequence): void {
     const target = consequence.target as keyof typeof this.gameState.resources;
     if (target && target in this.gameState.resources) {
       const currentValue = this.gameState.resources[target];
-      this.gameState.resources[target] = Math.max(0, currentValue + consequence.value);
+      const newValue = currentValue + consequence.value;
+
+      // Apply reasonable bounds to prevent exploits
+      const MAX_RESOURCE_VALUE = 999999;
+      this.gameState.resources[target] = Math.max(0, Math.min(MAX_RESOURCE_VALUE, newValue));
+
+      // Log significant changes for debugging
+      if (Math.abs(consequence.value) > 100) {
+        console.log(`Event consequence: ${target} changed by ${consequence.value} (${currentValue} -> ${this.gameState.resources[target]})`);
+      }
     }
   }
 
@@ -355,6 +370,11 @@ export class StoryEventSystem {
   }
 
   private createGameEventFromTemplate(eventId: string, template: EventTemplate): GameEvent {
+    // Validate event template before creating
+    if (!validateEventTemplate(eventId, template)) {
+      throw new Error(`Invalid event template: ${eventId}`);
+    }
+
     return {
       id: eventId,
       title: template.title,

@@ -490,12 +490,13 @@ export const useGameStore = create<GameStore>()(
 
       // Event Implementation (placeholder methods)
       respondToEvent: (eventId, choiceId) => {
-        const state = get();
-        const storyEventSystem = new StoryEventSystem(state);
-        storyEventSystem.processEventChoice(eventId, choiceId);
+        set((state) => {
+          const storyEventSystem = new StoryEventSystem(state);
+          storyEventSystem.processEventChoice(eventId, choiceId);
 
-        // Update the game state with any changes made by the event system
-        set({ ...state });
+          // Return the modified state (the StoryEventSystem modifies state in-place)
+          return { ...state };
+        });
       },
       triggerEvent: (eventType, conditions) => true,
       processRandomEvents: () => {},
