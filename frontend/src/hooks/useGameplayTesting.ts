@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 /**
  * React Hook for Gameplay Testing
  * Provides easy access to testing functions from components

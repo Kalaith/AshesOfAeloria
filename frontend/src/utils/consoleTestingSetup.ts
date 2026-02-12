@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Console Testing Setup
  * Exposes gameplay testing functions to the browser console

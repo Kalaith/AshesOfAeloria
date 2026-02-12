@@ -148,7 +148,7 @@ export const useDebouncedAsyncOperation = <T>(
     timeoutRef.current = setTimeout(() => {
       asyncOp.execute();
     }, delay);
-  }, [asyncOp.execute, delay]);
+  }, [asyncOp, delay]);
 
   useEffect(() => {
     return () => {

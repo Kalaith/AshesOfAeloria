@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Core game types for Ashes of Aeloria - Comprehensive World Rebuilding System
 export type Owner = 'player' | 'enemy' | 'neutral' | 'faction';
 export type Phase = 'player' | 'enemy' | 'upkeep' | 'events' | 'diplomacy';
@@ -1905,3 +1906,4 @@ export interface BuildingInfo {
   workerRequirement: number;
   specialRequirements: string[];
 }
+

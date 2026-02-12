@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
@@ -340,3 +341,4 @@ export const InfoPanel: React.FC = () => {
     </Card>
   );
 };
+

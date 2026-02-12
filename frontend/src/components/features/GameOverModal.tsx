@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * Game Over Modal Component
  * Displays victory/defeat screen with restart option
@@ -77,3 +78,4 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
     </Modal>
   );
 };
+

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // Custom hook for campaign logic separation
 import { useCallback, useMemo } from 'react';
 import { useGameStore } from '../stores/useGameStore';

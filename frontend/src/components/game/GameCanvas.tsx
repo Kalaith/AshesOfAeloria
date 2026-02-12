@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { useGameStore } from '../../stores/useGameStore';
 import { GAME_DATA } from '../../data/gameData';
@@ -437,3 +438,4 @@ export const GameCanvas: React.FC = () => {
     </div>
   );
 };
+

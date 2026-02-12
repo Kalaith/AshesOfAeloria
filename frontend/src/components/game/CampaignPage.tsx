@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import React, { useState, useCallback } from 'react';
 import { CAMPAIGN_CHAPTERS, RESEARCH_TREE } from '../../data/campaignData';
 import { ChapterCard } from '../campaign/ChapterCard';

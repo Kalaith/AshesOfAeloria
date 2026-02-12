@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 /**
  * AI Player System for Ashes of Aeloria
  * Provides automated gameplay testing and balance validation

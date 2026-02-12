@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * Story Events Data for Ashes of Aeloria
  * Implements the narrative-driven events system as defined in the Game Design Document

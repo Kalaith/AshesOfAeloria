@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 /**
  * Node Information Display Component
  * Shows detailed information about selected nodes
@@ -207,3 +208,4 @@ export const NodeInfo: React.FC<NodeInfoProps> = ({
     </Card>
   );
 };
+

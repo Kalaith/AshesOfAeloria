@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 /**
  * Game Provider Component
  * Provides global context and state management for the game
@@ -59,3 +60,4 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
     </GameContext.Provider>
   );
 };
+

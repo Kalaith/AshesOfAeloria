@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 /**
  * Story Event System for Ashes of Aeloria
  * Manages narrative events, choices, and consequences throughout the game

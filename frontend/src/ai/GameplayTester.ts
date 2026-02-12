@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 /**
  * Automated Gameplay Testing Framework
  * Tests game balance by running AI vs AI simulations

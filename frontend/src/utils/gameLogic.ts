@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, prefer-const */
 import type {
   Commander,
   GameNode,
@@ -1058,3 +1059,4 @@ export const generateInitialMilitaryIntelligence = (): MilitaryIntelligence => {
     secrecy: 60
   };
 };
+

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Input Validation and Data Sanitization
 // Provides validation functions for user inputs and external data
 

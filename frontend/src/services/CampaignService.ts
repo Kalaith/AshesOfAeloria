@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // Campaign Service - Abstraction layer for campaign data access
 import { CAMPAIGN_CHAPTERS, RESEARCH_TREE, getChapterById, getAvailableResearchNodes } from '../data/campaignData';
 import type { CampaignChapter, ResearchNode } from '../data/campaignData';

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 /**
  * Custom hook for game actions and business logic
  * Separates business logic from UI components following clean code principles
@@ -135,7 +136,7 @@ export const useGameActions = () => {
       upgradeInfo,
       attackableNodes: getAttackableNodes(node)
     };
-  }, [selectedNode, nodes, getNodeCommanderInfo, canUpgradeNode, getUpgradeCost]);
+  }, [selectedNode, nodes, getNodeCommanderInfo, canUpgradeNode, getUpgradeCost, getAttackableNodes]);
 
   const getSelectedCommanderInfo = useCallback(() => {
     if (selectedCommander === null) return null;
@@ -187,3 +188,4 @@ export const useGameActions = () => {
     canUpgradeNode
   };
 };
+

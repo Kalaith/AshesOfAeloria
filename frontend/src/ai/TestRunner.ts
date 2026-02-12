@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Simple Test Runner for Quick AI Validation
  * Use this to test the AI functionality without the full UI

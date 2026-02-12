@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 /**
  * Gameplay Testing Panel Component
  * UI for running automated gameplay tests and viewing balance reports

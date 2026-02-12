@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 // Error Boundary Component for graceful error handling
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 

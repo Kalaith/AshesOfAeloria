@@ -1,3 +1,4 @@
+ 
 /**
  * Manual Test Setup
  * Simple functions that can be copy-pasted into console
@@ -110,4 +111,6 @@ export const directTestCode = `
 })();
 `;
 
-console.log('📋 Manual test setup code available. Check the console for copy-paste instructions.');`;
+console.log('Manual test setup code available. Check the console for copy-paste instructions.');
+
+
