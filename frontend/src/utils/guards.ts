@@ -29,18 +29,14 @@ export const isNotNullish = <T>(value: T | null | undefined): value is T => {
 /**
  * Type guard to check if string is not empty
  */
-export const isNonEmptyString = (
-  value: unknown,
-): value is string => {
+export const isNonEmptyString = (value: unknown): value is string => {
   return typeof value === "string" && value.length > 0;
 };
 
 /**
  * Type guard to check if number is valid (not NaN, finite)
  */
-export const isValidNumber = (
-  value: unknown,
-): value is number => {
+export const isValidNumber = (value: unknown): value is number => {
   return typeof value === "number" && isFinite(value) && !isNaN(value);
 };
 

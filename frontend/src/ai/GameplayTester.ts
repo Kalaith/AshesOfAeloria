@@ -914,7 +914,9 @@ export class GameplayTester {
   /**
    * Calculate upgrade cost for a node
    */
-  private calculateUpgradeCost(node: Pick<GameNode, "starLevel" | "type">): number {
+  private calculateUpgradeCost(
+    node: Pick<GameNode, "starLevel" | "type">,
+  ): number {
     const baseMultiplier: Partial<Record<NodeType, number>> = {
       city: 1.5,
       fortress: 2.0,
@@ -1111,12 +1113,21 @@ export class GameplayTester {
    */
   private generateBalanceReport(config: TestConfiguration): BalanceReport {
     const totalGames = this.results.length;
-    const playerWins = this.results.filter((r: GameTestResult) => r.winner === "player").length;
-    const enemyWins = this.results.filter((r: GameTestResult) => r.winner === "enemy").length;
-    const draws = this.results.filter((r: GameTestResult) => r.winner === "draw").length;
+    const playerWins = this.results.filter(
+      (r: GameTestResult) => r.winner === "player",
+    ).length;
+    const enemyWins = this.results.filter(
+      (r: GameTestResult) => r.winner === "enemy",
+    ).length;
+    const draws = this.results.filter(
+      (r: GameTestResult) => r.winner === "draw",
+    ).length;
 
     const averageTurns =
-      this.results.reduce((sum: number, r: GameTestResult) => sum + r.turns, 0) / totalGames;
+      this.results.reduce(
+        (sum: number, r: GameTestResult) => sum + r.turns,
+        0,
+      ) / totalGames;
 
     // Collect all balance issues
     const allIssues = this.results.reduce(
@@ -1131,9 +1142,14 @@ export class GameplayTester {
       {},
     );
 
-    const commonBalanceIssues = (Object.entries(issueFrequency) as Array<[string, number]>)
+    const commonBalanceIssues = (
+      Object.entries(issueFrequency) as Array<[string, number]>
+    )
       .filter(([, count]: [string, number]) => count >= totalGames * 0.2) // Issues in 20%+ of games
-      .map(([issue, count]: [string, number]) => `${issue} (${count}/${totalGames} games)`)
+      .map(
+        ([issue, count]: [string, number]) =>
+          `${issue} (${count}/${totalGames} games)`,
+      )
       .sort((a, b) => b.localeCompare(a));
 
     // Generate recommendations

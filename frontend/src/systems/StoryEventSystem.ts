@@ -537,9 +537,9 @@ export class StoryEventSystem {
       if (target && target in largestNode.population) {
         const currentValue = largestNode.population[target];
         if (typeof currentValue === "number") {
-          (
-            largestNode.population as unknown as Record<string, number>
-          )[target as string] = Math.max(0, currentValue + consequence.value);
+          (largestNode.population as unknown as Record<string, number>)[
+            target as string
+          ] = Math.max(0, currentValue + consequence.value);
         }
       }
     }

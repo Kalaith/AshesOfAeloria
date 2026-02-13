@@ -50,10 +50,7 @@ export const useCampaignLogic = (selectedChapterId: string | null = null) => {
       completedChapters,
       completedResearch,
     };
-  }, [
-    selectedChapterId,
-    gameState.research?.completedTechnologies,
-  ]);
+  }, [selectedChapterId, gameState.research?.completedTechnologies]);
 
   // Memoized resource state
   const resources = useMemo(

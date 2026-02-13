@@ -867,9 +867,11 @@ export const useGameStore = create<GameStore>()(
       updateResources: (newResources) =>
         set((state) => {
           const mergedResources: Resources = { ...state.resources };
-          (Object.entries(newResources) as Array<
-            [keyof Resources, number | undefined]
-          >).forEach(([key, value]) => {
+          (
+            Object.entries(newResources) as Array<
+              [keyof Resources, number | undefined]
+            >
+          ).forEach(([key, value]) => {
             if (typeof value === "number") {
               mergedResources[key] = value;
             }

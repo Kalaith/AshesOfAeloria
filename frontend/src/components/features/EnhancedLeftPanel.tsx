@@ -26,7 +26,11 @@ export const EnhancedLeftPanel: React.FC<EnhancedLeftPanelProps> = ({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <ResourceDisplay resources={resources} income={income} showIncome={true} />
+      <ResourceDisplay
+        resources={resources}
+        income={income}
+        showIncome={true}
+      />
 
       <GameStatus
         turn={turn}

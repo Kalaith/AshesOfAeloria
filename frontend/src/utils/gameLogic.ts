@@ -1279,7 +1279,8 @@ export const generateInitialPopulationCenters = (
       nodeId: node.id,
       name: node.name || `Settlement ${node.id}`,
       type: node.type === "city" ? ("city" as const) : ("settlement" as const),
-      population: node.population ?? generateInitialPopulation(node.type, node.owner),
+      population:
+        node.population ?? generateInitialPopulation(node.type, node.owner),
       infrastructure: {
         roads: 50,
         housing: 60,

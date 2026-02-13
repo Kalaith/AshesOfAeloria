@@ -21,7 +21,8 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
   const [filterBranch, setFilterBranch] = useState<string>("all");
   const gameState = useGameStore();
 
-  const completedResearch = (gameState.research?.completedTechnologies || []) as string[];
+  const completedResearch = (gameState.research?.completedTechnologies ||
+    []) as string[];
   const completedChapters: string[] = [];
   const currentResources = {
     knowledge: gameState.resources.knowledge || 0,

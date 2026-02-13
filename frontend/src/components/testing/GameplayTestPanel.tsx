@@ -567,16 +567,18 @@ Examples:
 
                 return (
                   <div className="space-y-2">
-                    {allIssues.slice(0, 5).map((issue: string, index: number) => (
-                      <div
-                        key={index}
-                        className="p-3 bg-blood/10 border border-blood rounded"
-                      >
-                        <span className="text-blood font-parchment">
-                          ⚠️ {issue}
-                        </span>
-                      </div>
-                    ))}
+                    {allIssues
+                      .slice(0, 5)
+                      .map((issue: string, index: number) => (
+                        <div
+                          key={index}
+                          className="p-3 bg-blood/10 border border-blood rounded"
+                        >
+                          <span className="text-blood font-parchment">
+                            ⚠️ {issue}
+                          </span>
+                        </div>
+                      ))}
                   </div>
                 );
               })()}
