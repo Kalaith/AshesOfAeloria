@@ -127,9 +127,11 @@ export function setupConsoleTesting() {
           console.log(
             `${strategy.name}: ${(winRate * 100).toFixed(1)}% win rate`,
           );
-        } catch (error) {
+        } catch (error: unknown) {
           console.error(`Failed to test ${strategy.name}:`, error);
-          results[key] = { error: error.message };
+          results[key] = {
+            error: error instanceof Error ? error.message : String(error),
+          };
         }
       }
 
@@ -179,7 +181,7 @@ Examples:
 }
 
 // Auto-setup in development
-if (process.env.NODE_ENV === "development") {
+if (import.meta.env.DEV) {
   // Delay to ensure everything is loaded
   setTimeout(() => {
     setupConsoleTesting();

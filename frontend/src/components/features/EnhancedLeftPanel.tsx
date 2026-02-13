@@ -1,8 +1,3 @@
-/**
- * Enhanced Left Panel Component
- * Clean, modular implementation using feature components
- */
-
 import React from "react";
 import { ResourceDisplay } from "../features/ResourceDisplay";
 import { GameStatus } from "../features/GameStatus";
@@ -27,19 +22,12 @@ export const EnhancedLeftPanel: React.FC<EnhancedLeftPanelProps> = ({
 
   const { turn, nodes } = useGameStore();
 
-  // Calculate current income
   const income = calculateIncome(nodes);
 
   return (
     <div className={`space-y-4 ${className}`}>
-      {/* Resources */}
-      <ResourceDisplay
-        resources={resources}
-        income={income}
-        showIncome={true}
-      />
+      <ResourceDisplay resources={resources} income={income} showIncome={true} />
 
-      {/* Game Status */}
       <GameStatus
         turn={turn}
         phase={phase}
@@ -47,13 +35,12 @@ export const EnhancedLeftPanel: React.FC<EnhancedLeftPanelProps> = ({
         canEndTurn={canPerformActions}
       />
 
-      {/* Quick Actions */}
       <div className="space-y-2">
         <Button
-          variant="recruit"
+          variant="success"
           fullWidth
           onClick={onRecruitClick}
-          leftIcon="⚔"
+          leftIcon="?"
           disabled={!canPerformActions}
           className="font-frontier font-bold"
         >
@@ -61,10 +48,10 @@ export const EnhancedLeftPanel: React.FC<EnhancedLeftPanelProps> = ({
         </Button>
 
         <Button
-          variant="outline"
+          variant="ghost"
           fullWidth
           onClick={onHelpClick}
-          leftIcon="📜"
+          leftIcon="??"
           className="font-frontier font-bold"
         >
           War Manual & Strategy

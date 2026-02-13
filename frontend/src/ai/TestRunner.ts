@@ -91,9 +91,11 @@ export async function runAllStrategiesDebug(): Promise<void> {
       console.log(
         `${strategy.name}: ${(winRate * 100).toFixed(1)}% win rate, ${result.averageTurns.toFixed(1)} avg turns`,
       );
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(`❌ Failed to test ${strategy.name}:`, error);
-      results[key] = { error: error.message };
+      results[key] = {
+        error: error instanceof Error ? error.message : String(error),
+      };
     }
   }
 

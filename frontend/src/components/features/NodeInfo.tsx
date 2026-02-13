@@ -174,7 +174,7 @@ export const NodeInfo: React.FC<NodeInfoProps> = ({
           {canUpgrade && onUpgrade && (
             <div>
               <Button
-                variant="recruit"
+                variant="success"
                 fullWidth
                 onClick={onUpgrade}
                 leftIcon="⬆"
@@ -200,7 +200,7 @@ export const NodeInfo: React.FC<NodeInfoProps> = ({
                 {attackableNodes.map((target) => (
                   <Button
                     key={target.id}
-                    variant="attack"
+                    variant="danger"
                     size="sm"
                     fullWidth
                     onClick={() => onAttack(target.id)}

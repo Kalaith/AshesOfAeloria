@@ -1,8 +1,3 @@
-/**
- * Game Status Display Component
- * Shows current game phase and turn information
- */
-
 import React from "react";
 import { Card } from "../ui/Card";
 import { Button } from "../ui/EnhancedButton";
@@ -23,17 +18,27 @@ const phaseInfoByPhase: Record<
   player: {
     label: "Your Command",
     color: "text-forest bg-forest/20 border-forest",
-    icon: "⚔",
+    icon: "?",
   },
   enemy: {
     label: "Enemy Assault",
     color: "text-blood bg-blood/20 border-blood",
-    icon: "🛡",
+    icon: "??",
   },
   upkeep: {
     label: "Supply & Logistics",
     color: "text-amber bg-amber/20 border-amber",
-    icon: "⚙",
+    icon: "?",
+  },
+  events: {
+    label: "World Events",
+    color: "text-crystal bg-crystal/20 border-crystal",
+    icon: "?",
+  },
+  diplomacy: {
+    label: "Diplomatic Affairs",
+    color: "text-bronze bg-bronze/20 border-bronze",
+    icon: "??",
   },
 };
 
@@ -50,7 +55,7 @@ export const GameStatus: React.FC<GameStatusProps> = ({
     <Card className={`bg-card-enhanced p-4 ${className}`}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-frontier font-bold text-battle-worn">
-          ⚡ Campaign Status
+          Campaign Status
         </h3>
         <div className="text-sm font-frontier font-bold text-dark-enhanced bg-bronze/30 px-2 py-1 rounded border border-bronze">
           Turn {turn}
@@ -73,7 +78,7 @@ export const GameStatus: React.FC<GameStatusProps> = ({
           fullWidth
           onClick={onEndTurn}
           disabled={!canEndTurn}
-          rightIcon="⚡"
+          rightIcon="?"
           className="font-frontier font-bold"
         >
           Conclude Turn

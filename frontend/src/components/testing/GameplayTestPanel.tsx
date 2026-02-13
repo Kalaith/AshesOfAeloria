@@ -552,8 +552,10 @@ Examples:
                   );
                 }
 
-                const allIssues = completedTests.flatMap(
-                  (test) => test.result!.commonBalanceIssues,
+                const allIssues = completedTests.reduce(
+                  (acc: string[], test) =>
+                    acc.concat(test.result!.commonBalanceIssues),
+                  [],
                 );
                 if (allIssues.length === 0) {
                   return (
@@ -565,7 +567,7 @@ Examples:
 
                 return (
                   <div className="space-y-2">
-                    {allIssues.slice(0, 5).map((issue, index) => (
+                    {allIssues.slice(0, 5).map((issue: string, index: number) => (
                       <div
                         key={index}
                         className="p-3 bg-blood/10 border border-blood rounded"
@@ -598,8 +600,10 @@ Examples:
                   );
                 }
 
-                const allRecommendations = completedTests.flatMap(
-                  (test) => test.result!.recommendations,
+                const allRecommendations = completedTests.reduce(
+                  (acc: string[], test) =>
+                    acc.concat(test.result!.recommendations),
+                  [],
                 );
                 const uniqueRecommendations = [...new Set(allRecommendations)];
 

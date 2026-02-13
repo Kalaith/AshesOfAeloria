@@ -1111,26 +1111,29 @@ export class GameplayTester {
    */
   private generateBalanceReport(config: TestConfiguration): BalanceReport {
     const totalGames = this.results.length;
-    const playerWins = this.results.filter((r) => r.winner === "player").length;
-    const enemyWins = this.results.filter((r) => r.winner === "enemy").length;
-    const draws = this.results.filter((r) => r.winner === "draw").length;
+    const playerWins = this.results.filter((r: GameTestResult) => r.winner === "player").length;
+    const enemyWins = this.results.filter((r: GameTestResult) => r.winner === "enemy").length;
+    const draws = this.results.filter((r: GameTestResult) => r.winner === "draw").length;
 
     const averageTurns =
-      this.results.reduce((sum, r) => sum + r.turns, 0) / totalGames;
+      this.results.reduce((sum: number, r: GameTestResult) => sum + r.turns, 0) / totalGames;
 
     // Collect all balance issues
-    const allIssues = this.results.flatMap((r) => r.balanceIssues);
+    const allIssues = this.results.reduce(
+      (acc: string[], r: GameTestResult) => acc.concat(r.balanceIssues),
+      [],
+    );
     const issueFrequency = allIssues.reduce(
-      (acc, issue) => {
+      (acc: Record<string, number>, issue: string) => {
         acc[issue] = (acc[issue] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>,
+      {},
     );
 
-    const commonBalanceIssues = Object.entries(issueFrequency)
-      .filter(([_, count]) => count >= totalGames * 0.2) // Issues in 20%+ of games
-      .map(([issue, count]) => `${issue} (${count}/${totalGames} games)`)
+    const commonBalanceIssues = (Object.entries(issueFrequency) as Array<[string, number]>)
+      .filter(([, count]: [string, number]) => count >= totalGames * 0.2) // Issues in 20%+ of games
+      .map(([issue, count]: [string, number]) => `${issue} (${count}/${totalGames} games)`)
       .sort((a, b) => b.localeCompare(a));
 
     // Generate recommendations
