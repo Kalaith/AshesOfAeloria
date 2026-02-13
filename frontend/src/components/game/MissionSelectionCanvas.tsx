@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import { campaignChapters } from "../../data/campaignData";
 import { useCampaignLogic } from "../../hooks/useCampaignLogic";
 import { Card } from "../ui/Card";
-import { Button } from "../ui/Button";
+import { Button } from "../ui/EnhancedButton";
 import type { CampaignChapter } from "../../data/campaignData";
 
 interface MissionSelectionCanvasProps {

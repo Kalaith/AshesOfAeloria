@@ -6,6 +6,7 @@ import {
   calculateResearchCost,
 } from "../../data/campaignData";
 import type { ResearchNode } from "../../data/campaignData";
+import type { Technology } from "../../types/game";
 
 interface ResearchTreeProps {
   showOnlyAvailable?: boolean;
@@ -20,15 +21,15 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
   const [filterBranch, setFilterBranch] = useState<string>("all");
   const gameState = useGameStore();
 
-  const completedResearch = gameState.completedResearch || [];
-  const completedChapters = gameState.completedChapters || [];
+  const completedResearch = (gameState.research?.completedTechnologies || []) as string[];
+  const completedChapters: string[] = [];
   const currentResources = {
-    knowledge: gameState.knowledge || 0,
-    mana: gameState.mana || 0,
-    materials: gameState.materials || 0,
-    culture: gameState.culture || 0,
-    energy: gameState.energy || 0,
-    artifacts: gameState.artifacts || 0,
+    knowledge: gameState.resources.knowledge || 0,
+    mana: gameState.resources.mana || 0,
+    materials: gameState.resources.materials || 0,
+    culture: gameState.resources.culture || 0,
+    energy: gameState.resources.energy || 0,
+    artifacts: gameState.resources.artifacts || 0,
   };
 
   const availableNodes = getAvailableResearchNodes(
@@ -70,7 +71,7 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
     if (!isAvailable || isCompleted || !canAfford(node)) return;
 
     // This would trigger the research action in the game store
-    gameState.startResearch?.(node.id);
+    gameState.startResearch?.(node.id as Technology);
   };
 
   const renderNodeCard = (node: ResearchNode) => {

@@ -11,7 +11,7 @@ import {
   type BalanceReport,
 } from "../../ai/GameplayTester";
 import { aiStrategies, type AIStrategy } from "../../ai/AIPlayer";
-import { Button } from "../ui/Button";
+import { Button } from "../ui/EnhancedButton";
 import { Card } from "../ui/Card";
 
 interface TestRun {

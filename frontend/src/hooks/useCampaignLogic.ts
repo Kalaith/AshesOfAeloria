@@ -34,12 +34,14 @@ export const useCampaignLogic = (selectedChapterId: string | null = null) => {
 
   // Memoized state calculations
   const state: CampaignLogicState = useMemo(() => {
-    const completedChapters = safeArrayAccess(gameState.completedChapters);
-    const completedResearch = safeArrayAccess(gameState.completedResearch);
+    const completedChapters: string[] = [];
+    const completedResearch = safeArrayAccess(
+      gameState.research?.completedTechnologies,
+    ).map((tech) => String(tech));
 
     return {
       currentChapter: selectedChapterId
-        ? getChapterById(selectedChapterId)
+        ? (getChapterById(selectedChapterId) ?? null)
         : null,
       availableResearch: getAvailableResearchNodes(
         completedResearch,
@@ -50,27 +52,26 @@ export const useCampaignLogic = (selectedChapterId: string | null = null) => {
     };
   }, [
     selectedChapterId,
-    gameState.completedChapters,
-    gameState.completedResearch,
+    gameState.research?.completedTechnologies,
   ]);
 
   // Memoized resource state
   const resources = useMemo(
     () => ({
-      knowledge: gameState.knowledge || 0,
-      mana: gameState.mana || 0,
-      materials: gameState.materials || 0,
-      culture: gameState.culture || 0,
-      energy: gameState.energy || 0,
-      artifacts: gameState.artifacts || 0,
+      knowledge: gameState.resources.knowledge || 0,
+      mana: gameState.resources.mana || 0,
+      materials: gameState.resources.materials || 0,
+      culture: gameState.resources.culture || 0,
+      energy: gameState.resources.energy || 0,
+      artifacts: gameState.resources.artifacts || 0,
     }),
     [
-      gameState.knowledge,
-      gameState.mana,
-      gameState.materials,
-      gameState.culture,
-      gameState.energy,
-      gameState.artifacts,
+      gameState.resources.knowledge,
+      gameState.resources.mana,
+      gameState.resources.materials,
+      gameState.resources.culture,
+      gameState.resources.energy,
+      gameState.resources.artifacts,
     ],
   );
 
@@ -90,7 +91,7 @@ export const useCampaignLogic = (selectedChapterId: string | null = null) => {
       },
 
       isChapterActive: (chapter: CampaignChapter): boolean => {
-        return gameState.currentChapter === chapter.id;
+        return gameState.currentMission === chapter.id;
       },
 
       canAffordResearch: (node: ResearchNode): boolean => {
@@ -113,7 +114,7 @@ export const useCampaignLogic = (selectedChapterId: string | null = null) => {
         return validation.success;
       },
     }),
-    [state, resources, gameState.currentChapter],
+    [state, resources, gameState.currentMission],
   );
 
   return {

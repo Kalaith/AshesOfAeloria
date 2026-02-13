@@ -47,6 +47,7 @@ export const GameCanvas: React.FC = () => {
       player: "#4CAF50",
       enemy: "#F44336",
       neutral: "#9E9E9E",
+      faction: "#9C27B0",
     };
     return ownerColors[node.owner];
   };
