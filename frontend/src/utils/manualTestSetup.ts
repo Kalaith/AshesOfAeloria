@@ -34,13 +34,13 @@ window.gameplayTesting = {
 
     try {
       const { GameplayTester } = await import('/src/ai/GameplayTester.ts');
-      const { AI_STRATEGIES } = await import('/src/ai/AIPlayer.ts');
+      const { aiStrategies } = await import('/src/ai/AIPlayer.ts');
 
       const tester = new GameplayTester();
       const config = {
         maxTurns: 50,
         iterations: 1,
-        playerStrategy: AI_STRATEGIES.aggressive,
+        playerStrategy: aiStrategies.aggressive,
         logLevel: 'verbose'
       };
 

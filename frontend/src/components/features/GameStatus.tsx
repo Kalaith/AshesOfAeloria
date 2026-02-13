@@ -16,7 +16,7 @@ interface GameStatusProps {
   className?: string;
 }
 
-const PHASE_INFO: Record<Phase, { label: string; color: string; icon: string }> = {
+const phaseInfoByPhase: Record<Phase, { label: string; color: string; icon: string }> = {
   player: {
     label: 'Your Command',
     color: 'text-forest bg-forest/20 border-forest',
@@ -41,7 +41,7 @@ export const GameStatus: React.FC<GameStatusProps> = ({
   canEndTurn = true,
   className = ''
 }) => {
-  const phaseInfo = PHASE_INFO[phase];
+  const phaseInfo = phaseInfoByPhase[phase];
 
   return (
     <Card className={`bg-card-enhanced p-4 ${className}`}>

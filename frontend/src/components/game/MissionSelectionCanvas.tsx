@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { CAMPAIGN_CHAPTERS } from '../../data/campaignData';
+import { campaignChapters } from '../../data/campaignData';
 import { useCampaignLogic } from '../../hooks/useCampaignLogic';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
@@ -24,7 +24,7 @@ export const MissionSelectionCanvas: React.FC<MissionSelectionCanvasProps> = ({ 
     getChapterProgress
   } = useCampaignLogic(selectedMission);
 
-  console.log('MissionSelectionCanvas mounted, CAMPAIGN_CHAPTERS:', CAMPAIGN_CHAPTERS.length);
+  console.log('MissionSelectionCanvas mounted, campaignChapters:', campaignChapters.length);
 
   const handleMissionSelect = (chapterId: string) => {
     console.log('Mission selected:', chapterId);
@@ -158,7 +158,7 @@ export const MissionSelectionCanvas: React.FC<MissionSelectionCanvasProps> = ({ 
     );
   };
 
-  const selectedChapter = CAMPAIGN_CHAPTERS.find(c => c.id === selectedMission);
+  const selectedChapter = campaignChapters.find(c => c.id === selectedMission);
 
   return (
     <div className="h-full flex flex-col bg-stone-texture p-4">
@@ -176,7 +176,7 @@ export const MissionSelectionCanvas: React.FC<MissionSelectionCanvasProps> = ({ 
       <div className="flex-1 flex gap-6">
         {/* Mission List */}
         <div className="flex-1 space-y-3 overflow-y-auto">
-          {CAMPAIGN_CHAPTERS.map(renderMissionCard)}
+          {campaignChapters.map(renderMissionCard)}
         </div>
 
         {/* Mission Details & Actions */}

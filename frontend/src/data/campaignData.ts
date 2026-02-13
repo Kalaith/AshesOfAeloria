@@ -120,7 +120,7 @@ export interface ResearchEffect {
 }
 
 // Campaign Chapter Definitions
-export const CAMPAIGN_CHAPTERS: CampaignChapter[] = [
+export const campaignChapters: CampaignChapter[] = [
   {
     id: 'chapter_1_awakening',
     title: 'The Awakening',
@@ -890,7 +890,7 @@ export const CAMPAIGN_CHAPTERS: CampaignChapter[] = [
 ];
 
 // The Great Restoration Research Tree
-export const RESEARCH_TREE: ResearchNode[] = [
+export const researchTree: ResearchNode[] = [
   // TIER 1: SURVIVAL FOUNDATIONS
   {
     id: 'basic_shelter',
@@ -1363,19 +1363,19 @@ export const RESEARCH_TREE: ResearchNode[] = [
 ];
 
 export const getResearchNodeById = (id: string): ResearchNode | undefined => {
-  return RESEARCH_TREE.find(node => node.id === id);
+  return researchTree.find(node => node.id === id);
 };
 
 export const getResearchNodesByBranch = (branch: string): ResearchNode[] => {
-  return RESEARCH_TREE.filter(node => node.branch === branch);
+  return researchTree.filter(node => node.branch === branch);
 };
 
 export const getResearchNodesByTier = (tier: number): ResearchNode[] => {
-  return RESEARCH_TREE.filter(node => node.tier === tier);
+  return researchTree.filter(node => node.tier === tier);
 };
 
 export const getAvailableResearchNodes = (completedResearch: string[], chapterProgress: string[]): ResearchNode[] => {
-  return RESEARCH_TREE.filter(node => {
+  return researchTree.filter(node => {
     // Check if prerequisites are met
     const prerequisitesMet = node.prerequisites.every(prereq => completedResearch.includes(prereq));
 
@@ -1401,13 +1401,13 @@ export const calculateResearchCost = (node: ResearchNode, modifiers: Record<stri
 };
 
 export const getChapterById = (id: string): CampaignChapter | undefined => {
-  return CAMPAIGN_CHAPTERS.find(chapter => chapter.id === id);
+  return campaignChapters.find(chapter => chapter.id === id);
 };
 
 export const getNextChapter = (currentChapterId: string): CampaignChapter | undefined => {
-  const currentIndex = CAMPAIGN_CHAPTERS.findIndex(chapter => chapter.id === currentChapterId);
-  return currentIndex !== -1 && currentIndex < CAMPAIGN_CHAPTERS.length - 1
-    ? CAMPAIGN_CHAPTERS[currentIndex + 1]
+  const currentIndex = campaignChapters.findIndex(chapter => chapter.id === currentChapterId);
+  return currentIndex !== -1 && currentIndex < campaignChapters.length - 1
+    ? campaignChapters[currentIndex + 1]
     : undefined;
 };
 

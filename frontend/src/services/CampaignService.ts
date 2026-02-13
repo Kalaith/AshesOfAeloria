@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // Campaign Service - Abstraction layer for campaign data access
-import { CAMPAIGN_CHAPTERS, RESEARCH_TREE, getChapterById, getAvailableResearchNodes } from '../data/campaignData';
+import { campaignChapters, researchTree, getChapterById, getAvailableResearchNodes } from '../data/campaignData';
 import type { CampaignChapter, ResearchNode } from '../data/campaignData';
 import type { ChapterId, ResearchId } from '../types/improved';
 import { validateChapterId } from '../validators/gameValidators';
@@ -22,8 +22,8 @@ export class StaticCampaignService implements CampaignServiceInterface {
   private readonly researchNodes: ReadonlyArray<ResearchNode>;
 
   constructor() {
-    this.chapters = CAMPAIGN_CHAPTERS;
-    this.researchNodes = RESEARCH_TREE;
+    this.chapters = campaignChapters;
+    this.researchNodes = researchTree;
   }
 
   getAllChapters(): CampaignChapter[] {

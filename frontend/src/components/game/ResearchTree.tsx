@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGameStore } from '../../stores/useGameStore';
-import { RESEARCH_TREE, getAvailableResearchNodes, calculateResearchCost } from '../../data/campaignData';
+import { researchTree, getAvailableResearchNodes, calculateResearchCost } from '../../data/campaignData';
 import type { ResearchNode } from '../../data/campaignData';
 
 interface ResearchTreeProps {
@@ -28,9 +28,9 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
   };
 
   const availableNodes = getAvailableResearchNodes(completedResearch, completedChapters);
-  const branches = [...new Set(RESEARCH_TREE.map(node => node.branch))];
+  const branches = [...new Set(researchTree.map(node => node.branch))];
 
-  const filteredNodes = RESEARCH_TREE.filter(node => {
+  const filteredNodes = researchTree.filter(node => {
     if (showOnlyAvailable && !availableNodes.some(n => n.id === node.id) && !completedResearch.includes(node.id)) {
       return false;
     }

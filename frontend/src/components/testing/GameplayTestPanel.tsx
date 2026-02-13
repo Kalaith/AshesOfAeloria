@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { GameplayTester, runQuickBalanceTest, type BalanceReport } from '../../ai/GameplayTester';
-import { AI_STRATEGIES, type AIStrategy } from '../../ai/AIPlayer';
+import { aiStrategies, type AIStrategy } from '../../ai/AIPlayer';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 
@@ -73,7 +73,7 @@ export const GameplayTestPanel: React.FC = () => {
 
     setIsRunning(true);
 
-    const strategies = Object.keys(AI_STRATEGIES);
+    const strategies = Object.keys(aiStrategies);
     for (const strategy of strategies) {
       setSelectedStrategy(strategy);
       await new Promise(resolve => setTimeout(resolve, 100)); // Small delay
@@ -131,7 +131,7 @@ export const GameplayTestPanel: React.FC = () => {
             const config = {
               maxTurns: 100,
               iterations: 1,
-              playerStrategy: AI_STRATEGIES.aggressive,
+              playerStrategy: aiStrategies.aggressive,
               logLevel: 'verbose' as const
             };
 
@@ -157,7 +157,7 @@ export const GameplayTestPanel: React.FC = () => {
           }
         },
 
-        strategies: Object.keys(AI_STRATEGIES),
+        strategies: Object.keys(aiStrategies),
 
         help: () => {
           console.log(`
@@ -170,7 +170,7 @@ gameplayTesting.runVerbose()                  - Single detailed test with loggin
 gameplayTesting.strategies                    - List available strategies
 gameplayTesting.help()                        - Show this help
 
-Available strategies: ${Object.keys(AI_STRATEGIES).join(', ')}
+Available strategies: ${Object.keys(aiStrategies).join(', ')}
 
 Examples:
 > gameplayTesting.runQuick()                  // Quick balanced test
@@ -234,7 +234,7 @@ Examples:
                     className="w-full p-3 rounded border-2 border-bronze bg-parchment text-iron-dark font-parchment"
                     disabled={isRunning}
                   >
-                    {Object.entries(AI_STRATEGIES).map(([key, strategy]) => (
+                    {Object.entries(aiStrategies).map(([key, strategy]) => (
                       <option key={key} value={key}>
                         {strategy.name} - {strategy.description}
                       </option>
@@ -287,32 +287,32 @@ Examples:
             {/* Strategy Details */}
             <Card className="p-6">
               <h3 className="font-frontier font-bold text-lg text-iron-dark mb-4 text-battle-worn">
-                Strategy Details: {AI_STRATEGIES[selectedStrategy].name}
+                Strategy Details: {aiStrategies[selectedStrategy].name}
               </h3>
 
               <p className="text-parchment-dark font-parchment mb-4">
-                {AI_STRATEGIES[selectedStrategy].description}
+                {aiStrategies[selectedStrategy].description}
               </p>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="font-frontier font-bold text-bronze">Aggressiveness:</span>
-                    <span className="text-parchment-dark">{(AI_STRATEGIES[selectedStrategy].aggressiveness * 100).toFixed(0)}%</span>
+                    <span className="text-parchment-dark">{(aiStrategies[selectedStrategy].aggressiveness * 100).toFixed(0)}%</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="font-frontier font-bold text-bronze">Economic Focus:</span>
-                    <span className="text-parchment-dark">{(AI_STRATEGIES[selectedStrategy].economicFocus * 100).toFixed(0)}%</span>
+                    <span className="text-parchment-dark">{(aiStrategies[selectedStrategy].economicFocus * 100).toFixed(0)}%</span>
                   </div>
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="font-frontier font-bold text-bronze">Expansion Rate:</span>
-                    <span className="text-parchment-dark">{(AI_STRATEGIES[selectedStrategy].expansionRate * 100).toFixed(0)}%</span>
+                    <span className="text-parchment-dark">{(aiStrategies[selectedStrategy].expansionRate * 100).toFixed(0)}%</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="font-frontier font-bold text-bronze">Risk Tolerance:</span>
-                    <span className="text-parchment-dark">{(AI_STRATEGIES[selectedStrategy].riskTolerance * 100).toFixed(0)}%</span>
+                    <span className="text-parchment-dark">{(aiStrategies[selectedStrategy].riskTolerance * 100).toFixed(0)}%</span>
                   </div>
                 </div>
               </div>
@@ -334,7 +334,7 @@ Examples:
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h3 className="font-frontier font-bold text-lg text-iron-dark">
-                        {AI_STRATEGIES[testRun.strategy].name}
+                        {aiStrategies[testRun.strategy].name}
                       </h3>
                       <p className="text-sm text-parchment-dark">
                         {testRun.timestamp.toLocaleString()} • {testRun.iterations} iterations
@@ -414,7 +414,7 @@ Examples:
                 </p>
               ) : (
                 <div className="space-y-4">
-                  {Object.entries(AI_STRATEGIES).map(([key, strategy]) => {
+                  {Object.entries(aiStrategies).map(([key, strategy]) => {
                     const relevantTests = testRuns.filter(r =>
                       r.status === 'completed' && r.strategy === key && r.result
                     );

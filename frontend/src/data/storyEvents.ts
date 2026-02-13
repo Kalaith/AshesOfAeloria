@@ -38,7 +38,7 @@ export const validateEventTemplate = (eventId: string, template: EventTemplate):
 };
 
 // Early game events - establishing the world and introducing core themes
-export const EARLY_GAME_EVENTS: Record<string, EventTemplate> = {
+export const earlyGameEvents: Record<string, EventTemplate> = {
   'awakening_first_contact': {
     title: "First Contact with Survivors",
     description: "You emerge from the ancient stasis chamber to find a small group of survivors huddled around a dying fire. They look up at you with a mixture of fear, hope, and desperation. Their leader, a weathered woman named Keira, steps forward cautiously.",
@@ -198,7 +198,7 @@ export const EARLY_GAME_EVENTS: Record<string, EventTemplate> = {
 };
 
 // Mid-game events - factional conflicts and major decisions
-export const MID_GAME_EVENTS: Record<string, EventTemplate> = {
+export const midGameEvents: Record<string, EventTemplate> = {
   'corruption_crisis': {
     title: "The Spreading Corruption",
     description: "A wave of magical corruption sweeps across the land, twisting plants and animals into horrific forms. Several factions blame each other for the outbreak. The Verdant Circle claims it's caused by industrial expansion, while the Iron Covenant points to uncontrolled magical experimentation.",
@@ -305,7 +305,7 @@ export const MID_GAME_EVENTS: Record<string, EventTemplate> = {
 };
 
 // Late game events - victory path divergence and transcendence themes
-export const LATE_GAME_EVENTS: Record<string, EventTemplate> = {
+export const lateGameEvents: Record<string, EventTemplate> = {
   'transcendence_choice': {
     title: "The Path to Transcendence",
     description: "Your research has uncovered three possible paths to transcendence - the same choice that faced the Architects before the Sundering. You stand at the threshold of power that could remake the world, but each path demands a different sacrifice and offers a different future.",
@@ -360,7 +360,7 @@ export const LATE_GAME_EVENTS: Record<string, EventTemplate> = {
 };
 
 // Random events that can occur throughout the game
-export const RANDOM_EVENTS: Record<string, EventTemplate> = {
+export const randomEvents: Record<string, EventTemplate> = {
   'ancient_artifact_discovery': {
     title: "Ancient Artifact Discovered",
     description: "Your explorers have uncovered a mysterious artifact in the ruins of an old city. It pulses with unknown energy and bears inscriptions in the old tongue. Your scholars are divided on whether it's safe to study.",
@@ -460,15 +460,15 @@ export const RANDOM_EVENTS: Record<string, EventTemplate> = {
 };
 
 // Export all event collections
-export const ALL_STORY_EVENTS = {
-  ...EARLY_GAME_EVENTS,
-  ...MID_GAME_EVENTS,
-  ...LATE_GAME_EVENTS,
-  ...RANDOM_EVENTS
+export const allStoryEvents = {
+  ...earlyGameEvents,
+  ...midGameEvents,
+  ...lateGameEvents,
+  ...randomEvents
 };
 
 // Event weights by game phase for proper pacing
-export const EVENT_PHASE_WEIGHTS = {
+export const eventPhaseWeights = {
   early: { // Turns 1-20
     'awakening_first_contact': 100,
     'sundering_revelation': 80,

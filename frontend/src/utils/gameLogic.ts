@@ -38,7 +38,7 @@ import type {
   Equipment,
   Quest
 } from '../types/game';
-import { GAME_DATA, GAME_CONSTANTS } from '../data/gameData';
+import { gameData, gameConstants } from '../data/gameData';
 
 // Pure functions for game logic - no state management
 
@@ -48,8 +48,8 @@ export const createCommander = (
   race: Race,
   owner: Owner = 'player'
 ): Commander => {
-  const commanderClass = GAME_DATA.commanderClasses[className];
-  const raceData = GAME_DATA.races[race];
+  const commanderClass = gameData.commanderClasses[className];
+  const raceData = gameData.races[race];
 
   // Generate random personality traits
   const personalityTraits: PersonalityTrait[] = generateRandomPersonalityTraits();
@@ -111,7 +111,7 @@ export const canAffordCommander = (
   resources: Resources, 
   className: CommanderClass
 ): boolean => {
-  return resources.gold >= GAME_DATA.commanderClasses[className].cost;
+  return resources.gold >= gameData.commanderClasses[className].cost;
 };
 
 export const calculateIncome = (nodes: GameNode[]): Resources => {
@@ -120,7 +120,7 @@ export const calculateIncome = (nodes: GameNode[]): Resources => {
   nodes
     .filter(node => node.owner === 'player')
     .forEach(node => {
-      const nodeType = GAME_DATA.nodeTypes[node.type];
+      const nodeType = gameData.nodeTypes[node.type];
       income.gold += nodeType.goldGeneration;
       income.supplies += nodeType.suppliesGeneration;
       income.mana += nodeType.manaGeneration;
@@ -246,7 +246,7 @@ export const checkVictoryCondition = (nodes: GameNode[]): boolean => {
   const playerNodes = nodes.filter(node => node.owner === 'player').length;
   const playerControlPercentage = playerNodes / totalNodes;
   
-  return playerControlPercentage >= GAME_CONSTANTS.VICTORY_CONTROL_PERCENTAGE;
+  return playerControlPercentage >= gameConstants.VICTORY_CONTROL_PERCENTAGE;
 };
 
 export const getNodeById = (nodes: GameNode[], id: number): GameNode | undefined => {
@@ -258,17 +258,17 @@ export const getCommanderById = (commanders: Commander[], id: number): Commander
 };
 
 // Grid-based map constants - optimized for 800x600 canvas with node-sized cells
-export const GRID_SIZE = 50; // Size of each grid cell (large enough for nodes)
-export const GRID_OFFSET_X = 25; // Starting X offset (reduced to center grid better)
-export const GRID_OFFSET_Y = 25; // Starting Y offset (reduced to center grid better)
-export const GRID_COLS = 15; // Number of grid columns (15 * 50 = 750px + 50px margins = 800px)
-export const GRID_ROWS = 11; // Number of grid rows (11 * 50 = 550px + 50px margins = 600px)
+export const gridSize = 50; // Size of each grid cell (large enough for nodes)
+export const gridOffsetX = 25; // Starting X offset (reduced to center grid better)
+export const gridOffsetY = 25; // Starting Y offset (reduced to center grid better)
+export const gridCols = 15; // Number of grid columns (15 * 50 = 750px + 50px margins = 800px)
+export const gridRows = 11; // Number of grid rows (11 * 50 = 550px + 50px margins = 600px)
 
 // Helper function to convert grid coordinates to canvas coordinates (center of cell)
 const gridToCanvas = (gridX: number, gridY: number): { x: number, y: number } => {
   return {
-    x: GRID_OFFSET_X + (gridX * GRID_SIZE) + (GRID_SIZE / 2), // Center in cell
-    y: GRID_OFFSET_Y + (gridY * GRID_SIZE) + (GRID_SIZE / 2)  // Center in cell
+    x: gridOffsetX + (gridX * gridSize) + (gridSize / 2), // Center in cell
+    y: gridOffsetY + (gridY * gridSize) + (gridSize / 2)  // Center in cell
   };
 };
 
@@ -374,7 +374,7 @@ const generateCommanderName = (race: Race, className: CommanderClass): string =>
 
   const names = raceNames[race];
   const randomName = names[Math.floor(Math.random() * names.length)];
-  return `${randomName} the ${GAME_DATA.commanderClasses[className].name}`;
+  return `${randomName} the ${gameData.commanderClasses[className].name}`;
 };
 
 const generateRandomAlignment = (): Alignment => {
@@ -413,7 +413,7 @@ const generateRandomPersonalityTraits = (): PersonalityTrait[] => {
 
 const generateCommanderBackstory = (className: CommanderClass, race: Race): string => {
   const backstories = {
-    knight: `A noble warrior from the ${GAME_DATA.races[race].name} people, trained in the ancient arts of combat and honor.`,
+    knight: `A noble warrior from the ${gameData.races[race].name} people, trained in the ancient arts of combat and honor.`,
     mage: `A scholar of the arcane arts, seeking to understand the magical forces that shaped the world's destiny.`,
     ranger: `A wanderer of the wilderness, intimately familiar with the changed landscape of the post-apocalyptic world.`,
     warlord: `A proven leader who has rallied survivors and led them through the darkest times.`,
@@ -555,9 +555,9 @@ const generateInitialPopulation = (type: NodeType, owner: Owner) => {
 const generateNodeResources = (type: NodeType) => {
   return {
     production: {
-      gold: GAME_DATA.nodeTypes[type].goldGeneration,
-      supplies: GAME_DATA.nodeTypes[type].suppliesGeneration,
-      mana: GAME_DATA.nodeTypes[type].manaGeneration,
+      gold: gameData.nodeTypes[type].goldGeneration,
+      supplies: gameData.nodeTypes[type].suppliesGeneration,
+      mana: gameData.nodeTypes[type].manaGeneration,
       food: type === 'farm' ? 200 : 20,
       materials: type === 'mine' ? 150 : 30,
       energy: type === 'laboratory' ? 100 : 10,
@@ -674,7 +674,7 @@ export const generateInitialWorldState = (): WorldState => {
 };
 
 export const generateInitialFactions = (): FactionData[] => {
-  const factionKeys = Object.keys(GAME_DATA.factions) as Faction[];
+  const factionKeys = Object.keys(gameData.factions) as Faction[];
 
   return factionKeys.map(faction => ({
     faction,
@@ -694,7 +694,7 @@ export const generateInitialFactions = (): FactionData[] => {
       artifacts: Math.floor(Math.random() * 3)
     },
     commanders: [],
-    disposition: GAME_DATA.factions[faction].initialDisposition,
+    disposition: gameData.factions[faction].initialDisposition,
     activeAgreements: [],
     militaryPower: 40 + Math.random() * 40,
     economicPower: 30 + Math.random() * 50,
@@ -702,10 +702,10 @@ export const generateInitialFactions = (): FactionData[] => {
     technologicalLevel: 25 + Math.random() * 50,
     population: 1000 + Math.random() * 5000,
     stability: 60 + Math.random() * 30,
-    aggressiveness: GAME_DATA.factions[faction].militaryFocus * 10,
-    expansionDesire: GAME_DATA.factions[faction].territorialAmbitions * 10,
-    tradeDesire: GAME_DATA.factions[faction].economicFocus * 10,
-    culturalOpenness: GAME_DATA.factions[faction].culturalFocus * 10,
+    aggressiveness: gameData.factions[faction].militaryFocus * 10,
+    expansionDesire: gameData.factions[faction].territorialAmbitions * 10,
+    tradeDesire: gameData.factions[faction].economicFocus * 10,
+    culturalOpenness: gameData.factions[faction].culturalFocus * 10,
     diplomaticGoals: ['Survival', 'Growth', 'Influence'],
     currentActions: []
   }));
@@ -715,7 +715,7 @@ export const generateInitialResearchSystem = (): ResearchSystem => {
   return {
     activeProjects: [],
     completedTechnologies: [],
-    availableTechnologies: Object.keys(GAME_DATA.technologies) as Technology[],
+    availableTechnologies: Object.keys(gameData.technologies) as Technology[],
     researchPoints: 50,
     researchPointsPerTurn: 10,
     knowledgePreservation: 70,
@@ -807,11 +807,11 @@ export const generateInitialCalendar = (): Calendar => {
 };
 
 export const generateInitialDiplomacy = (): DiplomaticRelations => {
-  const factionKeys = Object.keys(GAME_DATA.factions) as Faction[];
+  const factionKeys = Object.keys(gameData.factions) as Faction[];
   const playerFactionRelations: Record<Faction, number> = {} as Record<Faction, number>;
 
   factionKeys.forEach(faction => {
-    playerFactionRelations[faction] = GAME_DATA.factions[faction].initialDisposition;
+    playerFactionRelations[faction] = gameData.factions[faction].initialDisposition;
   });
 
   return {

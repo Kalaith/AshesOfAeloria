@@ -2,8 +2,8 @@
 // Input Validation and Data Sanitization
 // Provides validation functions for user inputs and external data
 
-import { CAMPAIGN_CHAPTERS } from '../data/campaignData';
-import { GAME_BALANCE } from '../constants/gameBalance';
+import { campaignChapters } from '../data/campaignData';
+import { gameBalance } from '../constants/gameBalance';
 import { isNonEmptyString, isValidNumber } from '../utils/guards';
 
 // Branded types for better type safety
@@ -31,7 +31,7 @@ export const validateChapterId = (id: unknown): ValidationResult<ChapterId> => {
     return { success: false, error: 'Chapter ID must be a non-empty string' };
   }
 
-  const validChapter = CAMPAIGN_CHAPTERS.find(chapter => chapter.id === id);
+  const validChapter = campaignChapters.find(chapter => chapter.id === id);
   if (!validChapter) {
     return { success: false, error: `Invalid chapter ID: ${id}` };
   }
@@ -82,8 +82,8 @@ export const validateResourceAmount = (amount: unknown): ValidationResult<number
     return { success: false, error: 'Resource amount cannot be negative' };
   }
 
-  if (amount > GAME_BALANCE.RESOURCES.MAX_RESOURCE_STORAGE) {
-    return { success: false, error: `Resource amount exceeds maximum storage: ${GAME_BALANCE.RESOURCES.MAX_RESOURCE_STORAGE}` };
+  if (amount > gameBalance.RESOURCES.MAX_RESOURCE_STORAGE) {
+    return { success: false, error: `Resource amount exceeds maximum storage: ${gameBalance.RESOURCES.MAX_RESOURCE_STORAGE}` };
   }
 
   return { success: true, data: amount };
@@ -101,8 +101,8 @@ export const validateCommanderLevel = (level: unknown): ValidationResult<number>
     return { success: false, error: 'Commander level must be a positive integer' };
   }
 
-  if (level > GAME_BALANCE.BATTLE.MAX_COMMANDER_LEVEL) {
-    return { success: false, error: `Commander level exceeds maximum: ${GAME_BALANCE.BATTLE.MAX_COMMANDER_LEVEL}` };
+  if (level > gameBalance.BATTLE.MAX_COMMANDER_LEVEL) {
+    return { success: false, error: `Commander level exceeds maximum: ${gameBalance.BATTLE.MAX_COMMANDER_LEVEL}` };
   }
 
   return { success: true, data: level };
@@ -116,8 +116,8 @@ export const validateStarRating = (rating: unknown): ValidationResult<number> =>
     return { success: false, error: 'Star rating must be a valid number' };
   }
 
-  if (!Number.isInteger(rating) || rating < 0 || rating > GAME_BALANCE.UI.MAX_STAR_RATING) {
-    return { success: false, error: `Star rating must be between 0 and ${GAME_BALANCE.UI.MAX_STAR_RATING}` };
+  if (!Number.isInteger(rating) || rating < 0 || rating > gameBalance.UI.MAX_STAR_RATING) {
+    return { success: false, error: `Star rating must be between 0 and ${gameBalance.UI.MAX_STAR_RATING}` };
   }
 
   return { success: true, data: rating };
@@ -131,10 +131,10 @@ export const validateFactionRelationship = (value: unknown): ValidationResult<nu
     return { success: false, error: 'Faction relationship must be a valid number' };
   }
 
-  if (value < GAME_BALANCE.FACTIONS.RELATIONSHIP_MIN || value > GAME_BALANCE.FACTIONS.RELATIONSHIP_MAX) {
+  if (value < gameBalance.FACTIONS.RELATIONSHIP_MIN || value > gameBalance.FACTIONS.RELATIONSHIP_MAX) {
     return {
       success: false,
-      error: `Faction relationship must be between ${GAME_BALANCE.FACTIONS.RELATIONSHIP_MIN} and ${GAME_BALANCE.FACTIONS.RELATIONSHIP_MAX}`
+      error: `Faction relationship must be between ${gameBalance.FACTIONS.RELATIONSHIP_MIN} and ${gameBalance.FACTIONS.RELATIONSHIP_MAX}`
     };
   }
 

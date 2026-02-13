@@ -13,14 +13,14 @@ interface ToastProps {
   onClose: (id: string) => void;
 }
 
-const NOTIFICATION_ICONS: Record<NotificationType, string> = {
+const notificationIconsByType: Record<NotificationType, string> = {
   success: '⚔️',
   error: '💀',
   warning: '⚠️',
   info: '📜'
 };
 
-const NOTIFICATION_COLORS: Record<NotificationType, string> = {
+const notificationColorsByType: Record<NotificationType, string> = {
   success: 'bg-forest/20 border-forest text-forest',
   error: 'bg-blood/20 border-blood text-blood',
   warning: 'bg-amber/20 border-amber text-amber',
@@ -47,12 +47,12 @@ export const Toast: React.FC<ToastProps> = ({ notification, onClose }) => {
   return (
     <div className={`
       flex items-center justify-between p-4 mb-3 border-2 rounded-lg shadow-lg bg-bronze-texture
-      ${NOTIFICATION_COLORS[type]}
+      ${notificationColorsByType[type]}
       animate-in slide-in-from-right duration-300
     `}>
       <div className="flex items-center">
         <span className="mr-3 text-lg">
-          {NOTIFICATION_ICONS[type]}
+          {notificationIconsByType[type]}
         </span>
         <span className="text-sm font-frontier font-bold">
           {message}

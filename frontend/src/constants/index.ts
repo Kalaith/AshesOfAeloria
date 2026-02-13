@@ -4,7 +4,7 @@
  */
 
 // Game Configuration
-export const GAME_CONFIG = {
+export const gameConfig = {
   // Initial Resources
   INITIAL_GOLD: 500,
   INITIAL_SUPPLIES: 100,
@@ -44,7 +44,7 @@ export const GAME_CONFIG = {
 } as const;
 
 // UI Constants
-export const UI_CONFIG = {
+export const uiConfig = {
   // Canvas Dimensions
   CANVAS_WIDTH: 800,
   CANVAS_HEIGHT: 600,
@@ -76,14 +76,14 @@ export const UI_CONFIG = {
 } as const;
 
 // Storage Keys
-export const STORAGE_KEYS = {
+export const storageKeys = {
   GAME_STATE: 'ashes-of-aeloria-game',
   SETTINGS: 'ashes-of-aeloria-settings',
   TUTORIAL_COMPLETED: 'ashes-of-aeloria-tutorial',
 } as const;
 
 // Error Messages
-export const ERROR_MESSAGES = {
+export const errorMessages = {
   INSUFFICIENT_RESOURCES: 'Insufficient resources for this action',
   NO_COMMANDER_SELECTED: 'Please select a commander first',
   NO_NODE_SELECTED: 'Please select a node first',
@@ -94,7 +94,7 @@ export const ERROR_MESSAGES = {
 } as const;
 
 // Success Messages
-export const SUCCESS_MESSAGES = {
+export const successMessages = {
   COMMANDER_RECRUITED: 'Commander recruited successfully',
   NODE_CAPTURED: 'Node captured!',
   NODE_UPGRADED: 'Node upgraded successfully',
@@ -103,7 +103,7 @@ export const SUCCESS_MESSAGES = {
 } as const;
 
 // Feature Flags
-export const FEATURE_FLAGS = {
+export const featureFlags = {
   ENABLE_ANIMATIONS: true,
   ENABLE_SOUND: false, // Will be implemented in Phase 2
   ENABLE_TUTORIAL: true,
@@ -112,5 +112,5 @@ export const FEATURE_FLAGS = {
 } as const;
 
 // Type exports for constants
-export type GamePhase = typeof GAME_CONFIG.PHASES[number];
-export type ColorKey = keyof typeof UI_CONFIG.COLORS;
+export type GamePhase = typeof gameConfig.PHASES[number];
+export type ColorKey = keyof typeof uiConfig.COLORS;

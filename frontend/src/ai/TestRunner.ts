@@ -5,7 +5,7 @@
  */
 
 import { GameplayTester } from './GameplayTester';
-import { AI_STRATEGIES } from './AIPlayer';
+import { aiStrategies } from './AIPlayer';
 
 /**
  * Run a single quick test with verbose logging
@@ -18,7 +18,7 @@ export async function runSingleDebugTest(): Promise<void> {
   const config = {
     maxTurns: 50, // Shorter for debugging
     iterations: 1,
-    playerStrategy: AI_STRATEGIES.aggressive,
+    playerStrategy: aiStrategies.aggressive,
     logLevel: 'verbose' as const
   };
 
@@ -59,7 +59,7 @@ export async function runAllStrategiesDebug(): Promise<void> {
 
   const results: Record<string, any> = {};
 
-  for (const [key, strategy] of Object.entries(AI_STRATEGIES)) {
+  for (const [key, strategy] of Object.entries(aiStrategies)) {
     console.log(`\n🎯 Testing ${strategy.name}...`);
 
     const tester = new GameplayTester();
@@ -108,9 +108,9 @@ export function testAIDecisionMaking(): void {
 
   // This would test the AI logic in isolation
   // For now, just confirm the AI classes are working
-  console.log('Available strategies:', Object.keys(AI_STRATEGIES));
+  console.log('Available strategies:', Object.keys(aiStrategies));
 
-  Object.entries(AI_STRATEGIES).forEach(([key, strategy]) => {
+  Object.entries(aiStrategies).forEach(([key, strategy]) => {
     console.log(`${key}: Aggression ${strategy.aggressiveness}, Economy ${strategy.economicFocus}`);
   });
 }

@@ -5,7 +5,7 @@
  */
 
 import { runQuickBalanceTest } from '../ai/GameplayTester';
-import { AI_STRATEGIES } from '../ai/AIPlayer';
+import { aiStrategies } from '../ai/AIPlayer';
 
 // Simple verbose test function
 async function runVerboseTest() {
@@ -19,7 +19,7 @@ async function runVerboseTest() {
     const config = {
       maxTurns: 100,
       iterations: 1,
-      playerStrategy: AI_STRATEGIES.aggressive,
+      playerStrategy: aiStrategies.aggressive,
       logLevel: 'verbose' as const
     };
 
@@ -98,7 +98,7 @@ export function setupConsoleTesting() {
 
       const results: Record<string, any> = {};
 
-      for (const [key, strategy] of Object.entries(AI_STRATEGIES)) {
+      for (const [key, strategy] of Object.entries(aiStrategies)) {
         try {
           console.log(`Testing ${strategy.name}...`);
           const result = await runQuickBalanceTest(key, iterations);
@@ -132,7 +132,7 @@ export function setupConsoleTesting() {
       return results;
     },
 
-    strategies: Object.keys(AI_STRATEGIES),
+    strategies: Object.keys(aiStrategies),
 
     help: () => {
       console.log(`
@@ -146,7 +146,7 @@ gameplayTesting.runAll(5)                     - Test all strategies
 gameplayTesting.strategies                    - List available strategies
 gameplayTesting.help()                        - Show this help
 
-Available strategies: ${Object.keys(AI_STRATEGIES).join(', ')}
+Available strategies: ${Object.keys(aiStrategies).join(', ')}
 
 Examples:
 > gameplayTesting.runQuick()                  // Quick test

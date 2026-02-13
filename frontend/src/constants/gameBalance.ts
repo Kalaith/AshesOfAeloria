@@ -1,7 +1,7 @@
 // Game Balance Constants
 // Centralized configuration for all game balance values
 
-export const GAME_BALANCE = {
+export const gameBalance = {
   // Commander Base Stats
   COMMANDER_STATS: {
     KNIGHT: {
@@ -142,7 +142,7 @@ export const GAME_BALANCE = {
   CAMPAIGN: {
     MIN_TURNS_PER_CHAPTER: 15,
     MAX_TURNS_PER_CHAPTER: 100,
-    VICTORY_CONDITION_TYPES: [
+    victoryConditionTypes: [
       'territory',
       'population',
       'research',
@@ -165,9 +165,9 @@ export const GAME_BALANCE = {
 } as const;
 
 // Derived constants
-export const COMMANDER_CLASSES = Object.keys(GAME_BALANCE.COMMANDER_STATS) as const;
-export const NODE_TYPES = Object.keys(GAME_BALANCE.NODE_GENERATION) as const;
-export const VICTORY_CONDITION_TYPES = GAME_BALANCE.CAMPAIGN.VICTORY_CONDITION_TYPES;
+export const commanderClasses = Object.keys(gameBalance.COMMANDER_STATS) as const;
+export const nodeTypes = Object.keys(gameBalance.NODE_GENERATION) as const;
+export const victoryConditionTypes = gameBalance.CAMPAIGN.victoryConditionTypes;
 
-export type CommanderClassName = keyof typeof GAME_BALANCE.COMMANDER_STATS;
-export type NodeTypeName = keyof typeof GAME_BALANCE.NODE_GENERATION;
+export type CommanderClassName = keyof typeof gameBalance.COMMANDER_STATS;
+export type NodeTypeName = keyof typeof gameBalance.NODE_GENERATION;

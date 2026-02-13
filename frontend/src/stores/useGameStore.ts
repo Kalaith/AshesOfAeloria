@@ -65,7 +65,7 @@ import {
   generateInitialPoliticalSituation,
   generateInitialMilitaryIntelligence
 } from '../utils/gameLogic';
-import { GAME_DATA, GAME_CONSTANTS } from '../data/gameData';
+import { gameData, gameConstants } from '../data/gameData';
 import { StoryEventSystem } from '../systems/StoryEventSystem';
 
 // Initial game state with comprehensive world rebuilding systems
@@ -333,7 +333,7 @@ export const useGameStore = create<GameStore>()(
         if (state.research.completedTechnologies.includes(technology)) return false;
         if (state.research.activeProjects.some(p => p.technology === technology)) return false;
 
-        const techInfo = GAME_DATA.technologies[technology];
+        const techInfo = gameData.technologies[technology];
         if (!techInfo) return false;
 
         // Check prerequisites
@@ -375,7 +375,7 @@ export const useGameStore = create<GameStore>()(
         const project = state.research.activeProjects.find(p => p.id === projectId);
         if (!project) return false;
 
-        const techInfo = GAME_DATA.technologies[project.technology];
+        const techInfo = gameData.technologies[project.technology];
         const refund = Math.floor(techInfo.researchCost * 0.5); // 50% refund
 
         set((state) => ({
@@ -569,7 +569,7 @@ export const useGameStore = create<GameStore>()(
       processWeatherEffects: () => {
         const state = get();
         const currentWeather = state.weather.currentWeather;
-        const weatherPattern = GAME_DATA.weatherPatterns[currentWeather];
+        const weatherPattern = gameData.weatherPatterns[currentWeather];
 
         if (weatherPattern) {
           // Apply weather effects to resources, movement, etc.
@@ -628,7 +628,7 @@ export const useGameStore = create<GameStore>()(
         if (canAffordCommander(state.resources, className)) {
           const newId = Math.max(0, ...state.commanders.map(c => c.id)) + 1;
           const commander = createCommander(newId, className, race, 'player'); // Specify player ownership
-          const cost = GAME_DATA.commanderClasses[className].cost;
+          const cost = gameData.commanderClasses[className].cost;
           
           set((state) => ({
             commanders: [...state.commanders, commander],
@@ -653,7 +653,7 @@ export const useGameStore = create<GameStore>()(
         if (node.owner !== 'player') return false;
         
         // Check commander capacity for this node type
-        const maxCapacity = GAME_CONSTANTS.COMMANDER_CAPACITIES[node.type];
+        const maxCapacity = gameConstants.COMMANDER_CAPACITIES[node.type];
         const currentCommanders = state.commanders.filter(c => c.assignedNode === nodeId).length;
         
         if (currentCommanders >= maxCapacity) {
@@ -662,7 +662,7 @@ export const useGameStore = create<GameStore>()(
             battleLog: [...state.battleLog, {
               timestamp: Date.now(),
               type: 'info',
-              message: `Cannot assign ${commander.name}: ${GAME_DATA.nodeTypes[node.type].name} is at capacity (${maxCapacity} commanders)`
+              message: `Cannot assign ${commander.name}: ${gameData.nodeTypes[node.type].name} is at capacity (${maxCapacity} commanders)`
             }]
           }));
           return false;
@@ -677,7 +677,7 @@ export const useGameStore = create<GameStore>()(
           battleLog: [...state.battleLog, {
             timestamp: Date.now(),
             type: 'info',
-            message: `${commander.name} assigned to defend the ${GAME_DATA.nodeTypes[node.type].name}`
+            message: `${commander.name} assigned to defend the ${gameData.nodeTypes[node.type].name}`
           }]
         }));
         
@@ -708,7 +708,7 @@ export const useGameStore = create<GameStore>()(
         if (!node) return { current: 0, max: 0, commanders: [] };
         
         const assignedCommanders = state.commanders.filter(c => c.assignedNode === nodeId);
-        const maxCapacity = GAME_CONSTANTS.COMMANDER_CAPACITIES[node.type];
+        const maxCapacity = gameConstants.COMMANDER_CAPACITIES[node.type];
         
         return {
           current: assignedCommanders.length,
@@ -767,7 +767,7 @@ export const useGameStore = create<GameStore>()(
           battleLog: [...state.battleLog, {
             timestamp: Date.now(),
             type: 'info',
-            message: `${GAME_DATA.nodeTypes[node.type].name} upgraded to ${node.starLevel + 1} stars for ${upgradeCost} gold!`
+            message: `${gameData.nodeTypes[node.type].name} upgraded to ${node.starLevel + 1} stars for ${upgradeCost} gold!`
           }]
         }));
         
@@ -800,7 +800,7 @@ export const useGameStore = create<GameStore>()(
         let enemyResources = { gold: 0, supplies: 0, mana: 0 };
         
         enemyNodes.forEach(node => {
-          const nodeType = GAME_DATA.nodeTypes[node.type];
+          const nodeType = gameData.nodeTypes[node.type];
           enemyResources.gold += nodeType.goldGeneration;
           enemyResources.supplies += nodeType.suppliesGeneration;
           enemyResources.mana += nodeType.manaGeneration;
@@ -881,7 +881,7 @@ export const useGameStore = create<GameStore>()(
               )
             }));
             
-            get().addBattleLogEntry('defeat', `Enemy captured ${GAME_DATA.nodeTypes[attack.target.type].name} from ${attack.target.owner === 'player' ? 'player' : 'neutral'} forces!`);
+            get().addBattleLogEntry('defeat', `Enemy captured ${gameData.nodeTypes[attack.target.type].name} from ${attack.target.owner === 'player' ? 'player' : 'neutral'} forces!`);
           } else {
             // Enemy loses - reduce both garrisons
             set((state) => ({
@@ -894,7 +894,7 @@ export const useGameStore = create<GameStore>()(
               )
             }));
             
-            get().addBattleLogEntry('victory', `Player forces successfully defended ${GAME_DATA.nodeTypes[attack.target.type].name} from enemy attack!`);
+            get().addBattleLogEntry('victory', `Player forces successfully defended ${gameData.nodeTypes[attack.target.type].name} from enemy attack!`);
           }
           
           attacksExecuted++;
@@ -945,7 +945,7 @@ export const useGameStore = create<GameStore>()(
             )
           }));
           
-          get().addBattleLogEntry('info', `Enemy upgraded their ${GAME_DATA.nodeTypes[nodeToUpgrade.type].name} to ${nodeToUpgrade.starLevel + 1} stars`);
+          get().addBattleLogEntry('info', `Enemy upgraded their ${gameData.nodeTypes[nodeToUpgrade.type].name} to ${nodeToUpgrade.starLevel + 1} stars`);
         }
 
         // 7. End enemy turn and start player turn
@@ -1033,7 +1033,7 @@ export const useGameStore = create<GameStore>()(
           const commanderBonusText = attackerBonus.attackBonus > 0 ? 
             ` (Commander bonus: +${Math.floor(attackerBonus.attackBonus)})` : '';
           
-          get().addBattleLogEntry('victory', `Successfully captured ${GAME_DATA.nodeTypes[defenderNode.type].name}!${commanderBonusText}`);
+          get().addBattleLogEntry('victory', `Successfully captured ${gameData.nodeTypes[defenderNode.type].name}!${commanderBonusText}`);
           
           // Award experience to commanders at the attacking node
           const attackingCommanders = state.commanders.filter(c => c.assignedNode === attackerNode.id && c.owner === 'player');
@@ -1063,7 +1063,7 @@ export const useGameStore = create<GameStore>()(
           const defenderBonusText = defenderBonus.defenseBonus > 0 ? 
             ` Enemy commanders provided +${Math.floor(defenderBonus.defenseBonus)} defense.` : '';
           
-          get().addBattleLogEntry('defeat', `Attack on ${GAME_DATA.nodeTypes[defenderNode.type].name} failed!${defenderBonusText}`);
+          get().addBattleLogEntry('defeat', `Attack on ${gameData.nodeTypes[defenderNode.type].name} failed!${defenderBonusText}`);
         }
       },
       canAttackNode: (nodeId) => {

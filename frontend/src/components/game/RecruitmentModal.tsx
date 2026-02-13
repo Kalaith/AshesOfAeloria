@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 import { useGameStore } from '../../stores/useGameStore';
-import { GAME_DATA } from '../../data/gameData';
+import { gameData } from '../../data/gameData';
 import type { CommanderClass, Race } from '../../types/game';
 
 interface RecruitmentModalProps {
@@ -34,7 +34,7 @@ export const RecruitmentModal: React.FC<RecruitmentModalProps> = ({ isOpen, onCl
     onClose();
   };
 
-  const canAfford = selectedClass ? resources.gold >= GAME_DATA.commanderClasses[selectedClass].cost : false;
+  const canAfford = selectedClass ? resources.gold >= gameData.commanderClasses[selectedClass].cost : false;
 
   const footer = (
     <>
@@ -48,7 +48,7 @@ export const RecruitmentModal: React.FC<RecruitmentModalProps> = ({ isOpen, onCl
         fullWidth
         className="sm:w-auto font-frontier font-bold"
       >
-        Enlist War Leader ({selectedClass ? GAME_DATA.commanderClasses[selectedClass].cost : '-'} 🪙)
+        Enlist War Leader ({selectedClass ? gameData.commanderClasses[selectedClass].cost : '-'} 🪙)
       </Button>
     </>
   );
@@ -64,7 +64,7 @@ export const RecruitmentModal: React.FC<RecruitmentModalProps> = ({ isOpen, onCl
         <div>
           <h4 className="text-sm lg:text-md font-frontier font-bold text-iron-dark mb-3 text-battle-worn">⚔ Choose War Leader Class:</h4>
           <div className="grid grid-cols-1 gap-2">
-            {Object.entries(GAME_DATA.commanderClasses).map(([key, classData]) => (
+            {Object.entries(gameData.commanderClasses).map(([key, classData]) => (
               <div
                 key={key}
                 className={`p-3 border-2 rounded cursor-pointer transition-all duration-300 flex items-center gap-3 ${
@@ -92,7 +92,7 @@ export const RecruitmentModal: React.FC<RecruitmentModalProps> = ({ isOpen, onCl
         <div>
           <h4 className="text-sm lg:text-md font-frontier font-bold text-iron-dark mb-3 text-battle-worn">🏺 Choose Bloodline Heritage:</h4>
           <div className="grid grid-cols-1 gap-2">
-            {Object.entries(GAME_DATA.races).map(([key, raceData]) => (
+            {Object.entries(gameData.races).map(([key, raceData]) => (
               <div
                 key={key}
                 className={`p-3 border-2 rounded cursor-pointer transition-all duration-300 flex items-center gap-3 ${
@@ -122,28 +122,28 @@ export const RecruitmentModal: React.FC<RecruitmentModalProps> = ({ isOpen, onCl
                 <div className="flex justify-between text-sm">
                   <span className="text-parchment-dark font-parchment">🎭 Identity:</span>
                   <span className="font-frontier font-bold text-parchment-light">
-                    {GAME_DATA.races[selectedRace].name} {GAME_DATA.commanderClasses[selectedClass].name}
+                    {gameData.races[selectedRace].name} {gameData.commanderClasses[selectedClass].name}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-parchment-dark font-parchment">🩸 Battle Endurance:</span>
-                  <span className="font-frontier font-bold text-forest">{GAME_DATA.commanderClasses[selectedClass].baseHealth}</span>
+                  <span className="font-frontier font-bold text-forest">{gameData.commanderClasses[selectedClass].baseHealth}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-parchment-dark font-parchment">⚔ Battle Prowess:</span>
-                  <span className="font-frontier font-bold text-blood">{GAME_DATA.commanderClasses[selectedClass].baseAttack}</span>
+                  <span className="font-frontier font-bold text-blood">{gameData.commanderClasses[selectedClass].baseAttack}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-parchment-dark font-parchment">🛡 Tactical Defense:</span>
-                  <span className="font-frontier font-bold text-mana">{GAME_DATA.commanderClasses[selectedClass].baseDefense}</span>
+                  <span className="font-frontier font-bold text-mana">{gameData.commanderClasses[selectedClass].baseDefense}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-parchment-dark font-parchment">✨ War Specialty:</span>
-                  <span className="font-frontier font-bold text-crystal">{GAME_DATA.commanderClasses[selectedClass].specialAbility}</span>
+                  <span className="font-frontier font-bold text-crystal">{gameData.commanderClasses[selectedClass].specialAbility}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-parchment-dark font-parchment">🏺 Heritage Blessing:</span>
-                  <span className="font-frontier font-bold text-amber">{GAME_DATA.races[selectedRace].bonus}</span>
+                  <span className="font-frontier font-bold text-amber">{gameData.races[selectedRace].bonus}</span>
                 </div>
               </div>
             </div>

@@ -1,6 +1,6 @@
 // Separated ChapterCard component with proper typing and accessibility
 import React, { memo } from 'react';
-import { GAME_BALANCE } from '../../constants/gameBalance';
+import { gameBalance } from '../../constants/gameBalance';
 import type { CampaignChapter } from '../../data/campaignData';
 
 export interface ChapterCardProps {
@@ -32,7 +32,7 @@ const getChapterStateLabel = (isActive: boolean, isCompleted: boolean): string |
 };
 
 const renderStarRating = (rating: number): React.JSX.Element[] => {
-  return Array.from({ length: GAME_BALANCE.UI.MAX_STAR_RATING }, (_, i) => (
+  return Array.from({ length: gameBalance.UI.MAX_STAR_RATING }, (_, i) => (
     <span
       key={i}
       className={`text-sm ${
@@ -95,7 +95,7 @@ export const ChapterCard = memo<ChapterCardProps>(({
 
         <div className="flex items-center space-x-2 flex-shrink-0">
           {/* Star Rating */}
-          <div className="flex" role="img" aria-label={`Difficulty: ${chapter.starRating} out of ${GAME_BALANCE.UI.MAX_STAR_RATING} stars`}>
+          <div className="flex" role="img" aria-label={`Difficulty: ${chapter.starRating} out of ${gameBalance.UI.MAX_STAR_RATING} stars`}>
             {renderStarRating(chapter.starRating)}
           </div>
 

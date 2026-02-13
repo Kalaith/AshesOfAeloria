@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import React, { useState, useCallback } from 'react';
-import { CAMPAIGN_CHAPTERS, RESEARCH_TREE } from '../../data/campaignData';
+import { campaignChapters, researchTree } from '../../data/campaignData';
 import { ChapterCard } from '../campaign/ChapterCard';
 import { useCampaignLogic } from '../../hooks/useCampaignLogic';
 import { validateChapterId } from '../../validators/gameValidators';
@@ -132,7 +132,7 @@ export const CampaignPage: React.FC = () => {
       <h4 className="font-frontier font-bold text-xl text-iron-dark mb-3 text-battle-worn">Research Tree</h4>
 
       {[1, 2, 3, 4].map(tier => {
-        const tierNodes = RESEARCH_TREE.filter(node => node.tier === tier);
+        const tierNodes = researchTree.filter(node => node.tier === tier);
         if (tierNodes.length === 0) return null;
 
         return (
@@ -202,7 +202,7 @@ export const CampaignPage: React.FC = () => {
 
         {!selectedChapter ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {CAMPAIGN_CHAPTERS.map(renderChapterCard)}
+            {campaignChapters.map(renderChapterCard)}
           </div>
         ) : (
           <div className="space-y-6">

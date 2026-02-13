@@ -4,7 +4,7 @@
  * Tests game balance by running AI vs AI simulations
  */
 
-import { AIPlayer, AI_STRATEGIES, type AIStrategy, type GameTestResult, type AIDecision } from './AIPlayer';
+import { AIPlayer, aiStrategies, type AIStrategy, type GameTestResult, type AIDecision } from './AIPlayer';
 import type { GameState, Resources } from '../types/game.d';
 import {
   generateInitialMap,
@@ -13,7 +13,7 @@ import {
   resolveBattle,
   calculateEffectiveGarrison
 } from '../utils/gameLogic';
-import { GAME_DATA } from '../data/gameData';
+import { gameData } from '../data/gameData';
 
 export interface TestConfiguration {
   maxTurns: number;
@@ -405,7 +405,7 @@ export class GameplayTester {
       const randomClass = commanderClasses[Math.floor(Math.random() * commanderClasses.length)];
 
       // Enemy has limited "budget" - gets harder to recruit as game goes on
-      const recruitmentCost = GAME_DATA.commanderClasses[randomClass].cost;
+      const recruitmentCost = gameData.commanderClasses[randomClass].cost;
       const enemyIncome = calculateIncome(enemyNodes);
       const canAfford = enemyIncome.gold * gameState.turn > recruitmentCost * 2; // Simplified budget check
 
@@ -496,7 +496,7 @@ export class GameplayTester {
         }
 
         if (logLevel === 'verbose') {
-          console.log(`👹 Enemy captured ${GAME_DATA.nodeTypes[bestAttack.target.type].name} (${bestAttack.strength} vs ${bestAttack.defenderStrength})`);
+          console.log(`👹 Enemy captured ${gameData.nodeTypes[bestAttack.target.type].name} (${bestAttack.strength} vs ${bestAttack.defenderStrength})`);
         }
       } else {
         // Failed attack, reduce garrisons
@@ -518,7 +518,7 @@ export class GameplayTester {
         }
 
         if (logLevel === 'verbose') {
-          console.log(`👹 Enemy failed to capture ${GAME_DATA.nodeTypes[bestAttack.target.type].name}`);
+          console.log(`👹 Enemy failed to capture ${gameData.nodeTypes[bestAttack.target.type].name}`);
         }
       }
     }
@@ -541,7 +541,7 @@ export class GameplayTester {
               : 'knight';
 
             // Get actual cost from game data
-            const commanderCost = GAME_DATA.commanderClasses[validClass].cost;
+            const commanderCost = gameData.commanderClasses[validClass].cost;
             const playerCommanders = gameState.commanders.filter(c => c.owner === 'player');
             const playerNodes = gameState.nodes.filter(n => n.owner === 'player');
 
@@ -590,7 +590,7 @@ export class GameplayTester {
                   gameState.resources.gold -= cost;
 
                   if (logLevel === 'verbose') {
-                    console.log(`⭐ Upgraded ${GAME_DATA.nodeTypes[node.type].name} to ${node.starLevel + 1} stars`);
+                    console.log(`⭐ Upgraded ${gameData.nodeTypes[node.type].name} to ${node.starLevel + 1} stars`);
                   }
                 }
               }
@@ -696,7 +696,7 @@ export class GameplayTester {
         }
 
         if (logLevel === 'verbose') {
-          console.log(`⚔️ Player captured ${GAME_DATA.nodeTypes[targetNode.type].name} (${bestAttacker.strength} vs ${defenderStrength})`);
+          console.log(`⚔️ Player captured ${gameData.nodeTypes[targetNode.type].name} (${bestAttacker.strength} vs ${defenderStrength})`);
         }
       } else {
         // Attack failed, reduce both garrisons slightly
@@ -718,7 +718,7 @@ export class GameplayTester {
         }
 
         if (logLevel === 'verbose') {
-          console.log(`❌ Failed to capture ${GAME_DATA.nodeTypes[targetNode.type].name} (${bestAttacker.strength} vs ${defenderStrength})`);
+          console.log(`❌ Failed to capture ${gameData.nodeTypes[targetNode.type].name} (${bestAttacker.strength} vs ${defenderStrength})`);
         }
       }
     }
@@ -979,7 +979,7 @@ export class GameplayTester {
 // Convenience function to run quick balance tests
 export async function runQuickBalanceTest(strategy: string = 'balanced', iterations: number = 10): Promise<BalanceReport> {
   const tester = new GameplayTester();
-  const selectedStrategy = AI_STRATEGIES[strategy] || AI_STRATEGIES.balanced;
+  const selectedStrategy = aiStrategies[strategy] || aiStrategies.balanced;
 
   const config: TestConfiguration = {
     maxTurns: 100,

@@ -14,7 +14,7 @@ import type {
   EventEffect,
   Faction
 } from '../types/game.d.js';
-import { ALL_STORY_EVENTS, EVENT_PHASE_WEIGHTS, validateEventTemplate } from '../data/storyEvents.js';
+import { allStoryEvents, eventPhaseWeights, validateEventTemplate } from '../data/storyEvents.js';
 
 export class StoryEventSystem {
   private gameState: GameState;
@@ -71,7 +71,7 @@ export class StoryEventSystem {
    */
   private checkScriptedEvents(): GameEvent | null {
     const currentPhase = this.getCurrentGamePhase();
-    const phaseEvents = EVENT_PHASE_WEIGHTS[currentPhase];
+    const phaseEvents = eventPhaseWeights[currentPhase];
 
     if (!phaseEvents) return null;
 
@@ -81,7 +81,7 @@ export class StoryEventSystem {
       .map(([eventId]) => eventId);
 
     for (const eventId of sortedEvents) {
-      const template = ALL_STORY_EVENTS[eventId];
+      const template = allStoryEvents[eventId];
       if (!template || template.type !== 'scripted') continue;
 
       // Skip if already seen and not repeatable
@@ -103,7 +103,7 @@ export class StoryEventSystem {
    * Check for events triggered by previous choices or consequences
    */
   private checkConsequenceEvents(): GameEvent | null {
-    for (const [eventId, template] of Object.entries(ALL_STORY_EVENTS)) {
+    for (const [eventId, template] of Object.entries(allStoryEvents)) {
       if (template.type !== 'consequence') continue;
 
       // Skip if already seen and not repeatable
@@ -125,7 +125,7 @@ export class StoryEventSystem {
    * Select a random event based on current game state
    */
   private selectRandomEvent(): GameEvent | null {
-    const availableEvents = Object.entries(ALL_STORY_EVENTS)
+    const availableEvents = Object.entries(allStoryEvents)
       .filter(([eventId, template]) => {
         return template.type === 'random' &&
                (!this.seenEvents.has(eventId) || template.repeatable) &&
@@ -172,7 +172,7 @@ export class StoryEventSystem {
     this.seenEvents.add(eventId);
 
     // Set cooldown if repeatable
-    const template = ALL_STORY_EVENTS[eventId];
+    const template = allStoryEvents[eventId];
     if (template?.repeatable && template.cooldown) {
       this.eventCooldowns.set(eventId, this.gameState.turn + template.cooldown);
     }
@@ -199,21 +199,24 @@ export class StoryEventSystem {
         case 'turn':
           return this.evaluateNumericCondition(this.gameState.turn, condition.operator, condition.value);
 
-        case 'nodes_controlled':
+        case 'nodes_controlled': {
           const playerNodes = this.gameState.nodes?.filter(n => n.owner === 'player').length || 0;
           return this.evaluateNumericCondition(playerNodes, condition.operator, condition.value);
+        }
 
         case 'resources_gold':
           return this.evaluateNumericCondition(this.gameState.resources?.gold || 0, condition.operator, condition.value);
 
-        case 'corruption_level':
+        case 'corruption_level': {
           return this.evaluateNumericCondition(this.gameState.worldState?.corruptionLevel || 0, condition.operator, condition.value);
+        }
 
-        case 'reputation':
+        case 'reputation': {
           const [, faction] = condition.target?.split(':') || [];
           if (!faction || !this.gameState.diplomacy?.playerFactionRelations) return false;
           const reputation = this.gameState.diplomacy.playerFactionRelations[faction as Faction] || 0;
           return this.evaluateNumericCondition(reputation, condition.operator, condition.value);
+        }
 
         case 'technology':
           return this.gameState.globalTechnologies?.includes(condition.value) || false;
@@ -224,15 +227,17 @@ export class StoryEventSystem {
         case 'event_not_seen':
           return !this.seenEvents.has(condition.value);
 
-        case 'trade_routes':
+        case 'trade_routes': {
           const tradeRoutes = this.gameState.market?.tradeRoutes?.length || 0;
           return this.evaluateNumericCondition(tradeRoutes, condition.operator, condition.value);
+        }
 
-        case 'population':
+        case 'population': {
           const totalPop = this.gameState.nodes
             ?.filter(n => n.owner === 'player')
             ?.reduce((sum, n) => sum + (n.population?.total || 0), 0) || 0;
           return this.evaluateNumericCondition(totalPop, condition.operator, condition.value);
+        }
 
         default:
           console.warn(`Unknown event condition type: ${condition.type}`);
@@ -319,8 +324,8 @@ export class StoryEventSystem {
       const newValue = currentValue + consequence.value;
 
       // Apply reasonable bounds to prevent exploits
-      const MAX_RESOURCE_VALUE = 999999;
-      this.gameState.resources[target] = Math.max(0, Math.min(MAX_RESOURCE_VALUE, newValue));
+      const maxResourceValue = 999999;
+      this.gameState.resources[target] = Math.max(0, Math.min(maxResourceValue, newValue));
 
       // Log significant changes for debugging
       if (Math.abs(consequence.value) > 100) {

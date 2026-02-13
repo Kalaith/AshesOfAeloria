@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { useGameStore } from '../../stores/useGameStore';
-import { GAME_DATA } from '../../data/gameData';
-import { calculateEffectiveGarrison, GRID_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, GRID_COLS, GRID_ROWS } from '../../utils/gameLogic';
+import { gameData } from '../../data/gameData';
+import { calculateEffectiveGarrison, gridSize, gridOffsetX, gridOffsetY, gridCols, gridRows } from '../../utils/gameLogic';
 import type { GameNode, Owner } from '../../types/game';
 
 export const GameCanvas: React.FC = () => {
@@ -48,28 +48,28 @@ export const GameCanvas: React.FC = () => {
     ctx.lineWidth = 0.5;
 
     // Draw vertical grid lines
-    for (let col = 0; col <= GRID_COLS; col++) {
-      const x = GRID_OFFSET_X + (col * GRID_SIZE);
+    for (let col = 0; col <= gridCols; col++) {
+      const x = gridOffsetX + (col * gridSize);
       ctx.beginPath();
-      ctx.moveTo(x, GRID_OFFSET_Y);
-      ctx.lineTo(x, GRID_OFFSET_Y + (GRID_ROWS * GRID_SIZE));
+      ctx.moveTo(x, gridOffsetY);
+      ctx.lineTo(x, gridOffsetY + (gridRows * gridSize));
       ctx.stroke();
     }
 
     // Draw horizontal grid lines
-    for (let row = 0; row <= GRID_ROWS; row++) {
-      const y = GRID_OFFSET_Y + (row * GRID_SIZE);
+    for (let row = 0; row <= gridRows; row++) {
+      const y = gridOffsetY + (row * gridSize);
       ctx.beginPath();
-      ctx.moveTo(GRID_OFFSET_X, y);
-      ctx.lineTo(GRID_OFFSET_X + (GRID_COLS * GRID_SIZE), y);
+      ctx.moveTo(gridOffsetX, y);
+      ctx.lineTo(gridOffsetX + (gridCols * gridSize), y);
       ctx.stroke();
     }
 
     // Add grass texture to grid cells
-    for (let col = 0; col < GRID_COLS; col++) {
-      for (let row = 0; row < GRID_ROWS; row++) {
-        const x = GRID_OFFSET_X + (col * GRID_SIZE);
-        const y = GRID_OFFSET_Y + (row * GRID_SIZE);
+    for (let col = 0; col < gridCols; col++) {
+      for (let row = 0; row < gridRows; row++) {
+        const x = gridOffsetX + (col * gridSize);
+        const y = gridOffsetY + (row * gridSize);
 
         // Base grass color with slight variation
         const grassVariation = (col + row) % 3;
@@ -79,7 +79,7 @@ export const GameCanvas: React.FC = () => {
           'rgba(80, 100, 60, 0.2)'   // Light green
         ];
         ctx.fillStyle = grassColors[grassVariation];
-        ctx.fillRect(x + 1, y + 1, GRID_SIZE - 2, GRID_SIZE - 2);
+        ctx.fillRect(x + 1, y + 1, gridSize - 2, gridSize - 2);
 
         // Add grass blade texture
         ctx.strokeStyle = 'rgba(40, 60, 30, 0.4)';
@@ -88,8 +88,8 @@ export const GameCanvas: React.FC = () => {
         // Generate random grass blades within each cell
         const grassBlades = 8 + (col * row) % 5; // 8-12 blades per cell
         for (let blade = 0; blade < grassBlades; blade++) {
-          const bladeX = x + 5 + ((col * 17 + row * 13 + blade * 7) % (GRID_SIZE - 10));
-          const bladeY = y + 5 + ((row * 19 + col * 11 + blade * 3) % (GRID_SIZE - 10));
+          const bladeX = x + 5 + ((col * 17 + row * 13 + blade * 7) % (gridSize - 10));
+          const bladeY = y + 5 + ((row * 19 + col * 11 + blade * 3) % (gridSize - 10));
           const bladeHeight = 3 + (blade % 4);
 
           ctx.beginPath();
@@ -101,8 +101,8 @@ export const GameCanvas: React.FC = () => {
         // Add occasional small flowers or details
         if ((col + row * 3) % 7 === 0) {
           ctx.fillStyle = 'rgba(200, 180, 60, 0.4)'; // Small yellow flowers
-          const flowerX = x + GRID_SIZE * 0.3 + ((col * 23) % (GRID_SIZE * 0.4));
-          const flowerY = y + GRID_SIZE * 0.3 + ((row * 29) % (GRID_SIZE * 0.4));
+          const flowerX = x + gridSize * 0.3 + ((col * 23) % (gridSize * 0.4));
+          const flowerY = y + gridSize * 0.3 + ((row * 29) % (gridSize * 0.4));
           ctx.beginPath();
           ctx.arc(flowerX, flowerY, 1.5, 0, 2 * Math.PI);
           ctx.fill();
@@ -112,10 +112,10 @@ export const GameCanvas: React.FC = () => {
 
     // Add small center dots to show grid cell centers (where nodes should be positioned)
     ctx.fillStyle = 'rgba(139, 129, 103, 0.15)';
-    for (let col = 0; col < GRID_COLS; col++) {
-      for (let row = 0; row < GRID_ROWS; row++) {
-        const centerX = GRID_OFFSET_X + (col * GRID_SIZE) + (GRID_SIZE / 2);
-        const centerY = GRID_OFFSET_Y + (row * GRID_SIZE) + (GRID_SIZE / 2);
+    for (let col = 0; col < gridCols; col++) {
+      for (let row = 0; row < gridRows; row++) {
+        const centerX = gridOffsetX + (col * gridSize) + (gridSize / 2);
+        const centerY = gridOffsetY + (row * gridSize) + (gridSize / 2);
         ctx.beginPath();
         ctx.arc(centerX, centerY, 2, 0, 2 * Math.PI);
         ctx.fill();
@@ -127,20 +127,20 @@ export const GameCanvas: React.FC = () => {
       const selectedNodeData = nodes.find(n => n.id === selectedNode);
       if (selectedNodeData) {
         // Calculate which grid cell this node is in (accounting for centered positioning)
-        const gridX = Math.round((selectedNodeData.x - GRID_OFFSET_X - GRID_SIZE/2) / GRID_SIZE);
-        const gridY = Math.round((selectedNodeData.y - GRID_OFFSET_Y - GRID_SIZE/2) / GRID_SIZE);
+        const gridX = Math.round((selectedNodeData.x - gridOffsetX - gridSize/2) / gridSize);
+        const gridY = Math.round((selectedNodeData.y - gridOffsetY - gridSize/2) / gridSize);
 
-        if (gridX >= 0 && gridX < GRID_COLS && gridY >= 0 && gridY < GRID_ROWS) {
-          const cellX = GRID_OFFSET_X + (gridX * GRID_SIZE);
-          const cellY = GRID_OFFSET_Y + (gridY * GRID_SIZE);
+        if (gridX >= 0 && gridX < gridCols && gridY >= 0 && gridY < gridRows) {
+          const cellX = gridOffsetX + (gridX * gridSize);
+          const cellY = gridOffsetY + (gridY * gridSize);
 
           // Draw highlighted grid cell
           ctx.strokeStyle = 'rgba(76, 175, 80, 0.4)'; // Green highlight
           ctx.lineWidth = 2;
-          ctx.strokeRect(cellX + 2, cellY + 2, GRID_SIZE - 4, GRID_SIZE - 4);
+          ctx.strokeRect(cellX + 2, cellY + 2, gridSize - 4, gridSize - 4);
 
           ctx.fillStyle = 'rgba(76, 175, 80, 0.1)';
-          ctx.fillRect(cellX + 2, cellY + 2, GRID_SIZE - 4, GRID_SIZE - 4);
+          ctx.fillRect(cellX + 2, cellY + 2, gridSize - 4, gridSize - 4);
         }
       }
     }
@@ -181,7 +181,7 @@ export const GameCanvas: React.FC = () => {
 
   const drawNodes = useCallback((ctx: CanvasRenderingContext2D) => {
     nodes.forEach(node => {
-      const nodeData = GAME_DATA.nodeTypes[node.type];
+      const nodeData = gameData.nodeTypes[node.type];
       const isSelected = selectedNode === node.id;
       const commanderInfo = getNodeCommanderInfo(node.id);
       

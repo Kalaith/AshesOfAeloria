@@ -261,7 +261,7 @@ export type RequiredBy<T, K extends keyof T> = T & Required<Pick<T, K>>;
 
 // Configuration types
 export interface GameConfig {
-  balance: typeof import('../constants/gameBalance').GAME_BALANCE;
+  balance: typeof import('../constants/gameBalance').gameBalance;
   ui: {
     animationDuration: number;
     autoSaveInterval: number;

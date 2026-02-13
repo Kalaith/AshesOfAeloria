@@ -6,7 +6,7 @@
 import React from 'react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/EnhancedButton';
-import { GAME_DATA } from '../../data/gameData';
+import { gameData } from '../../data/gameData';
 import type { Commander } from '../../types/game';
 
 interface CommanderInfoProps {
@@ -58,8 +58,8 @@ export const CommanderInfo: React.FC<CommanderInfoProps> = ({
   availableNodes = [],
   className = ''
 }) => {
-  const commanderClass = GAME_DATA.commanderClasses[commander.class];
-  const race = GAME_DATA.races[commander.race];
+  const commanderClass = gameData.commanderClasses[commander.class];
+  const race = gameData.races[commander.race];
 
   const isAssigned = commander.assignedNode !== null;
   const healthPercentage = (commander.health / commander.maxHealth) * 100;

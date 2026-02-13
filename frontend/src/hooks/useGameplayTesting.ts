@@ -6,7 +6,7 @@
 
 import { useState, useCallback } from 'react';
 import { GameplayTester, runQuickBalanceTest, type BalanceReport } from '../ai/GameplayTester';
-import { AI_STRATEGIES } from '../ai/AIPlayer';
+import { aiStrategies } from '../ai/AIPlayer';
 
 export interface TestingState {
   isRunning: boolean;
@@ -74,7 +74,7 @@ export const useGameplayTesting = () => {
   }, []);
 
   const runAllStrategies = useCallback(async (iterations: number = 10) => {
-    const strategies = Object.keys(AI_STRATEGIES);
+    const strategies = Object.keys(aiStrategies);
     const results: BalanceReport[] = [];
 
     console.log(`🤖 Running comprehensive balance test across ${strategies.length} strategies...`);
@@ -131,7 +131,7 @@ export const useGameplayTesting = () => {
       (window as any).gameplayTesting = {
         runTest,
         runAllStrategies,
-        strategies: Object.keys(AI_STRATEGIES),
+        strategies: Object.keys(aiStrategies),
         runQuick: () => runTest('balanced', 10),
         runComprehensive: () => runAllStrategies(25),
         help: () => {
@@ -145,7 +145,7 @@ gameplayTesting.runAllStrategies(10)          - Test all strategies (10 games ea
 gameplayTesting.runComprehensive()            - Full test suite (25 games per strategy)
 gameplayTesting.strategies                    - List available strategies
 
-Available strategies: ${Object.keys(AI_STRATEGIES).join(', ')}
+Available strategies: ${Object.keys(aiStrategies).join(', ')}
 
 Example usage:
 > gameplayTesting.runTest('rushdown', 20)  // Test aggressive early-game strategy

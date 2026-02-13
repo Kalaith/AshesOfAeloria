@@ -6,7 +6,7 @@
 
 import { useCallback } from 'react';
 import { useGameStore } from '../stores/useGameStore';
-import { GAME_CONFIG, ERROR_MESSAGES, SUCCESS_MESSAGES } from '../constants';
+import { gameConfig, errorMessages, successMessages } from '../constants';
 import type { CommanderClass, Race } from '../types/game';
 
 export const useGameActions = () => {
@@ -39,7 +39,7 @@ export const useGameActions = () => {
     const success = addCommander(className, race);
     return {
       success,
-      message: success ? SUCCESS_MESSAGES.COMMANDER_RECRUITED : ERROR_MESSAGES.INSUFFICIENT_RESOURCES
+      message: success ? successMessages.COMMANDER_RECRUITED : errorMessages.INSUFFICIENT_RESOURCES
     };
   }, [addCommander]);
 
@@ -47,7 +47,7 @@ export const useGameActions = () => {
     const success = assignCommanderToNode(commanderId, nodeId);
     return {
       success,
-      message: success ? SUCCESS_MESSAGES.COMMANDER_ASSIGNED : ERROR_MESSAGES.NODE_AT_CAPACITY
+      message: success ? successMessages.COMMANDER_ASSIGNED : errorMessages.NODE_AT_CAPACITY
     };
   }, [assignCommanderToNode]);
 
@@ -67,11 +67,11 @@ export const useGameActions = () => {
   // Combat Actions
   const initiateAttack = useCallback((defenderNodeId: number): { success: boolean; message: string } => {
     if (selectedNode === null) {
-      return { success: false, message: ERROR_MESSAGES.NO_NODE_SELECTED };
+      return { success: false, message: errorMessages.NO_NODE_SELECTED };
     }
     
     if (!canAttackNode(defenderNodeId)) {
-      return { success: false, message: ERROR_MESSAGES.INVALID_ATTACK_TARGET };
+      return { success: false, message: errorMessages.INVALID_ATTACK_TARGET };
     }
 
     // Note: attackNode currently returns void, will be enhanced in Phase 2
@@ -85,7 +85,7 @@ export const useGameActions = () => {
   // Node Upgrades
   const upgradeSelectedNode = useCallback((): { success: boolean; message: string; cost?: any } => {
     if (selectedNode === null) {
-      return { success: false, message: ERROR_MESSAGES.NO_NODE_SELECTED };
+      return { success: false, message: errorMessages.NO_NODE_SELECTED };
     }
 
     const cost = getUpgradeCost(selectedNode);
@@ -94,7 +94,7 @@ export const useGameActions = () => {
     if (!canUpgrade) {
       return { 
         success: false, 
-        message: ERROR_MESSAGES.INSUFFICIENT_RESOURCES,
+        message: errorMessages.INSUFFICIENT_RESOURCES,
         cost 
       };
     }
@@ -102,7 +102,7 @@ export const useGameActions = () => {
     const success = upgradeNode(selectedNode);
     return {
       success,
-      message: success ? SUCCESS_MESSAGES.NODE_UPGRADED : ERROR_MESSAGES.INSUFFICIENT_RESOURCES,
+      message: success ? successMessages.NODE_UPGRADED : errorMessages.INSUFFICIENT_RESOURCES,
       cost
     };
   }, [selectedNode, getUpgradeCost, canUpgradeNode, upgradeNode]);
@@ -110,7 +110,7 @@ export const useGameActions = () => {
   // Turn Management
   const completeTurn = useCallback(() => {
     endTurn();
-    return { success: true, message: SUCCESS_MESSAGES.TURN_COMPLETED };
+    return { success: true, message: successMessages.TURN_COMPLETED };
   }, [endTurn]);
 
   const restartGame = useCallback(() => {

@@ -7,7 +7,7 @@
 import React from 'react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/EnhancedButton';
-import { GAME_DATA } from '../../data/gameData';
+import { gameData } from '../../data/gameData';
 import { calculateEffectiveGarrison } from '../../utils/gameLogic';
 import type { GameNode, Resources } from '../../types/game';
 
@@ -69,7 +69,7 @@ export const NodeInfo: React.FC<NodeInfoProps> = ({
   commanderInfo,
   className = ''
 }) => {
-  const nodeTypeData = GAME_DATA.nodeTypes[node.type];
+  const nodeTypeData = gameData.nodeTypes[node.type];
   
   // Calculate effective garrison with commander bonuses
   const effectiveGarrison = commanderInfo ? 
@@ -190,7 +190,7 @@ export const NodeInfo: React.FC<NodeInfoProps> = ({
                     leftIcon="⚔"
                     className="font-frontier font-bold"
                   >
-                    Assault {GAME_DATA.nodeTypes[target.type].name}
+                    Assault {gameData.nodeTypes[target.type].name}
                   </Button>
                 ))}
               </div>

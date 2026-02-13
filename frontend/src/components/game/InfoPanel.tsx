@@ -3,7 +3,7 @@ import React from 'react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { useGameStore } from '../../stores/useGameStore';
-import { GAME_DATA } from '../../data/gameData';
+import { gameData } from '../../data/gameData';
 
 export const InfoPanel: React.FC = () => {
   const selectedNode = useGameStore(state => state.selectedNode);
@@ -65,8 +65,8 @@ export const InfoPanel: React.FC = () => {
         {node ? (
           <div className="space-y-3 lg:space-y-4">
             <div className="flex items-center gap-2 lg:gap-3 p-2 lg:p-3 bg-gray-50 rounded-lg">
-              <span className="text-xl lg:text-2xl">{GAME_DATA.nodeTypes[node.type].icon}</span>
-              <span className="text-base lg:text-lg font-semibold text-gray-800">{GAME_DATA.nodeTypes[node.type].name}</span>
+              <span className="text-xl lg:text-2xl">{gameData.nodeTypes[node.type].icon}</span>
+              <span className="text-base lg:text-lg font-semibold text-gray-800">{gameData.nodeTypes[node.type].name}</span>
             </div>
             <div className="grid grid-cols-1 gap-2">
               <div className="flex justify-between items-center py-1">
@@ -89,18 +89,18 @@ export const InfoPanel: React.FC = () => {
               </div>
               <div className="flex justify-between items-center py-1">
                 <span className="text-xs lg:text-sm text-gray-600">Gold/Turn:</span>
-                <span className="text-xs lg:text-sm font-medium text-yellow-600">{GAME_DATA.nodeTypes[node.type].goldGeneration}</span>
+                <span className="text-xs lg:text-sm font-medium text-yellow-600">{gameData.nodeTypes[node.type].goldGeneration}</span>
               </div>
               <div className="flex justify-between items-center py-1">
                 <span className="text-xs lg:text-sm text-gray-600">Supplies/Turn:</span>
-                <span className="text-xs lg:text-sm font-medium text-green-600">{GAME_DATA.nodeTypes[node.type].suppliesGeneration}</span>
+                <span className="text-xs lg:text-sm font-medium text-green-600">{gameData.nodeTypes[node.type].suppliesGeneration}</span>
               </div>
               <div className="flex justify-between items-center py-1">
                 <span className="text-xs lg:text-sm text-gray-600">Mana/Turn:</span>
-                <span className="text-xs lg:text-sm font-medium text-purple-600">{GAME_DATA.nodeTypes[node.type].manaGeneration}</span>
+                <span className="text-xs lg:text-sm font-medium text-purple-600">{gameData.nodeTypes[node.type].manaGeneration}</span>
               </div>
             </div>
-            <p className="text-xs lg:text-sm text-gray-500 bg-gray-50 p-2 lg:p-3 rounded-lg">{GAME_DATA.nodeTypes[node.type].description}</p>
+            <p className="text-xs lg:text-sm text-gray-500 bg-gray-50 p-2 lg:p-3 rounded-lg">{gameData.nodeTypes[node.type].description}</p>
             
             {/* Commander Assignment Section - Only for player-owned nodes */}
             {node.owner === 'player' && (
@@ -152,7 +152,7 @@ export const InfoPanel: React.FC = () => {
                       {commanderInfo.current < commanderInfo.max && availableCommanders.length > 0 && (
                         <div className="space-y-2">
                           <div className="text-xs text-gray-600 mb-2">
-                            Assign commander to this {GAME_DATA.nodeTypes[node.type].name.toLowerCase()}:
+                            Assign commander to this {gameData.nodeTypes[node.type].name.toLowerCase()}:
                           </div>
                           {availableCommanders.slice(0, 3).map(availableCommander => (
                             <Button
@@ -182,7 +182,7 @@ export const InfoPanel: React.FC = () => {
                       {/* Show capacity status */}
                       {commanderInfo.current >= commanderInfo.max && (
                         <div className="text-xs text-gray-500 italic bg-gray-50 p-2 rounded">
-                          {GAME_DATA.nodeTypes[node.type].name} is at maximum commander capacity
+                          {gameData.nodeTypes[node.type].name} is at maximum commander capacity
                         </div>
                       )}
                       
@@ -250,8 +250,8 @@ export const InfoPanel: React.FC = () => {
                       className="w-full justify-start text-left"
                       onClick={() => handleAttack(targetNode.id)}
                     >
-                      <span className="mr-2">{GAME_DATA.nodeTypes[targetNode.type].icon}</span>
-                      Attack {GAME_DATA.nodeTypes[targetNode.type].name}
+                      <span className="mr-2">{gameData.nodeTypes[targetNode.type].icon}</span>
+                      Attack {gameData.nodeTypes[targetNode.type].name}
                     </Button>
                   ))}
                 </div>
@@ -262,18 +262,18 @@ export const InfoPanel: React.FC = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
               <span className="text-2xl">
-                {GAME_DATA.commanderClasses[commander.class].icon}
+                {gameData.commanderClasses[commander.class].icon}
               </span>
               <span className="text-lg font-semibold text-gray-800">{commander.name}</span>
             </div>
             <div className="grid grid-cols-1 gap-2">
               <div className="flex justify-between items-center py-1">
                 <span className="text-sm text-gray-600">Class:</span>
-                <span className="text-sm font-medium">{GAME_DATA.commanderClasses[commander.class].name}</span>
+                <span className="text-sm font-medium">{gameData.commanderClasses[commander.class].name}</span>
               </div>
               <div className="flex justify-between items-center py-1">
                 <span className="text-sm text-gray-600">Race:</span>
-                <span className="text-sm font-medium">{GAME_DATA.races[commander.race].name}</span>
+                <span className="text-sm font-medium">{gameData.races[commander.race].name}</span>
               </div>
               <div className="flex justify-between items-center py-1">
                 <span className="text-sm text-gray-600">Level:</span>
@@ -305,9 +305,9 @@ export const InfoPanel: React.FC = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <p className="text-sm text-gray-500 bg-gray-50 p-3 rounded-lg">{GAME_DATA.commanderClasses[commander.class].description}</p>
+              <p className="text-sm text-gray-500 bg-gray-50 p-3 rounded-lg">{gameData.commanderClasses[commander.class].description}</p>
               <p className="text-sm text-gray-500 bg-blue-50 p-3 rounded-lg">
-                <span className="font-medium text-blue-800">Special:</span> {GAME_DATA.commanderClasses[commander.class].specialAbility}
+                <span className="font-medium text-blue-800">Special:</span> {gameData.commanderClasses[commander.class].specialAbility}
               </p>
             </div>
             <div className="space-y-3 pt-2 border-t border-gray-200">

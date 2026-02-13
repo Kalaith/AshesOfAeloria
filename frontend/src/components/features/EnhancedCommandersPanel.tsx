@@ -8,7 +8,7 @@ import { Card } from '../ui/Card';
 import { Button } from '../ui/EnhancedButton';
 import { useGameActions } from '../../hooks/useGameActions';
 import { useGameStore } from '../../stores/useGameStore';
-import { GAME_DATA } from '../../data/gameData';
+import { gameData } from '../../data/gameData';
 import type { Commander } from '../../types/game';
 
 export const EnhancedCommandersPanel: React.FC = () => {
@@ -62,8 +62,8 @@ export const EnhancedCommandersPanel: React.FC = () => {
   const renderCommander = (commander: Commander) => {
     const isSelected = selectedCommander === commander.id;
     const assignedNode = getAssignedNode(commander);
-    const commanderClass = GAME_DATA.commanderClasses[commander.class];
-    const race = GAME_DATA.races[commander.race];
+    const commanderClass = gameData.commanderClasses[commander.class];
+    const race = gameData.races[commander.race];
     const playerNodes = getPlayerNodes();
 
     return (
@@ -111,7 +111,7 @@ export const EnhancedCommandersPanel: React.FC = () => {
         {/* Assignment Info */}
         {assignedNode && (
           <div className="text-xs text-dark-enhanced opacity-80 mb-2">
-            Assigned to {GAME_DATA.nodeTypes[assignedNode.type].name}
+            Assigned to {gameData.nodeTypes[assignedNode.type].name}
           </div>
         )}
 
@@ -143,7 +143,7 @@ export const EnhancedCommandersPanel: React.FC = () => {
                       handleAssign(commander.id, node.id);
                     }}
                   >
-                    → {GAME_DATA.nodeTypes[node.type].name}
+                    → {gameData.nodeTypes[node.type].name}
                   </Button>
                 ))}
                 {playerNodes.length > 2 && (

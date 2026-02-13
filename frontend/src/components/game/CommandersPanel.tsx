@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { useGameStore } from '../../stores/useGameStore';
-import { GAME_DATA } from '../../data/gameData';
+import { gameData } from '../../data/gameData';
 import type { Commander } from '../../types/game';
 
 interface CommandersPanelProps {
@@ -39,7 +39,7 @@ export const CommandersPanel: React.FC<CommandersPanelProps> = ({ onRecruitClick
   const getAssignedNodeName = (nodeId: number | null) => {
     if (!nodeId) return null;
     const node = nodes.find(n => n.id === nodeId);
-    return node ? `${GAME_DATA.nodeTypes[node.type].name} (${node.id})` : 'Unknown';
+    return node ? `${gameData.nodeTypes[node.type].name} (${node.id})` : 'Unknown';
   };
 
   const handleAssignCommander = (commanderId: number, nodeId: number) => {
@@ -156,7 +156,7 @@ export const CommandersPanel: React.FC<CommandersPanelProps> = ({ onRecruitClick
                                 onClick={() => handleAssignCommander(commander.id, node.id)}
                                 disabled={isAtCapacity}
                               >
-                                {GAME_DATA.nodeTypes[node.type].icon} {GAME_DATA.nodeTypes[node.type].name} ({node.id})
+                                {gameData.nodeTypes[node.type].icon} {gameData.nodeTypes[node.type].name} ({node.id})
                                 <span className="ml-auto text-xs opacity-70">
                                   {commanderInfo.current}/{commanderInfo.max}
                                 </span>
@@ -175,7 +175,7 @@ export const CommandersPanel: React.FC<CommandersPanelProps> = ({ onRecruitClick
                 <div className="px-2 lg:px-3 pb-2 lg:pb-3 border-t border-gray-200 bg-red-50">
                   <div className="mt-2 text-xs text-red-700">
                     <div className="font-medium mb-1">🛡️ Enemy Intelligence:</div>
-                    <div>Class: {GAME_DATA.commanderClasses[commander.class].name}</div>
+                    <div>Class: {gameData.commanderClasses[commander.class].name}</div>
                     <div>Attack: {commander.attack} • Defense: {commander.defense}</div>
                     {commander.assignedNode && (
                       <div className="mt-1 text-red-600 font-medium">

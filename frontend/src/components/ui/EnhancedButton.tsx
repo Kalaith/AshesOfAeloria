@@ -4,7 +4,7 @@
  */
 
 import React, { forwardRef } from 'react';
-import { UI_CONFIG } from '../../constants';
+import { uiConfig } from '../../constants';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'ghost';
@@ -16,7 +16,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   children: React.ReactNode;
 }
 
-const VARIANT_CLASSES = {
+const variantClassesByVariant = {
   primary: 'bg-mana text-light-enhanced border-mana hover:bg-mana-light hover:animate-ember-glow focus:ring-mana',
   secondary: 'bg-iron text-light-enhanced border-iron hover:bg-iron-light hover:animate-forge-flicker focus:ring-iron',
   success: 'bg-forest text-light-enhanced border-forest hover:bg-forest-light hover:animate-forge-flicker focus:ring-forest',
@@ -25,7 +25,7 @@ const VARIANT_CLASSES = {
   ghost: 'bg-transparent hover:bg-mana/10 text-dark-enhanced border-mana/30 focus:ring-mana'
 } as const;
 
-const SIZE_CLASSES = {
+const sizeClassesBySize = {
   xs: 'px-2 py-1 text-xs',
   sm: 'px-3 py-1.5 text-sm',
   md: 'px-4 py-2 text-sm',
@@ -47,8 +47,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
 }, ref) => {
   const baseClasses = 'inline-flex items-center justify-center border-2 font-frontier font-bold rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed';
   
-  const variantClasses = VARIANT_CLASSES[variant];
-  const sizeClasses = SIZE_CLASSES[size];
+  const variantClasses = variantClassesByVariant[variant];
+  const sizeClasses = sizeClassesBySize[size];
   const widthClasses = fullWidth ? 'w-full' : '';
   
   const combinedClassName = [
@@ -66,7 +66,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
       ref={ref}
       className={combinedClassName}
       disabled={isDisabled}
-      style={{ minHeight: `${UI_CONFIG.MIN_TOUCH_TARGET}px` }}
+      style={{ minHeight: `${uiConfig.MIN_TOUCH_TARGET}px` }}
       {...props}
     >
       {leftIcon && !loading && (

@@ -5,7 +5,7 @@
  */
 
 import type { GameState, GameNode, Commander, Resources } from '../types/game.d';
-import { GAME_DATA, GAME_CONSTANTS } from '../data/gameData';
+import { gameData, gameConstants } from '../data/gameData';
 import {
   calculateIncome,
   resolveBattle,
@@ -173,7 +173,7 @@ export class AIPlayer {
               target: playerNode.id,
               commanderId: availableCommanders[0].id,
               priority: 0.9,
-              reasoning: `Defend ${GAME_DATA.nodeTypes[playerNode.type].name} from enemy threat (${enemyStrength} vs ${playerStrength})`
+              reasoning: `Defend ${gameData.nodeTypes[playerNode.type].name} from enemy threat (${enemyStrength} vs ${playerStrength})`
             });
           } else if (gameState.resources.gold >= 150) {
             // Recruit emergency defenders
@@ -181,7 +181,7 @@ export class AIPlayer {
               type: 'recruit',
               commanderClass: 'knight', // Balanced defender
               priority: 0.85,
-              reasoning: `Recruit defender for threatened ${GAME_DATA.nodeTypes[playerNode.type].name}`
+              reasoning: `Recruit defender for threatened ${gameData.nodeTypes[playerNode.type].name}`
             });
           }
         }
@@ -201,14 +201,14 @@ export class AIPlayer {
       if (node.starLevel < 5) {
         const upgradeCost = this.calculateUpgradeCost(node);
         if (gameState.resources.gold >= upgradeCost) {
-          const income = GAME_DATA.nodeTypes[node.type].goldGeneration;
+          const income = gameData.nodeTypes[node.type].goldGeneration;
           const paybackTurns = upgradeCost / (income * 0.2); // Rough estimate
 
           decisions.push({
             type: 'upgrade',
             target: node.id,
             priority: Math.max(0.1, 0.7 - (paybackTurns / 50)), // Lower priority for long payback
-            reasoning: `Upgrade ${GAME_DATA.nodeTypes[node.type].name} (${upgradeCost} gold, ${paybackTurns.toFixed(1)} turn payback)`
+            reasoning: `Upgrade ${gameData.nodeTypes[node.type].name} (${upgradeCost} gold, ${paybackTurns.toFixed(1)} turn payback)`
           });
         }
       }
@@ -264,7 +264,7 @@ export class AIPlayer {
         type: 'attack',
         target: target.node.id,
         priority: (target.value / (target.difficulty + 0.1)) * 0.1, // Scale to 0-1 range
-        reasoning: `Attack ${GAME_DATA.nodeTypes[target.node.type].name} (value: ${target.value.toFixed(1)}, difficulty: ${target.difficulty.toFixed(2)})`
+        reasoning: `Attack ${gameData.nodeTypes[target.node.type].name} (value: ${target.value.toFixed(1)}, difficulty: ${target.difficulty.toFixed(2)})`
       });
     });
 
@@ -280,7 +280,7 @@ export class AIPlayer {
     // Check if we need more commanders
     const undefendedNodes = playerNodes.filter(node => {
       const defenders = playerCommanders.filter(c => c.assignedNode === node.id);
-      const capacity = GAME_CONSTANTS.COMMANDER_CAPACITIES[node.type];
+      const capacity = gameConstants.COMMANDER_CAPACITIES[node.type];
       return defenders.length < capacity;
     });
 
@@ -306,7 +306,7 @@ export class AIPlayer {
           target: bestNode.id,
           commanderId: commander.id,
           priority: 0.4,
-          reasoning: `Assign ${commander.name} to ${GAME_DATA.nodeTypes[bestNode.type].name} for optimal defense`
+          reasoning: `Assign ${commander.name} to ${gameData.nodeTypes[bestNode.type].name} for optimal defense`
         });
       }
     });
@@ -341,7 +341,7 @@ export class AIPlayer {
    * Calculate strategic value of a node
    */
   private calculateNodeValue(node: GameNode): number {
-    const nodeData = GAME_DATA.nodeTypes[node.type];
+    const nodeData = gameData.nodeTypes[node.type];
     let value = 0;
 
     // Economic value
@@ -389,7 +389,7 @@ export class AIPlayer {
 
     playerNodes.forEach(node => {
       const currentDefenders = allCommanders.filter(c => c.assignedNode === node.id);
-      const capacity = GAME_CONSTANTS.COMMANDER_CAPACITIES[node.type];
+      const capacity = gameConstants.COMMANDER_CAPACITIES[node.type];
 
       if (currentDefenders.length < capacity) {
         const threatLevel = this.calculateNodeThreatLevel(node);
@@ -458,7 +458,7 @@ export class AIPlayer {
 }
 
 // Predefined AI strategies for testing different scenarios
-export const AI_STRATEGIES: Record<string, AIStrategy> = {
+export const aiStrategies: Record<string, AIStrategy> = {
   aggressive: {
     name: 'Aggressive Expansion',
     description: 'Focuses on rapid territorial expansion and early attacks',

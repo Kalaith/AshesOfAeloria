@@ -55,7 +55,7 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
       case 'flag':
         return gameState.narrativeState?.narrativeFlags?.[parts[1]] || false;
 
-      case 'reputation':
+      case 'reputation': {
         const faction = parts[1];
         const operator = parts[2];
         const value = parseInt(parts[3]);
@@ -69,8 +69,9 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
           case '==': return reputation === value;
           default: return false;
         }
+      }
 
-      case 'resources':
+      case 'resources': {
         const resource = parts[1];
         const resOperator = parts[2];
         const resValue = parseInt(parts[3]);
@@ -84,14 +85,16 @@ export const StoryEventModal: React.FC<StoryEventModalProps> = ({
           case '==': return currentRes === resValue;
           default: return false;
         }
+      }
 
       case 'technology':
         return gameState.globalTechnologies?.includes(parts[1]) || false;
 
-      case 'scholars':
+      case 'scholars': {
         const requiredScholars = parseInt(parts[1]);
         const currentScholars = gameState.research?.scholarNetwork?.scholars?.length || 0;
         return currentScholars >= requiredScholars;
+      }
 
       default:
         return true; // Unknown requirements default to true
