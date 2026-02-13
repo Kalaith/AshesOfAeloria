@@ -808,7 +808,7 @@ export const useGameStore = create<GameStore>()(
         if (!node) return 0;
 
         // Base cost formula: 200 * starLevel * multiplier based on node type
-        const baseMultiplier = {
+        const baseMultiplier: Partial<Record<NodeType, number>> = {
           city: 1.5,
           fortress: 2.0,
           stronghold: 2.5,
@@ -816,7 +816,9 @@ export const useGameStore = create<GameStore>()(
           shrine: 1.8,
         };
 
-        return Math.floor(200 * node.starLevel * baseMultiplier[node.type]);
+        return Math.floor(
+          200 * node.starLevel * (baseMultiplier[node.type] ?? 1.0),
+        );
       },
       canUpgradeNode: (nodeId) => {
         const state = get();
@@ -1041,13 +1043,14 @@ export const useGameStore = create<GameStore>()(
           nodes: state.nodes.map((node) => {
             if (node.owner === "enemy") {
               // Enemy gets slightly less reinforcement than player
-              const baseReinforcement = {
+              const reinforcementsByType: Partial<Record<NodeType, number>> = {
                 city: 12,
                 fortress: 8,
                 stronghold: 16,
                 resource: 6,
                 shrine: 4,
-              }[node.type];
+              };
+              const baseReinforcement = reinforcementsByType[node.type] ?? 4;
 
               const reinforcement = Math.floor(
                 baseReinforcement * node.starLevel,
@@ -1105,13 +1108,14 @@ export const useGameStore = create<GameStore>()(
           nodes: state.nodes.map((node) => {
             if (node.owner === "player") {
               // Add garrison reinforcement based on node type and star level
-              const baseReinforcement = {
+              const reinforcementsByType: Partial<Record<NodeType, number>> = {
                 city: 15,
                 fortress: 10,
                 stronghold: 20,
                 resource: 8,
                 shrine: 5,
-              }[node.type];
+              };
+              const baseReinforcement = reinforcementsByType[node.type] ?? 5;
 
               const reinforcement = Math.floor(
                 baseReinforcement * node.starLevel,

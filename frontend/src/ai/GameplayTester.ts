@@ -11,7 +11,13 @@ import {
   type GameTestResult,
   type AIDecision,
 } from "./AIPlayer";
-import type { GameState, Resources } from "../types/game.d";
+import type {
+  GameState,
+  Resources,
+  GameNode,
+  NodeType,
+  CommanderClass,
+} from "../types/game.d";
 import {
   generateInitialMap,
   createCommander,
@@ -45,8 +51,22 @@ export interface BalanceReport {
 export class GameplayTester {
   private results: GameTestResult[] = [];
   private balanceIssues: Set<string> = new Set();
+  private readonly recruitableCommanderClasses: readonly CommanderClass[] = [
+    "knight",
+    "mage",
+    "ranger",
+    "warlord",
+  ] as const;
 
   constructor() {}
+
+  private isRecruitableCommanderClass(
+    value: string,
+  ): value is (typeof this.recruitableCommanderClasses)[number] {
+    return (this.recruitableCommanderClasses as readonly string[]).includes(
+      value,
+    );
+  }
 
   /**
    * Run automated gameplay tests
@@ -488,8 +508,8 @@ export class GameplayTester {
     // Find all potential targets (player and neutral nodes)
     const allTargets = [...playerNodes, ...neutralNodes];
     const attackOpportunities: Array<{
-      attacker: any;
-      target: any;
+      attacker: GameNode;
+      target: GameNode;
       strength: number;
       defenderStrength: number;
       advantage: number;
@@ -631,16 +651,10 @@ export class GameplayTester {
       switch (decision.type) {
         case "recruit":
           if (decision.commanderClass) {
-            const commanderClasses = [
-              "knight",
-              "mage",
-              "ranger",
-              "warlord",
-            ] as const;
-            const validClass = commanderClasses.includes(
-              decision.commanderClass as any,
+            const validClass = this.isRecruitableCommanderClass(
+              decision.commanderClass,
             )
-              ? (decision.commanderClass as any)
+              ? decision.commanderClass
               : "knight";
 
             // Get actual cost from game data
@@ -900,8 +914,8 @@ export class GameplayTester {
   /**
    * Calculate upgrade cost for a node
    */
-  private calculateUpgradeCost(node: any): number {
-    const baseMultiplier = {
+  private calculateUpgradeCost(node: Pick<GameNode, "starLevel" | "type">): number {
+    const baseMultiplier: Partial<Record<NodeType, number>> = {
       city: 1.5,
       fortress: 2.0,
       stronghold: 2.5,
@@ -928,14 +942,14 @@ export class GameplayTester {
     // Reinforce garrisons (both player and enemy)
     gameState.nodes = gameState.nodes.map((node) => {
       if (node.owner === "player" || node.owner === "enemy") {
-        const baseReinforcement =
-          {
-            city: 20,
-            fortress: 15,
-            stronghold: 25,
-            resource: 12,
-            shrine: 8,
-          }[node.type] || 8;
+        const reinforcementsByType: Partial<Record<NodeType, number>> = {
+          city: 20,
+          fortress: 15,
+          stronghold: 25,
+          resource: 12,
+          shrine: 8,
+        };
+        const baseReinforcement = reinforcementsByType[node.type] || 8;
 
         const reinforcement = Math.floor(baseReinforcement * node.starLevel);
         const maxGarrison = 300 + node.starLevel * 75; // Higher max garrison

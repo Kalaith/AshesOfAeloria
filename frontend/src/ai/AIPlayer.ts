@@ -9,6 +9,7 @@ import type {
   GameNode,
   Commander,
   Resources,
+  NodeType,
 } from "../types/game.d";
 import { gameData, gameConstants } from "../data/gameData";
 import {
@@ -407,7 +408,7 @@ export class AIPlayer {
    * Calculate upgrade cost for a node
    */
   private calculateUpgradeCost(node: GameNode): number {
-    const baseMultiplier = {
+    const baseMultiplier: Partial<Record<NodeType, number>> = {
       city: 1.5,
       fortress: 2.0,
       stronghold: 2.5,
