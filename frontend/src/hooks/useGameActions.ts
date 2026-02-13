@@ -7,7 +7,7 @@
 import { useCallback } from "react";
 import { useGameStore } from "../stores/useGameStore";
 import { gameConfig, errorMessages, successMessages } from "../constants";
-import type { CommanderClass, Race } from "../types/game";
+import type { CommanderClass, Race, GameNode } from "../types/game";
 
 export const useGameActions = () => {
   // Store selectors
@@ -168,7 +168,12 @@ export const useGameActions = () => {
       node,
       commanderInfo,
       upgradeInfo,
-      attackableNodes: getAttackableNodes(node),
+      attackableNodes: node.connections
+        .map((id: number) => nodes.find((n) => n.id === id))
+        .filter((n): n is GameNode => {
+          if (n === undefined) return false;
+          return n.owner !== "player";
+        }),
     };
   }, [
     selectedNode,
@@ -176,7 +181,6 @@ export const useGameActions = () => {
     getNodeCommanderInfo,
     canUpgradeNode,
     getUpgradeCost,
-    getAttackableNodes,
   ]);
 
   const getSelectedCommanderInfo = useCallback(() => {
@@ -189,11 +193,14 @@ export const useGameActions = () => {
   }, [commanders]);
 
   const getAttackableNodes = useCallback(
-    (node: any) => {
+    (node: GameNode) => {
       if (!node || node.owner !== "player") return [];
       return node.connections
         .map((id: number) => nodes.find((n) => n.id === id))
-        .filter((n: any) => n && n.owner !== "player");
+        .filter((n): n is GameNode => {
+          if (n === undefined) return false;
+          return n.owner !== "player";
+        });
     },
     [nodes],
   );

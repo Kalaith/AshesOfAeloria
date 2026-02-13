@@ -7,9 +7,11 @@ import React from "react";
 import { Card } from "../ui/Card";
 import type { Resources } from "../../types/game";
 
+type Income = Pick<Resources, "gold" | "supplies" | "mana">;
+
 interface ResourceDisplayProps {
   resources: Resources;
-  income?: Resources;
+  income?: Income;
   showIncome?: boolean;
   className?: string;
 }

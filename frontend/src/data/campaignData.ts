@@ -60,7 +60,7 @@ export interface EventTrigger {
     | "diplomacy"
     | "random";
   condition: string;
-  value?: number;
+  value?: number | string;
 }
 
 export interface EventChoice {
@@ -78,6 +78,8 @@ export interface EventConsequence {
     | "resources"
     | "population"
     | "research"
+    | "culture"
+    | "special"
     | "diplomacy"
     | "story"
     | "unlock";
@@ -137,6 +139,7 @@ export interface ResearchEffect {
     | "military"
     | "population"
     | "culture"
+    | "diplomacy"
     | "unlock"
     | "special";
   target: string;

@@ -167,8 +167,10 @@ export const gameBalance = {
 // Derived constants
 export const commanderClasses = Object.keys(
   gameBalance.COMMANDER_STATS,
-) as const;
-export const nodeTypes = Object.keys(gameBalance.NODE_GENERATION) as const;
+) as ReadonlyArray<keyof typeof gameBalance.COMMANDER_STATS>;
+export const nodeTypes = Object.keys(
+  gameBalance.NODE_GENERATION,
+) as ReadonlyArray<keyof typeof gameBalance.NODE_GENERATION>;
 export const victoryConditionTypes = gameBalance.CAMPAIGN.victoryConditionTypes;
 
 export type CommanderClassName = keyof typeof gameBalance.COMMANDER_STATS;

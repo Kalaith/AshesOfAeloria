@@ -149,7 +149,7 @@ export const useDebouncedAsyncOperation = <T>(
   options: UseAsyncOperationOptions<T> = {},
 ) => {
   const asyncOp = useAsyncOperation(operation, options);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const debouncedExecute = useCallback(() => {
     if (timeoutRef.current) {

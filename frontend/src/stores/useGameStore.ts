@@ -865,9 +865,17 @@ export const useGameStore = create<GameStore>()(
         return true;
       },
       updateResources: (newResources) =>
-        set((state) => ({
-          resources: { ...state.resources, ...newResources },
-        })),
+        set((state) => {
+          const mergedResources: Resources = { ...state.resources };
+          (Object.entries(newResources) as Array<
+            [keyof Resources, number | undefined]
+          >).forEach(([key, value]) => {
+            if (typeof value === "number") {
+              mergedResources[key] = value;
+            }
+          });
+          return { resources: mergedResources };
+        }),
       nextTurn: () => {
         set((state) => ({
           turn: state.turn + 1,
@@ -1100,6 +1108,7 @@ export const useGameStore = create<GameStore>()(
 
         set((state) => ({
           resources: {
+            ...state.resources,
             gold: state.resources.gold + income.gold,
             supplies: state.resources.supplies + income.supplies,
             mana: state.resources.mana + income.mana,

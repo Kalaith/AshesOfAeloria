@@ -115,8 +115,10 @@ export const canAffordCommander = (
   return resources.gold >= gameData.commanderClasses[className].cost;
 };
 
-export const calculateIncome = (nodes: GameNode[]): Resources => {
-  let income: Resources = { gold: 0, supplies: 0, mana: 0 };
+export type Income = Pick<Resources, "gold" | "supplies" | "mana">;
+
+export const calculateIncome = (nodes: GameNode[]): Income => {
+  const income: Income = { gold: 0, supplies: 0, mana: 0 };
 
   nodes
     .filter((node) => node.owner === "player")
@@ -1277,7 +1279,7 @@ export const generateInitialPopulationCenters = (
       nodeId: node.id,
       name: node.name || `Settlement ${node.id}`,
       type: node.type === "city" ? ("city" as const) : ("settlement" as const),
-      population: node.population,
+      population: node.population ?? generateInitialPopulation(node.type, node.owner),
       infrastructure: {
         roads: 50,
         housing: 60,

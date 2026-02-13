@@ -526,15 +526,21 @@ export class StoryEventSystem {
     );
     if (playerNodes.length > 0) {
       const largestNode = playerNodes.reduce((largest, node) =>
-        node.population.total > largest.population.total ? node : largest,
+        (node.population?.total ?? 0) > (largest.population?.total ?? 0)
+          ? node
+          : largest,
       );
+
+      if (!largestNode.population) return;
 
       const target = consequence.target as keyof typeof largestNode.population;
       if (target && target in largestNode.population) {
-        (largestNode.population as any)[target] = Math.max(
-          0,
-          (largestNode.population as any)[target] + consequence.value,
-        );
+        const currentValue = largestNode.population[target];
+        if (typeof currentValue === "number") {
+          (
+            largestNode.population as unknown as Record<string, number>
+          )[target as string] = Math.max(0, currentValue + consequence.value);
+        }
       }
     }
   }

@@ -65,17 +65,7 @@ export type Alignment =
   | "lawful_evil"
   | "neutral_evil"
   | "chaotic_evil";
-export type Technology =
-  | "agriculture"
-  | "metalworking"
-  | "magic"
-  | "engineering"
-  | "medicine"
-  | "architecture"
-  | "warfare"
-  | "trade"
-  | "navigation"
-  | "scholarship";
+export type Technology = string;
 export type EnvironmentState =
   | "pristine"
   | "stable"
@@ -153,6 +143,7 @@ export interface Resources {
   food: number;
   energy: number;
   artifacts: number;
+  [key: string]: number;
 }
 
 export interface Army {
@@ -160,10 +151,10 @@ export interface Army {
   archers: number;
   cavalry: number;
   mages: number;
-  engineers: number;
-  scouts: number;
-  healers: number;
-  specialists: number;
+  engineers?: number;
+  scouts?: number;
+  healers?: number;
+  specialists?: number;
 }
 
 export interface Commander {
@@ -207,29 +198,29 @@ export interface GameNode {
   starLevel: number;
   garrison: number;
   connections: number[];
-  name: string;
-  description: string;
-  population: Population;
-  buildings: Building[];
-  technologies: Technology[];
-  environmentState: EnvironmentState;
-  corruption: number;
-  culturalInfluence: Record<Faction, number>;
-  tradeRoutes: TradeRoute[];
-  defenses: Defense[];
-  projects: ConstructionProject[];
-  resources: NodeResources;
-  history: HistoricalEvent[];
-  artifacts: Artifact[];
-  specialFeatures: string[];
-  climate: ClimateData;
-  faction: Faction | null;
-  politicalInfluence: Record<Faction, number>;
-  economicValue: number;
-  strategicValue: number;
-  lastUpgraded: number;
-  constructionQueue: ConstructionProject[];
-  researchQueue: ResearchProject[];
+  name?: string;
+  description?: string;
+  population?: Population;
+  buildings?: Building[];
+  technologies?: Technology[];
+  environmentState?: EnvironmentState;
+  corruption?: number;
+  culturalInfluence?: Record<string, number>;
+  tradeRoutes?: TradeRoute[];
+  defenses?: Defense[];
+  projects?: ConstructionProject[];
+  resources?: NodeResources;
+  history?: HistoricalEvent[];
+  artifacts?: Artifact[];
+  specialFeatures?: string[];
+  climate?: ClimateData;
+  faction?: Faction | null;
+  politicalInfluence?: Record<string, number>;
+  economicValue?: number;
+  strategicValue?: number;
+  lastUpgraded?: number;
+  constructionQueue?: ConstructionProject[];
+  researchQueue?: ResearchProject[];
 }
 
 export interface BattleResult {
@@ -288,12 +279,12 @@ export interface GameState {
 }
 
 export interface GameData {
-  nodeTypes: Record<NodeType, NodeTypeData>;
-  commanderClasses: Record<CommanderClass, CommanderClassData>;
-  races: Record<Race, RaceData>;
-  troopTypes: Record<TroopType, TroopTypeData>;
-  factions: Record<Faction, FactionInfo>;
-  technologies: Record<Technology, TechnologyInfo>;
+  nodeTypes: Record<string, NodeTypeData>;
+  commanderClasses: Record<string, CommanderClassData>;
+  races: Record<string, RaceData>;
+  troopTypes: Record<string, TroopTypeData>;
+  factions: Record<string, FactionInfo>;
+  technologies: Record<string, TechnologyInfo>;
   buildings: Record<string, BuildingInfo>;
   artifacts: Record<string, ArtifactInfo>;
   events: Record<string, EventTemplate>;
@@ -613,7 +604,7 @@ export interface FactionAction {
 }
 
 export interface DiplomaticRelations {
-  playerFactionRelations: Record<Faction, number>;
+  playerFactionRelations: Record<string, number>;
   factionRelations: Record<string, number>; // faction1_faction2 -> relation
   activeNegotiations: Negotiation[];
   treaties: Treaty[];
@@ -1448,7 +1439,7 @@ export interface EventEffect {
 export interface EventTemplate {
   title: string;
   description: string;
-  type: string;
+  type: GameEvent["type"];
   conditions: EventCondition[];
   choices: EventChoice[];
   effects: EventEffect[];
