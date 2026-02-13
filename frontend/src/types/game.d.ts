@@ -1,18 +1,106 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Core game types for Ashes of Aeloria - Comprehensive World Rebuilding System
-export type Owner = 'player' | 'enemy' | 'neutral' | 'faction';
-export type Phase = 'player' | 'enemy' | 'upkeep' | 'events' | 'diplomacy';
-export type NodeType = 'city' | 'resource' | 'fortress' | 'shrine' | 'stronghold' | 'settlement' | 'ruins' | 'laboratory' | 'sanctuary' | 'mine' | 'farm' | 'workshop' | 'library' | 'monument';
-export type CommanderClass = 'knight' | 'mage' | 'ranger' | 'warlord' | 'scholar' | 'engineer' | 'diplomat' | 'explorer' | 'architect' | 'healer';
-export type Race = 'human' | 'elf' | 'orc' | 'undead' | 'dwarf' | 'dragonkin' | 'elementals' | 'beastkin';
-export type TroopType = 'soldiers' | 'archers' | 'cavalry' | 'mages' | 'engineers' | 'scouts' | 'healers' | 'specialists';
-export type Faction = 'ironborn' | 'mystics' | 'merchants' | 'nomads' | 'scholars' | 'rebels' | 'guardians' | 'survivors';
-export type Alignment = 'lawful_good' | 'neutral_good' | 'chaotic_good' | 'lawful_neutral' | 'neutral' | 'chaotic_neutral' | 'lawful_evil' | 'neutral_evil' | 'chaotic_evil';
-export type Technology = 'agriculture' | 'metalworking' | 'magic' | 'engineering' | 'medicine' | 'architecture' | 'warfare' | 'trade' | 'navigation' | 'scholarship';
-export type EnvironmentState = 'pristine' | 'stable' | 'degraded' | 'corrupted' | 'hostile' | 'recovering';
-export type Weather = 'clear' | 'rain' | 'storm' | 'fog' | 'snow' | 'heat_wave' | 'ash_fall' | 'magical_storm';
-export type Season = 'spring' | 'summer' | 'autumn' | 'winter';
-export type VictoryType = 'territorial' | 'technological' | 'cultural' | 'diplomatic' | 'economic' | 'population' | 'magical';
+export type Owner = "player" | "enemy" | "neutral" | "faction";
+export type Phase = "player" | "enemy" | "upkeep" | "events" | "diplomacy";
+export type NodeType =
+  | "city"
+  | "resource"
+  | "fortress"
+  | "shrine"
+  | "stronghold"
+  | "settlement"
+  | "ruins"
+  | "laboratory"
+  | "sanctuary"
+  | "mine"
+  | "farm"
+  | "workshop"
+  | "library"
+  | "monument";
+export type CommanderClass =
+  | "knight"
+  | "mage"
+  | "ranger"
+  | "warlord"
+  | "scholar"
+  | "engineer"
+  | "diplomat"
+  | "explorer"
+  | "architect"
+  | "healer";
+export type Race =
+  | "human"
+  | "elf"
+  | "orc"
+  | "undead"
+  | "dwarf"
+  | "dragonkin"
+  | "elementals"
+  | "beastkin";
+export type TroopType =
+  | "soldiers"
+  | "archers"
+  | "cavalry"
+  | "mages"
+  | "engineers"
+  | "scouts"
+  | "healers"
+  | "specialists";
+export type Faction =
+  | "ironborn"
+  | "mystics"
+  | "merchants"
+  | "nomads"
+  | "scholars"
+  | "rebels"
+  | "guardians"
+  | "survivors";
+export type Alignment =
+  | "lawful_good"
+  | "neutral_good"
+  | "chaotic_good"
+  | "lawful_neutral"
+  | "neutral"
+  | "chaotic_neutral"
+  | "lawful_evil"
+  | "neutral_evil"
+  | "chaotic_evil";
+export type Technology =
+  | "agriculture"
+  | "metalworking"
+  | "magic"
+  | "engineering"
+  | "medicine"
+  | "architecture"
+  | "warfare"
+  | "trade"
+  | "navigation"
+  | "scholarship";
+export type EnvironmentState =
+  | "pristine"
+  | "stable"
+  | "degraded"
+  | "corrupted"
+  | "hostile"
+  | "recovering";
+export type Weather =
+  | "clear"
+  | "rain"
+  | "storm"
+  | "fog"
+  | "snow"
+  | "heat_wave"
+  | "ash_fall"
+  | "magical_storm";
+export type Season = "spring" | "summer" | "autumn" | "winter";
+export type VictoryType =
+  | "territorial"
+  | "technological"
+  | "cultural"
+  | "diplomatic"
+  | "economic"
+  | "population"
+  | "magical";
 
 export interface NodeTypeData {
   name: string;
@@ -154,7 +242,7 @@ export interface BattleResult {
 
 export interface BattleLogEntry {
   timestamp: number;
-  type: 'info' | 'combat' | 'victory' | 'defeat' | 'recruitment';
+  type: "info" | "combat" | "victory" | "defeat" | "recruitment";
   message: string;
 }
 
@@ -268,7 +356,13 @@ export interface Building {
 }
 
 export interface BuildingEffect {
-  type: 'resource_production' | 'population_bonus' | 'military_bonus' | 'cultural_bonus' | 'research_bonus' | 'trade_bonus';
+  type:
+    | "resource_production"
+    | "population_bonus"
+    | "military_bonus"
+    | "cultural_bonus"
+    | "research_bonus"
+    | "trade_bonus";
   value: number;
   target?: string;
 }
@@ -287,7 +381,13 @@ export interface TechnologyInfo {
 }
 
 export interface TechnologyEffect {
-  type: 'resource_bonus' | 'building_unlock' | 'unit_bonus' | 'population_bonus' | 'trade_bonus' | 'exploration_bonus';
+  type:
+    | "resource_bonus"
+    | "building_unlock"
+    | "unit_bonus"
+    | "population_bonus"
+    | "trade_bonus"
+    | "exploration_bonus";
   value: number;
   target?: string;
 }
@@ -365,8 +465,16 @@ export interface ExplorationData {
 export interface Ruin {
   id: string;
   nodeId: number;
-  type: 'temple' | 'fortress' | 'city' | 'laboratory' | 'tomb' | 'shrine' | 'library' | 'workshop';
-  size: 'small' | 'medium' | 'large' | 'massive';
+  type:
+    | "temple"
+    | "fortress"
+    | "city"
+    | "laboratory"
+    | "tomb"
+    | "shrine"
+    | "library"
+    | "workshop";
+  size: "small" | "medium" | "large" | "massive";
   danger: number;
   explorationProgress: number;
   totalExploration: number;
@@ -380,7 +488,7 @@ export interface Ruin {
 
 export interface Secret {
   id: string;
-  type: 'historical' | 'technological' | 'magical' | 'political' | 'cultural';
+  type: "historical" | "technological" | "magical" | "political" | "cultural";
   importance: number;
   discoveredBy: string;
   discoveryTurn: number;
@@ -396,7 +504,7 @@ export interface Expedition {
   objective: string;
   progress: number;
   duration: number;
-  status: 'preparing' | 'active' | 'returning' | 'completed' | 'failed';
+  status: "preparing" | "active" | "returning" | "completed" | "failed";
   supplies: number;
   discoveries: string[];
   risks: string[];
@@ -497,7 +605,7 @@ export interface FactionData {
 }
 
 export interface FactionAction {
-  type: 'expand' | 'trade' | 'research' | 'diplomacy' | 'military' | 'cultural';
+  type: "expand" | "trade" | "research" | "diplomacy" | "military" | "cultural";
   target?: string;
   progress: number;
   duration: number;
@@ -520,7 +628,7 @@ export interface Negotiation {
   participants: string[];
   topic: string;
   proposals: Proposal[];
-  status: 'active' | 'completed' | 'failed' | 'suspended';
+  status: "active" | "completed" | "failed" | "suspended";
   timeRemaining: number;
   successChance: number;
 }
@@ -557,7 +665,7 @@ export interface TreatyViolation {
 
 export interface Agreement {
   id: string;
-  type: 'trade' | 'military' | 'research' | 'cultural' | 'territorial';
+  type: "trade" | "military" | "research" | "cultural" | "territorial";
   partner: string;
   terms: string[];
   benefits: string[];
@@ -609,7 +717,7 @@ export interface Market {
 
 export interface MarketTrend {
   resource: string;
-  direction: 'rising' | 'falling' | 'stable' | 'volatile';
+  direction: "rising" | "falling" | "stable" | "volatile";
   strength: number;
   duration: number;
   causes: string[];
@@ -636,7 +744,7 @@ export interface Caravan {
   value: number;
   guards: number;
   position: number; // 0-100% along route
-  status: 'traveling' | 'trading' | 'resting' | 'attacked' | 'lost';
+  status: "traveling" | "trading" | "resting" | "attacked" | "lost";
 }
 
 export interface Merchant {
@@ -671,7 +779,7 @@ export interface EconomicIndicators {
 }
 
 export interface EconomicCycle {
-  phase: 'growth' | 'peak' | 'recession' | 'recovery';
+  phase: "growth" | "peak" | "recession" | "recovery";
   duration: number;
   intensity: number;
   effects: Record<string, number>;
@@ -736,7 +844,7 @@ export interface WeatherPattern {
 }
 
 export interface WeatherEffect {
-  type: 'travel' | 'combat' | 'production' | 'health' | 'morale' | 'trade';
+  type: "travel" | "combat" | "production" | "health" | "morale" | "trade";
   modifier: number;
   description: string;
 }
@@ -775,7 +883,15 @@ export interface MagicalWeatherInfluence {
 
 export interface NaturalDisaster {
   id: string;
-  type: 'earthquake' | 'flood' | 'drought' | 'plague' | 'famine' | 'volcanic' | 'storm' | 'wildfire';
+  type:
+    | "earthquake"
+    | "flood"
+    | "drought"
+    | "plague"
+    | "famine"
+    | "volcanic"
+    | "storm"
+    | "wildfire";
   severity: number;
   location: number[];
   duration: number;
@@ -786,13 +902,18 @@ export interface NaturalDisaster {
 }
 
 export interface DisasterEffect {
-  type: 'population' | 'infrastructure' | 'resources' | 'morale' | 'environment';
+  type:
+    | "population"
+    | "infrastructure"
+    | "resources"
+    | "morale"
+    | "environment";
   impact: number;
   permanent: boolean;
 }
 
 export interface ClimateChange {
-  trend: 'warming' | 'cooling' | 'stabilizing' | 'fluctuating';
+  trend: "warming" | "cooling" | "stabilizing" | "fluctuating";
   rate: number;
   causes: string[];
   effects: ClimateEffect[];
@@ -991,7 +1112,7 @@ export interface Festival {
 }
 
 export interface FestivalEffect {
-  type: 'morale' | 'culture' | 'economy' | 'diplomacy' | 'research';
+  type: "morale" | "culture" | "economy" | "diplomacy" | "research";
   value: number;
   duration: number;
 }
@@ -1051,7 +1172,12 @@ export interface EnvironmentalRestoration {
 export interface RestorationProject {
   id: string;
   name: string;
-  type: 'reforestation' | 'soil_healing' | 'water_purification' | 'species_reintroduction' | 'habitat_restoration';
+  type:
+    | "reforestation"
+    | "soil_healing"
+    | "water_purification"
+    | "species_reintroduction"
+    | "habitat_restoration";
   location: number;
   progress: number;
   required: number;
@@ -1089,7 +1215,7 @@ export interface Item {
   id: string;
   name: string;
   type: string;
-  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'artifact';
+  rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "artifact";
   stats: Record<string, number>;
   effects: ItemEffect[];
   durability: number;
@@ -1124,7 +1250,7 @@ export interface Artifact {
 export interface ArtifactEffect {
   type: string;
   value: number;
-  scope: 'personal' | 'local' | 'regional' | 'global';
+  scope: "personal" | "local" | "regional" | "global";
   permanent: boolean;
   cost?: string;
 }
@@ -1150,7 +1276,7 @@ export interface ArtifactInfo {
 
 export interface Treasure {
   id: string;
-  type: 'gold' | 'artifact' | 'knowledge' | 'resource' | 'equipment';
+  type: "gold" | "artifact" | "knowledge" | "resource" | "equipment";
   value: number;
   rarity: string;
   description: string;
@@ -1177,7 +1303,7 @@ export interface Trap {
 // Character Development
 export interface PersonalityTrait {
   name: string;
-  type: 'positive' | 'negative' | 'neutral';
+  type: "positive" | "negative" | "neutral";
   strength: number;
   effects: TraitEffect[];
   conflicts: string[];
@@ -1195,8 +1321,15 @@ export interface Quest {
   id: string;
   title: string;
   description: string;
-  type: 'main' | 'side' | 'personal' | 'faction' | 'exploration' | 'combat' | 'diplomacy';
-  status: 'available' | 'active' | 'completed' | 'failed' | 'abandoned';
+  type:
+    | "main"
+    | "side"
+    | "personal"
+    | "faction"
+    | "exploration"
+    | "combat"
+    | "diplomacy";
+  status: "available" | "active" | "completed" | "failed" | "abandoned";
   objectives: Objective[];
   rewards: QuestReward[];
   consequences: string[];
@@ -1219,7 +1352,14 @@ export interface Objective {
 }
 
 export interface QuestReward {
-  type: 'experience' | 'resources' | 'item' | 'relationship' | 'knowledge' | 'reputation' | 'territory';
+  type:
+    | "experience"
+    | "resources"
+    | "item"
+    | "relationship"
+    | "knowledge"
+    | "reputation"
+    | "territory";
   value: number;
   item?: string;
   target?: string;
@@ -1246,7 +1386,14 @@ export interface GameEvent {
   id: string;
   title: string;
   description: string;
-  type: 'random' | 'scripted' | 'consequence' | 'seasonal' | 'diplomatic' | 'technological' | 'cultural';
+  type:
+    | "random"
+    | "scripted"
+    | "consequence"
+    | "seasonal"
+    | "diplomatic"
+    | "technological"
+    | "cultural";
   probability: number;
   conditions: EventCondition[];
   choices: EventChoice[];
@@ -1475,7 +1622,7 @@ export interface Achievement {
   name: string;
   description: string;
   category: string;
-  difficulty: 'easy' | 'medium' | 'hard' | 'legendary';
+  difficulty: "easy" | "medium" | "hard" | "legendary";
   requirements: AchievementRequirement[];
   rewards: AchievementReward[];
   hidden: boolean;
@@ -1769,7 +1916,7 @@ export interface PopulationCenter {
   id: string;
   nodeId: number;
   name: string;
-  type: 'village' | 'town' | 'city' | 'metropolis' | 'settlement' | 'outpost';
+  type: "village" | "town" | "city" | "metropolis" | "settlement" | "outpost";
   population: Population;
   infrastructure: Infrastructure;
   services: Service[];
@@ -1906,4 +2053,3 @@ export interface BuildingInfo {
   workerRequirement: number;
   specialRequirements: string[];
 }
-

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, prefer-const */
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import type {
   GameState,
   Resources,
@@ -33,8 +33,8 @@ import type {
   TradeNetwork,
   PoliticalSituation,
   MilitaryIntelligence,
-  HistoricalRecord
-} from '../types/game';
+  HistoricalRecord,
+} from "../types/game";
 import {
   createCommander,
   canAffordCommander,
@@ -63,20 +63,20 @@ import {
   generateInitialPopulationCenters,
   generateInitialTradeNetworks,
   generateInitialPoliticalSituation,
-  generateInitialMilitaryIntelligence
-} from '../utils/gameLogic';
-import { gameData, gameConstants } from '../data/gameData';
-import { StoryEventSystem } from '../systems/StoryEventSystem';
+  generateInitialMilitaryIntelligence,
+} from "../utils/gameLogic";
+import { gameData, gameConstants } from "../data/gameData";
+import { StoryEventSystem } from "../systems/StoryEventSystem";
 
 // Initial game state with comprehensive world rebuilding systems
 const getInitialState = (): GameState => {
   // Create initial player and enemy commanders
   const initialCommanders = [
     // Player starts with one commander
-    createCommander(1, 'knight', 'human', 'player'),
+    createCommander(1, "knight", "human", "player"),
     // Enemy commanders
-    createCommander(1000, 'knight', 'orc', 'enemy'),
-    createCommander(1001, 'mage', 'orc', 'enemy')
+    createCommander(1000, "knight", "orc", "enemy"),
+    createCommander(1001, "mage", "orc", "enemy"),
   ];
 
   // Assign commanders to their starting nodes
@@ -88,7 +88,7 @@ const getInitialState = (): GameState => {
 
   return {
     turn: 1,
-    phase: 'player',
+    phase: "player",
     resources: {
       gold: 500,
       supplies: 100,
@@ -99,7 +99,7 @@ const getInitialState = (): GameState => {
       materials: 75,
       food: 200,
       energy: 100,
-      artifacts: 0
+      artifacts: 0,
     },
     commanders: initialCommanders,
     nodes: initialNodes,
@@ -112,9 +112,10 @@ const getInitialState = (): GameState => {
     battleLog: [
       {
         timestamp: Date.now(),
-        type: 'info',
-        message: 'Welcome to the world of Ashes of Aeloria! The great civilization has fallen, but from its ashes, you will rebuild. Your journey to restore the world begins now.'
-      }
+        type: "info",
+        message:
+          "Welcome to the world of Ashes of Aeloria! The great civilization has fallen, but from its ashes, you will rebuild. Your journey to restore the world begins now.",
+      },
     ],
     globalTechnologies: [],
     worldState: generateInitialWorldState(),
@@ -141,7 +142,7 @@ const getInitialState = (): GameState => {
     politicalSituation: generateInitialPoliticalSituation(),
     militaryIntelligence: generateInitialMilitaryIntelligence(),
     culturalRenaissance: generateInitialCulturalRenaissance(),
-    environmentalRestoration: generateInitialEnvironmentalRestoration()
+    environmentalRestoration: generateInitialEnvironmentalRestoration(),
   };
 };
 
@@ -152,7 +153,11 @@ interface GameStore extends GameState {
   addCommander: (className: CommanderClass, race: Race) => boolean;
   assignCommanderToNode: (commanderId: number, nodeId: number) => boolean;
   unassignCommander: (commanderId: number) => void;
-  getNodeCommanderInfo: (nodeId: number) => { current: number; max: number; commanders: any[] };
+  getNodeCommanderInfo: (nodeId: number) => {
+    current: number;
+    max: number;
+    commanders: any[];
+  };
   upgradeNode: (nodeId: number) => boolean;
   getUpgradeCost: (nodeId: number) => number;
   canUpgradeNode: (nodeId: number) => boolean;
@@ -165,7 +170,10 @@ interface GameStore extends GameState {
   repairMapConnections: () => void;
   attackNode: (nodeId: number) => void;
   canAttackNode: (nodeId: number) => boolean;
-  addBattleLogEntry: (type: 'info' | 'combat' | 'victory' | 'defeat' | 'recruitment', message: string) => void;
+  addBattleLogEntry: (
+    type: "info" | "combat" | "victory" | "defeat" | "recruitment",
+    message: string,
+  ) => void;
   initializeMission: (campaignId: string) => void;
   endMission: () => void;
 
@@ -173,8 +181,16 @@ interface GameStore extends GameState {
   constructBuilding: (nodeId: number, buildingType: string) => boolean;
   demolishBuilding: (nodeId: number, buildingId: string) => boolean;
   upgradeBuilding: (nodeId: number, buildingId: string) => boolean;
-  managePopulation: (nodeId: number, action: string, amount?: number) => boolean;
-  resettlePopulation: (fromNodeId: number, toNodeId: number, amount: number) => boolean;
+  managePopulation: (
+    nodeId: number,
+    action: string,
+    amount?: number,
+  ) => boolean;
+  resettlePopulation: (
+    fromNodeId: number,
+    toNodeId: number,
+    amount: number,
+  ) => boolean;
 
   // Technology and Research Actions
   startResearch: (technology: Technology) => boolean;
@@ -185,7 +201,11 @@ interface GameStore extends GameState {
   shareKnowledge: (faction: Faction, technology: Technology) => boolean;
 
   // Exploration and Discovery Actions
-  launchExpedition: (target: string, leaderId: number, members: number[]) => boolean;
+  launchExpedition: (
+    target: string,
+    leaderId: number,
+    members: number[],
+  ) => boolean;
   exploreRuin: (ruinId: string, explorerId: number) => boolean;
   studyArtifact: (artifactId: string, scholarId: number) => boolean;
   contactHiddenSociety: (societyId: string, diplomatId: number) => boolean;
@@ -203,7 +223,11 @@ interface GameStore extends GameState {
   breakAlliance: (faction: Faction) => boolean;
 
   // Economic Actions
-  establishTradeRoute: (fromNodeId: number, toNodeId: number, goods: string[]) => boolean;
+  establishTradeRoute: (
+    fromNodeId: number,
+    toNodeId: number,
+    goods: string[],
+  ) => boolean;
   cancelTradeRoute: (routeId: string) => boolean;
   adjustTariffs: (routeId: string, tariff: number) => void;
   investInMarket: (resource: string, amount: number) => boolean;
@@ -213,14 +237,21 @@ interface GameStore extends GameState {
 
   // Environmental Actions
   startRestorationProject: (type: string, nodeId: number) => boolean;
-  assignSpecialistsToRestoration: (projectId: string, specialists: number[]) => boolean;
+  assignSpecialistsToRestoration: (
+    projectId: string,
+    specialists: number[],
+  ) => boolean;
   cleanCorruption: (nodeId: number, method: string) => boolean;
   plantForests: (nodeId: number, area: number) => boolean;
   purifyWater: (nodeId: number) => boolean;
   reintroduceSpecies: (nodeId: number, species: string) => boolean;
 
   // Cultural Actions
-  commissionArtwork: (nodeId: number, artistId: string, type: string) => boolean;
+  commissionArtwork: (
+    nodeId: number,
+    artistId: string,
+    type: string,
+  ) => boolean;
   organizeFestival: (nodeId: number, festivalType: string) => boolean;
   preserveTradition: (traditionId: string) => boolean;
   promotePhilosophy: (schoolId: string, nodeId: number) => boolean;
@@ -246,7 +277,11 @@ interface GameStore extends GameState {
   acceptQuest: (questId: string) => boolean;
   completeQuest: (questId: string) => boolean;
   abandonQuest: (questId: string) => boolean;
-  updateQuestProgress: (questId: string, objectiveId: string, progress: number) => void;
+  updateQuestProgress: (
+    questId: string,
+    objectiveId: string,
+    progress: number,
+  ) => void;
 
   // Achievement Actions
   checkAchievements: () => void;
@@ -264,7 +299,11 @@ interface GameStore extends GameState {
   processWeatherEffects: () => void;
   advanceCalendar: () => void;
   updateStatistics: () => void;
-  generateHistoricalRecord: (type: string, description: string, participants: string[]) => void;
+  generateHistoricalRecord: (
+    type: string,
+    description: string,
+    participants: string[],
+  ) => void;
   saveGameState: () => void;
   loadGameState: (saveData: Partial<GameState>) => void;
 }
@@ -274,7 +313,7 @@ export const useGameStore = create<GameStore>()(
     (set, get) => ({
       // Initial state - will be overridden by persisted data if available
       ...getInitialState(),
-      
+
       // Actions
       selectCommander: (id) => set({ selectedCommander: id }),
       selectNode: (id) => set({ selectedNode: id }),
@@ -282,8 +321,8 @@ export const useGameStore = create<GameStore>()(
       // World Rebuilding Implementation
       constructBuilding: (nodeId, buildingType) => {
         const state = get();
-        const node = state.nodes.find(n => n.id === nodeId);
-        if (!node || node.owner !== 'player') return false;
+        const node = state.nodes.find((n) => n.id === nodeId);
+        if (!node || node.owner !== "player") return false;
 
         // Implementation for building construction
         // This would check costs, prerequisites, etc.
@@ -292,8 +331,8 @@ export const useGameStore = create<GameStore>()(
 
       demolishBuilding: (nodeId, buildingId) => {
         const state = get();
-        const node = state.nodes.find(n => n.id === nodeId);
-        if (!node || node.owner !== 'player') return false;
+        const node = state.nodes.find((n) => n.id === nodeId);
+        if (!node || node.owner !== "player") return false;
 
         // Implementation for building demolition
         return true;
@@ -301,8 +340,8 @@ export const useGameStore = create<GameStore>()(
 
       upgradeBuilding: (nodeId, buildingId) => {
         const state = get();
-        const node = state.nodes.find(n => n.id === nodeId);
-        if (!node || node.owner !== 'player') return false;
+        const node = state.nodes.find((n) => n.id === nodeId);
+        if (!node || node.owner !== "player") return false;
 
         // Implementation for building upgrades
         return true;
@@ -310,8 +349,8 @@ export const useGameStore = create<GameStore>()(
 
       managePopulation: (nodeId, action, amount = 0) => {
         const state = get();
-        const node = state.nodes.find(n => n.id === nodeId);
-        if (!node || node.owner !== 'player') return false;
+        const node = state.nodes.find((n) => n.id === nodeId);
+        if (!node || node.owner !== "player") return false;
 
         // Implementation for population management
         return true;
@@ -319,9 +358,15 @@ export const useGameStore = create<GameStore>()(
 
       resettlePopulation: (fromNodeId, toNodeId, amount) => {
         const state = get();
-        const fromNode = state.nodes.find(n => n.id === fromNodeId);
-        const toNode = state.nodes.find(n => n.id === toNodeId);
-        if (!fromNode || !toNode || fromNode.owner !== 'player' || toNode.owner !== 'player') return false;
+        const fromNode = state.nodes.find((n) => n.id === fromNodeId);
+        const toNode = state.nodes.find((n) => n.id === toNodeId);
+        if (
+          !fromNode ||
+          !toNode ||
+          fromNode.owner !== "player" ||
+          toNode.owner !== "player"
+        )
+          return false;
 
         // Implementation for population resettlement
         return true;
@@ -330,15 +375,19 @@ export const useGameStore = create<GameStore>()(
       // Technology and Research Implementation
       startResearch: (technology) => {
         const state = get();
-        if (state.research.completedTechnologies.includes(technology)) return false;
-        if (state.research.activeProjects.some(p => p.technology === technology)) return false;
+        if (state.research.completedTechnologies.includes(technology))
+          return false;
+        if (
+          state.research.activeProjects.some((p) => p.technology === technology)
+        )
+          return false;
 
         const techInfo = gameData.technologies[technology];
         if (!techInfo) return false;
 
         // Check prerequisites
-        const hasPrerequisites = techInfo.prerequisites.every(prereq =>
-          state.research.completedTechnologies.includes(prereq)
+        const hasPrerequisites = techInfo.prerequisites.every((prereq) =>
+          state.research.completedTechnologies.includes(prereq),
         );
         if (!hasPrerequisites) return false;
 
@@ -352,27 +401,29 @@ export const useGameStore = create<GameStore>()(
           totalRequired: techInfo.researchCost,
           researchers: 1,
           priority: 1,
-          startedTurn: state.turn
+          startedTurn: state.turn,
         };
 
         set((state) => ({
           research: {
             ...state.research,
-            activeProjects: [...state.research.activeProjects, newProject]
+            activeProjects: [...state.research.activeProjects, newProject],
           },
           resources: {
             ...state.resources,
-            knowledge: state.resources.knowledge - techInfo.researchCost
-          }
+            knowledge: state.resources.knowledge - techInfo.researchCost,
+          },
         }));
 
-        get().addBattleLogEntry('info', `Started research on ${techInfo.name}`);
+        get().addBattleLogEntry("info", `Started research on ${techInfo.name}`);
         return true;
       },
 
       cancelResearch: (projectId) => {
         const state = get();
-        const project = state.research.activeProjects.find(p => p.id === projectId);
+        const project = state.research.activeProjects.find(
+          (p) => p.id === projectId,
+        );
         if (!project) return false;
 
         const techInfo = gameData.technologies[project.technology];
@@ -381,15 +432,20 @@ export const useGameStore = create<GameStore>()(
         set((state) => ({
           research: {
             ...state.research,
-            activeProjects: state.research.activeProjects.filter(p => p.id !== projectId)
+            activeProjects: state.research.activeProjects.filter(
+              (p) => p.id !== projectId,
+            ),
           },
           resources: {
             ...state.resources,
-            knowledge: state.resources.knowledge + refund
-          }
+            knowledge: state.resources.knowledge + refund,
+          },
         }));
 
-        get().addBattleLogEntry('info', `Cancelled research on ${techInfo.name} (${refund} knowledge refunded)`);
+        get().addBattleLogEntry(
+          "info",
+          `Cancelled research on ${techInfo.name} (${refund} knowledge refunded)`,
+        );
         return true;
       },
 
@@ -397,32 +453,38 @@ export const useGameStore = create<GameStore>()(
         set((state) => ({
           research: {
             ...state.research,
-            activeProjects: state.research.activeProjects.map(p =>
-              p.id === projectId ? { ...p, priority } : p
-            )
-          }
+            activeProjects: state.research.activeProjects.map((p) =>
+              p.id === projectId ? { ...p, priority } : p,
+            ),
+          },
         }));
       },
 
       assignResearchers: (projectId, researchers) => {
         const state = get();
-        const project = state.research.activeProjects.find(p => p.id === projectId);
+        const project = state.research.activeProjects.find(
+          (p) => p.id === projectId,
+        );
         if (!project) return false;
 
         // Check if we have enough available researchers
         const totalResearchers = state.research.scholarNetwork.scholars.length;
-        const usedResearchers = state.research.activeProjects.reduce((sum, p) => sum + p.researchers, 0);
-        const availableResearchers = totalResearchers - usedResearchers + project.researchers;
+        const usedResearchers = state.research.activeProjects.reduce(
+          (sum, p) => sum + p.researchers,
+          0,
+        );
+        const availableResearchers =
+          totalResearchers - usedResearchers + project.researchers;
 
         if (researchers > availableResearchers) return false;
 
         set((state) => ({
           research: {
             ...state.research,
-            activeProjects: state.research.activeProjects.map(p =>
-              p.id === projectId ? { ...p, researchers } : p
-            )
-          }
+            activeProjects: state.research.activeProjects.map((p) =>
+              p.id === projectId ? { ...p, researchers } : p,
+            ),
+          },
         }));
 
         return true;
@@ -509,7 +571,7 @@ export const useGameStore = create<GameStore>()(
 
         if (newEvents.length > 0) {
           set((state) => ({
-            events: [...state.events, ...newEvents]
+            events: [...state.events, ...newEvents],
           }));
         }
       },
@@ -527,17 +589,23 @@ export const useGameStore = create<GameStore>()(
 
       unlockAchievement: (achievementId) => {
         const state = get();
-        if (state.achievements.some(a => a.id === achievementId && a.completed)) return false;
+        if (
+          state.achievements.some((a) => a.id === achievementId && a.completed)
+        )
+          return false;
 
         set((state) => ({
-          achievements: state.achievements.map(a =>
+          achievements: state.achievements.map((a) =>
             a.id === achievementId
               ? { ...a, completed: true, completionDate: Date.now() }
-              : a
-          )
+              : a,
+          ),
         }));
 
-        get().addBattleLogEntry('info', `Achievement unlocked: ${achievementId}`);
+        get().addBattleLogEntry(
+          "info",
+          `Achievement unlocked: ${achievementId}`,
+        );
         return true;
       },
 
@@ -550,10 +618,13 @@ export const useGameStore = create<GameStore>()(
       declareVictory: (victoryType) => {
         set((state) => ({
           gameOver: true,
-          winner: 'player'
+          winner: "player",
         }));
 
-        get().addBattleLogEntry('victory', `Victory achieved through ${victoryType}!`);
+        get().addBattleLogEntry(
+          "victory",
+          `Victory achieved through ${victoryType}!`,
+        );
       },
 
       // Legacy Implementation
@@ -573,7 +644,7 @@ export const useGameStore = create<GameStore>()(
 
         if (weatherPattern) {
           // Apply weather effects to resources, movement, etc.
-          weatherPattern.effects.forEach(effect => {
+          weatherPattern.effects.forEach((effect) => {
             // Process each weather effect
           });
         }
@@ -607,12 +678,12 @@ export const useGameStore = create<GameStore>()(
           location: [],
           significance: 1,
           consequences: [],
-          sources: ['Player Action'],
-          accuracy: 100
+          sources: ["Player Action"],
+          accuracy: 100,
         };
 
         set((state) => ({
-          historicalRecords: [...state.historicalRecords, record]
+          historicalRecords: [...state.historicalRecords, record],
         }));
       },
 
@@ -626,167 +697,186 @@ export const useGameStore = create<GameStore>()(
       addCommander: (className, race) => {
         const state = get();
         if (canAffordCommander(state.resources, className)) {
-          const newId = Math.max(0, ...state.commanders.map(c => c.id)) + 1;
-          const commander = createCommander(newId, className, race, 'player'); // Specify player ownership
+          const newId = Math.max(0, ...state.commanders.map((c) => c.id)) + 1;
+          const commander = createCommander(newId, className, race, "player"); // Specify player ownership
           const cost = gameData.commanderClasses[className].cost;
-          
+
           set((state) => ({
             commanders: [...state.commanders, commander],
-            resources: { ...state.resources, gold: state.resources.gold - cost },
-            battleLog: [...state.battleLog, {
-              timestamp: Date.now(),
-              type: 'recruitment',
-              message: `Recruited ${commander.name} for ${cost} gold`
-            }]
+            resources: {
+              ...state.resources,
+              gold: state.resources.gold - cost,
+            },
+            battleLog: [
+              ...state.battleLog,
+              {
+                timestamp: Date.now(),
+                type: "recruitment",
+                message: `Recruited ${commander.name} for ${cost} gold`,
+              },
+            ],
           }));
-          
+
           return true;
         }
         return false;
       },
       assignCommanderToNode: (commanderId, nodeId) => {
         const state = get();
-        const commander = state.commanders.find(c => c.id === commanderId);
-        const node = state.nodes.find(n => n.id === nodeId);
-        
+        const commander = state.commanders.find((c) => c.id === commanderId);
+        const node = state.nodes.find((n) => n.id === nodeId);
+
         if (!commander || !node) return false;
-        if (node.owner !== 'player') return false;
-        
+        if (node.owner !== "player") return false;
+
         // Check commander capacity for this node type
         const maxCapacity = gameConstants.COMMANDER_CAPACITIES[node.type];
-        const currentCommanders = state.commanders.filter(c => c.assignedNode === nodeId).length;
-        
+        const currentCommanders = state.commanders.filter(
+          (c) => c.assignedNode === nodeId,
+        ).length;
+
         if (currentCommanders >= maxCapacity) {
           // Add a message to battle log about capacity limit
           set((state) => ({
-            battleLog: [...state.battleLog, {
-              timestamp: Date.now(),
-              type: 'info',
-              message: `Cannot assign ${commander.name}: ${gameData.nodeTypes[node.type].name} is at capacity (${maxCapacity} commanders)`
-            }]
+            battleLog: [
+              ...state.battleLog,
+              {
+                timestamp: Date.now(),
+                type: "info",
+                message: `Cannot assign ${commander.name}: ${gameData.nodeTypes[node.type].name} is at capacity (${maxCapacity} commanders)`,
+              },
+            ],
           }));
           return false;
         }
-        
+
         set((state) => ({
-          commanders: state.commanders.map(c => 
-            c.id === commanderId 
-              ? { ...c, assignedNode: nodeId }
-              : c
+          commanders: state.commanders.map((c) =>
+            c.id === commanderId ? { ...c, assignedNode: nodeId } : c,
           ),
-          battleLog: [...state.battleLog, {
-            timestamp: Date.now(),
-            type: 'info',
-            message: `${commander.name} assigned to defend the ${gameData.nodeTypes[node.type].name}`
-          }]
+          battleLog: [
+            ...state.battleLog,
+            {
+              timestamp: Date.now(),
+              type: "info",
+              message: `${commander.name} assigned to defend the ${gameData.nodeTypes[node.type].name}`,
+            },
+          ],
         }));
-        
+
         return true;
       },
       unassignCommander: (commanderId) => {
         const state = get();
-        const commander = state.commanders.find(c => c.id === commanderId);
-        
+        const commander = state.commanders.find((c) => c.id === commanderId);
+
         if (!commander || !commander.assignedNode) return;
-        
+
         set((state) => ({
-          commanders: state.commanders.map(c => 
-            c.id === commanderId 
-              ? { ...c, assignedNode: null }
-              : c
+          commanders: state.commanders.map((c) =>
+            c.id === commanderId ? { ...c, assignedNode: null } : c,
           ),
-          battleLog: [...state.battleLog, {
-            timestamp: Date.now(),
-            type: 'info',
-            message: `${commander.name} recalled from duty`
-          }]
+          battleLog: [
+            ...state.battleLog,
+            {
+              timestamp: Date.now(),
+              type: "info",
+              message: `${commander.name} recalled from duty`,
+            },
+          ],
         }));
       },
       getNodeCommanderInfo: (nodeId) => {
         const state = get();
-        const node = state.nodes.find(n => n.id === nodeId);
+        const node = state.nodes.find((n) => n.id === nodeId);
         if (!node) return { current: 0, max: 0, commanders: [] };
-        
-        const assignedCommanders = state.commanders.filter(c => c.assignedNode === nodeId);
+
+        const assignedCommanders = state.commanders.filter(
+          (c) => c.assignedNode === nodeId,
+        );
         const maxCapacity = gameConstants.COMMANDER_CAPACITIES[node.type];
-        
+
         return {
           current: assignedCommanders.length,
           max: maxCapacity,
-          commanders: assignedCommanders
+          commanders: assignedCommanders,
         };
       },
       getUpgradeCost: (nodeId) => {
         const state = get();
-        const node = state.nodes.find(n => n.id === nodeId);
+        const node = state.nodes.find((n) => n.id === nodeId);
         if (!node) return 0;
-        
+
         // Base cost formula: 200 * starLevel * multiplier based on node type
         const baseMultiplier = {
           city: 1.5,
           fortress: 2.0,
           stronghold: 2.5,
           resource: 1.0,
-          shrine: 1.8
+          shrine: 1.8,
         };
-        
+
         return Math.floor(200 * node.starLevel * baseMultiplier[node.type]);
       },
       canUpgradeNode: (nodeId) => {
         const state = get();
-        const node = state.nodes.find(n => n.id === nodeId);
+        const node = state.nodes.find((n) => n.id === nodeId);
         if (!node) return false;
-        if (node.owner !== 'player') return false;
+        if (node.owner !== "player") return false;
         if (node.starLevel >= 5) return false; // Max star level
-        
+
         const upgradeCost = get().getUpgradeCost(nodeId);
         return state.resources.gold >= upgradeCost;
       },
       upgradeNode: (nodeId) => {
         const state = get();
-        const node = state.nodes.find(n => n.id === nodeId);
-        
+        const node = state.nodes.find((n) => n.id === nodeId);
+
         if (!get().canUpgradeNode(nodeId) || !node) return false;
-        
+
         const upgradeCost = get().getUpgradeCost(nodeId);
-        
+
         set((state) => ({
-          nodes: state.nodes.map(n => 
-            n.id === nodeId 
-              ? { 
-                  ...n, 
+          nodes: state.nodes.map((n) =>
+            n.id === nodeId
+              ? {
+                  ...n,
                   starLevel: n.starLevel + 1,
-                  garrison: n.garrison + 25 // Increase garrison with upgrade
+                  garrison: n.garrison + 25, // Increase garrison with upgrade
                 }
-              : n
+              : n,
           ),
-          resources: { 
-            ...state.resources, 
-            gold: state.resources.gold - upgradeCost 
+          resources: {
+            ...state.resources,
+            gold: state.resources.gold - upgradeCost,
           },
-          battleLog: [...state.battleLog, {
-            timestamp: Date.now(),
-            type: 'info',
-            message: `${gameData.nodeTypes[node.type].name} upgraded to ${node.starLevel + 1} stars for ${upgradeCost} gold!`
-          }]
+          battleLog: [
+            ...state.battleLog,
+            {
+              timestamp: Date.now(),
+              type: "info",
+              message: `${gameData.nodeTypes[node.type].name} upgraded to ${node.starLevel + 1} stars for ${upgradeCost} gold!`,
+            },
+          ],
         }));
-        
+
         return true;
       },
-      updateResources: (newResources) => set((state) => ({ 
-        resources: { ...state.resources, ...newResources } 
-      })),
+      updateResources: (newResources) =>
+        set((state) => ({
+          resources: { ...state.resources, ...newResources },
+        })),
       nextTurn: () => {
         set((state) => ({
           turn: state.turn + 1,
-          phase: 'player' as const
+          phase: "player" as const,
         }));
 
         // Process story events for the new turn
         get().processStoryEvents();
       },
       endTurn: () => {
-        set({ phase: 'enemy' as const });
+        set({ phase: "enemy" as const });
         // Process enemy turn after a short delay for better UX
         setTimeout(() => {
           get().processEnemyTurn();
@@ -794,158 +884,205 @@ export const useGameStore = create<GameStore>()(
       },
       processEnemyTurn: () => {
         const state = get();
-        
+
         // 1. Enemy resource collection
-        const enemyNodes = state.nodes.filter(n => n.owner === 'enemy');
+        const enemyNodes = state.nodes.filter((n) => n.owner === "enemy");
         let enemyResources = { gold: 0, supplies: 0, mana: 0 };
-        
-        enemyNodes.forEach(node => {
+
+        enemyNodes.forEach((node) => {
           const nodeType = gameData.nodeTypes[node.type];
           enemyResources.gold += nodeType.goldGeneration;
           enemyResources.supplies += nodeType.suppliesGeneration;
           enemyResources.mana += nodeType.manaGeneration;
         });
-        
-        get().addBattleLogEntry('info', `Enemy collected ${enemyResources.gold} gold, ${enemyResources.supplies} supplies, ${enemyResources.mana} mana`);
-        
+
+        get().addBattleLogEntry(
+          "info",
+          `Enemy collected ${enemyResources.gold} gold, ${enemyResources.supplies} supplies, ${enemyResources.mana} mana`,
+        );
+
         // 2. Enemy commander recruitment (if they have few commanders)
-        const enemyCommanders = state.commanders.filter(c => c.owner === 'enemy'); // Filter by owner, not race
+        const enemyCommanders = state.commanders.filter(
+          (c) => c.owner === "enemy",
+        ); // Filter by owner, not race
         if (enemyCommanders.length < 3 && enemyResources.gold >= 150) {
-          const commanderClasses: CommanderClass[] = ['knight', 'mage', 'ranger', 'warlord'];
-          const randomClass = commanderClasses[Math.floor(Math.random() * commanderClasses.length)];
-          
-          const newId = Math.max(0, ...state.commanders.map(c => c.id)) + 1;
-          const enemyCommander = createCommander(newId, randomClass, 'orc', 'enemy'); // Specify enemy ownership
-          
+          const commanderClasses: CommanderClass[] = [
+            "knight",
+            "mage",
+            "ranger",
+            "warlord",
+          ];
+          const randomClass =
+            commanderClasses[
+              Math.floor(Math.random() * commanderClasses.length)
+            ];
+
+          const newId = Math.max(0, ...state.commanders.map((c) => c.id)) + 1;
+          const enemyCommander = createCommander(
+            newId,
+            randomClass,
+            "orc",
+            "enemy",
+          ); // Specify enemy ownership
+
           set((state) => ({
-            commanders: [...state.commanders, enemyCommander]
+            commanders: [...state.commanders, enemyCommander],
           }));
-          
-          get().addBattleLogEntry('recruitment', `Enemy recruited ${enemyCommander.name}`);
+
+          get().addBattleLogEntry(
+            "recruitment",
+            `Enemy recruited ${enemyCommander.name}`,
+          );
         }
-        
+
         // 3. Enemy attacks - find potential targets
-        const playerNodes = state.nodes.filter(n => n.owner === 'player');
+        const playerNodes = state.nodes.filter((n) => n.owner === "player");
         const attackableTargets = [];
-        
+
         for (const enemyNode of enemyNodes) {
           for (const connectionId of enemyNode.connections) {
-            const targetNode = state.nodes.find(n => n.id === connectionId);
-            if (targetNode && (targetNode.owner === 'player' || targetNode.owner === 'neutral')) {
+            const targetNode = state.nodes.find((n) => n.id === connectionId);
+            if (
+              targetNode &&
+              (targetNode.owner === "player" || targetNode.owner === "neutral")
+            ) {
               attackableTargets.push({
                 attacker: enemyNode,
                 target: targetNode,
-                priority: targetNode.owner === 'player' ? 2 : 1 // Prefer player nodes
+                priority: targetNode.owner === "player" ? 2 : 1, // Prefer player nodes
               });
             }
           }
         }
-        
+
         // Sort by priority and attack strength
         attackableTargets.sort((a, b) => {
           const priorityDiff = b.priority - a.priority;
           if (priorityDiff !== 0) return priorityDiff;
           return b.attacker.garrison - a.attacker.garrison;
         });
-        
+
         // 4. Execute enemy attacks
         let attacksExecuted = 0;
         const maxAttacks = Math.min(2, attackableTargets.length); // Limit attacks per turn
-        
+
         for (let i = 0; i < maxAttacks; i++) {
           const attack = attackableTargets[i];
-          
+
           // Get commanders at each node for proper battle calculation
-          const attackerCommanders = state.commanders.filter(c => c.assignedNode === attack.attacker.id);
-          const defenderCommanders = state.commanders.filter(c => c.assignedNode === attack.target.id);
-          
+          const attackerCommanders = state.commanders.filter(
+            (c) => c.assignedNode === attack.attacker.id,
+          );
+          const defenderCommanders = state.commanders.filter(
+            (c) => c.assignedNode === attack.target.id,
+          );
+
           // Use the enhanced battle resolution
-          const battleResult = resolveBattle(attack.attacker, attack.target, attackerCommanders, defenderCommanders);
-          
+          const battleResult = resolveBattle(
+            attack.attacker,
+            attack.target,
+            attackerCommanders,
+            defenderCommanders,
+          );
+
           if (battleResult.victory) {
             // Enemy wins - capture the node
             set((state) => ({
-              nodes: state.nodes.map(n => 
-                n.id === attack.target.id 
-                  ? { 
-                      ...n, 
-                      owner: 'enemy',
-                      garrison: Math.floor(attack.attacker.garrison * 0.7) // Reduced garrison after attack
-                    }
-                  : n.id === attack.attacker.id
+              nodes: state.nodes.map((n) =>
+                n.id === attack.target.id
                   ? {
                       ...n,
-                      garrison: Math.floor(n.garrison * 0.8) // Attacker also loses some garrison
+                      owner: "enemy",
+                      garrison: Math.floor(attack.attacker.garrison * 0.7), // Reduced garrison after attack
                     }
-                  : n
-              )
+                  : n.id === attack.attacker.id
+                    ? {
+                        ...n,
+                        garrison: Math.floor(n.garrison * 0.8), // Attacker also loses some garrison
+                      }
+                    : n,
+              ),
             }));
-            
-            get().addBattleLogEntry('defeat', `Enemy captured ${gameData.nodeTypes[attack.target.type].name} from ${attack.target.owner === 'player' ? 'player' : 'neutral'} forces!`);
+
+            get().addBattleLogEntry(
+              "defeat",
+              `Enemy captured ${gameData.nodeTypes[attack.target.type].name} from ${attack.target.owner === "player" ? "player" : "neutral"} forces!`,
+            );
           } else {
             // Enemy loses - reduce both garrisons
             set((state) => ({
-              nodes: state.nodes.map(n => 
-                n.id === attack.target.id 
+              nodes: state.nodes.map((n) =>
+                n.id === attack.target.id
                   ? { ...n, garrison: Math.floor(n.garrison * 0.9) }
                   : n.id === attack.attacker.id
-                  ? { ...n, garrison: Math.floor(n.garrison * 0.7) }
-                  : n
-              )
+                    ? { ...n, garrison: Math.floor(n.garrison * 0.7) }
+                    : n,
+              ),
             }));
-            
-            get().addBattleLogEntry('victory', `Player forces successfully defended ${gameData.nodeTypes[attack.target.type].name} from enemy attack!`);
+
+            get().addBattleLogEntry(
+              "victory",
+              `Player forces successfully defended ${gameData.nodeTypes[attack.target.type].name} from enemy attack!`,
+            );
           }
-          
+
           attacksExecuted++;
         }
-        
+
         if (attacksExecuted === 0) {
-          get().addBattleLogEntry('info', 'Enemy consolidated their forces this turn');
+          get().addBattleLogEntry(
+            "info",
+            "Enemy consolidated their forces this turn",
+          );
         }
-        
+
         // 5. Enemy garrison reinforcement
         set((state) => ({
-          nodes: state.nodes.map(node => {
-            if (node.owner === 'enemy') {
+          nodes: state.nodes.map((node) => {
+            if (node.owner === "enemy") {
               // Enemy gets slightly less reinforcement than player
               const baseReinforcement = {
                 city: 12,
                 fortress: 8,
                 stronghold: 16,
                 resource: 6,
-                shrine: 4
+                shrine: 4,
               }[node.type];
-              
-              const reinforcement = Math.floor(baseReinforcement * node.starLevel);
-              const maxGarrison = 180 + (node.starLevel * 40); // Slightly lower max than player
-              
+
+              const reinforcement = Math.floor(
+                baseReinforcement * node.starLevel,
+              );
+              const maxGarrison = 180 + node.starLevel * 40; // Slightly lower max than player
+
               return {
                 ...node,
-                garrison: Math.min(node.garrison + reinforcement, maxGarrison)
+                garrison: Math.min(node.garrison + reinforcement, maxGarrison),
               };
             }
             return node;
-          })
+          }),
         }));
 
         // 6. Enemy upgrades (simple AI - upgrade if they have resources)
-        const upgradeableEnemyNodes = enemyNodes.filter(n => n.starLevel < 5);
+        const upgradeableEnemyNodes = enemyNodes.filter((n) => n.starLevel < 5);
         if (upgradeableEnemyNodes.length > 0 && enemyResources.gold >= 400) {
           const nodeToUpgrade = upgradeableEnemyNodes[0]; // Upgrade first available
           set((state) => ({
-            nodes: state.nodes.map(n => 
-              n.id === nodeToUpgrade.id 
-                ? { 
-                    ...n, 
+            nodes: state.nodes.map((n) =>
+              n.id === nodeToUpgrade.id
+                ? {
+                    ...n,
                     starLevel: n.starLevel + 1,
-                    garrison: n.garrison + 30
+                    garrison: n.garrison + 30,
                   }
-                : n
-            )
+                : n,
+            ),
           }));
-          
-          get().addBattleLogEntry('info', `Enemy upgraded their ${gameData.nodeTypes[nodeToUpgrade.type].name} to ${nodeToUpgrade.starLevel + 1} stars`);
+
+          get().addBattleLogEntry(
+            "info",
+            `Enemy upgraded their ${gameData.nodeTypes[nodeToUpgrade.type].name} to ${nodeToUpgrade.starLevel + 1} stars`,
+          );
         }
 
         // 7. End enemy turn and start player turn
@@ -957,145 +1094,194 @@ export const useGameStore = create<GameStore>()(
       collectResources: () => {
         const state = get();
         const income = calculateIncome(state.nodes);
-        
+
         set((state) => ({
           resources: {
             gold: state.resources.gold + income.gold,
             supplies: state.resources.supplies + income.supplies,
-            mana: state.resources.mana + income.mana
+            mana: state.resources.mana + income.mana,
           },
           // Reinforce player garrisons each turn
-          nodes: state.nodes.map(node => {
-            if (node.owner === 'player') {
+          nodes: state.nodes.map((node) => {
+            if (node.owner === "player") {
               // Add garrison reinforcement based on node type and star level
               const baseReinforcement = {
                 city: 15,
                 fortress: 10,
                 stronghold: 20,
                 resource: 8,
-                shrine: 5
+                shrine: 5,
               }[node.type];
-              
-              const reinforcement = Math.floor(baseReinforcement * node.starLevel);
-              const maxGarrison = 200 + (node.starLevel * 50); // Max garrison scales with star level
-              
+
+              const reinforcement = Math.floor(
+                baseReinforcement * node.starLevel,
+              );
+              const maxGarrison = 200 + node.starLevel * 50; // Max garrison scales with star level
+
               return {
                 ...node,
-                garrison: Math.min(node.garrison + reinforcement, maxGarrison)
+                garrison: Math.min(node.garrison + reinforcement, maxGarrison),
               };
             }
             return node;
-          })
+          }),
         }));
-        
-        get().addBattleLogEntry('info', `Turn ${state.turn + 1}: Collected ${income.gold} gold, ${income.supplies} supplies, ${income.mana} mana. Garrisons reinforced!`);
+
+        get().addBattleLogEntry(
+          "info",
+          `Turn ${state.turn + 1}: Collected ${income.gold} gold, ${income.supplies} supplies, ${income.mana} mana. Garrisons reinforced!`,
+        );
       },
       attackNode: (nodeId) => {
         const state = get();
-        const attackerNode = state.nodes.find(n => n.id === state.selectedNode);
-        const defenderNode = state.nodes.find(n => n.id === nodeId);
-        
+        const attackerNode = state.nodes.find(
+          (n) => n.id === state.selectedNode,
+        );
+        const defenderNode = state.nodes.find((n) => n.id === nodeId);
+
         if (!attackerNode || !defenderNode) {
-          get().addBattleLogEntry('defeat', 'Invalid attack: Could not find nodes');
+          get().addBattleLogEntry(
+            "defeat",
+            "Invalid attack: Could not find nodes",
+          );
           return;
         }
-        
-        if (!gameLogicCanAttackNode(state.nodes, attackerNode.id, defenderNode.id)) {
-          get().addBattleLogEntry('defeat', 'Invalid attack: Cannot attack this node');
+
+        if (
+          !gameLogicCanAttackNode(state.nodes, attackerNode.id, defenderNode.id)
+        ) {
+          get().addBattleLogEntry(
+            "defeat",
+            "Invalid attack: Cannot attack this node",
+          );
           return;
         }
-        
+
         // Get commanders at each node
-        const attackerCommanders = state.commanders.filter(c => c.assignedNode === attackerNode.id);
-        const defenderCommanders = state.commanders.filter(c => c.assignedNode === defenderNode.id);
-        
+        const attackerCommanders = state.commanders.filter(
+          (c) => c.assignedNode === attackerNode.id,
+        );
+        const defenderCommanders = state.commanders.filter(
+          (c) => c.assignedNode === defenderNode.id,
+        );
+
         // Calculate commander bonuses for battle log
         const attackerBonus = calculateCommanderBonus(attackerCommanders);
         const defenderBonus = calculateCommanderBonus(defenderCommanders);
-        
+
         // Resolve the battle with commander bonuses
-        const battleResult = resolveBattle(attackerNode, defenderNode, attackerCommanders, defenderCommanders);
-        
+        const battleResult = resolveBattle(
+          attackerNode,
+          defenderNode,
+          attackerCommanders,
+          defenderCommanders,
+        );
+
         if (battleResult.victory) {
           // Player wins - capture the node
-          const updatedDefenderNode = updateNodeAfterBattle(defenderNode, battleResult);
-          
+          const updatedDefenderNode = updateNodeAfterBattle(
+            defenderNode,
+            battleResult,
+          );
+
           set((state) => ({
-            nodes: state.nodes.map(n => 
-              n.id === nodeId 
+            nodes: state.nodes.map((n) =>
+              n.id === nodeId
                 ? updatedDefenderNode
                 : n.id === attackerNode.id
-                ? { ...n, garrison: Math.max(20, n.garrison - 10) } // Attacker loses some garrison
-                : n
-            )
+                  ? { ...n, garrison: Math.max(20, n.garrison - 10) } // Attacker loses some garrison
+                  : n,
+            ),
           }));
-          
-          const commanderBonusText = attackerBonus.attackBonus > 0 ? 
-            ` (Commander bonus: +${Math.floor(attackerBonus.attackBonus)})` : '';
-          
-          get().addBattleLogEntry('victory', `Successfully captured ${gameData.nodeTypes[defenderNode.type].name}!${commanderBonusText}`);
-          
+
+          const commanderBonusText =
+            attackerBonus.attackBonus > 0
+              ? ` (Commander bonus: +${Math.floor(attackerBonus.attackBonus)})`
+              : "";
+
+          get().addBattleLogEntry(
+            "victory",
+            `Successfully captured ${gameData.nodeTypes[defenderNode.type].name}!${commanderBonusText}`,
+          );
+
           // Award experience to commanders at the attacking node
-          const attackingCommanders = state.commanders.filter(c => c.assignedNode === attackerNode.id && c.owner === 'player');
+          const attackingCommanders = state.commanders.filter(
+            (c) => c.assignedNode === attackerNode.id && c.owner === "player",
+          );
           if (attackingCommanders.length > 0) {
             set((state) => ({
-              commanders: state.commanders.map(c => 
-                attackingCommanders.some(ac => ac.id === c.id)
-                  ? { ...c, experience: c.experience + battleResult.experienceGained }
-                  : c
-              )
+              commanders: state.commanders.map((c) =>
+                attackingCommanders.some((ac) => ac.id === c.id)
+                  ? {
+                      ...c,
+                      experience: c.experience + battleResult.experienceGained,
+                    }
+                  : c,
+              ),
             }));
-            
-            get().addBattleLogEntry('info', `Commanders gained ${battleResult.experienceGained} experience`);
+
+            get().addBattleLogEntry(
+              "info",
+              `Commanders gained ${battleResult.experienceGained} experience`,
+            );
           }
         } else {
           // Player loses - reduce both garrisons
           set((state) => ({
-            nodes: state.nodes.map(n => 
-              n.id === nodeId 
+            nodes: state.nodes.map((n) =>
+              n.id === nodeId
                 ? { ...n, garrison: Math.max(10, n.garrison - 5) }
                 : n.id === attackerNode.id
-                ? { ...n, garrison: Math.max(10, n.garrison - 15) } // Attacker loses more on defeat
-                : n
-            )
+                  ? { ...n, garrison: Math.max(10, n.garrison - 15) } // Attacker loses more on defeat
+                  : n,
+            ),
           }));
-          
-          const defenderBonusText = defenderBonus.defenseBonus > 0 ? 
-            ` Enemy commanders provided +${Math.floor(defenderBonus.defenseBonus)} defense.` : '';
-          
-          get().addBattleLogEntry('defeat', `Attack on ${gameData.nodeTypes[defenderNode.type].name} failed!${defenderBonusText}`);
+
+          const defenderBonusText =
+            defenderBonus.defenseBonus > 0
+              ? ` Enemy commanders provided +${Math.floor(defenderBonus.defenseBonus)} defense.`
+              : "";
+
+          get().addBattleLogEntry(
+            "defeat",
+            `Attack on ${gameData.nodeTypes[defenderNode.type].name} failed!${defenderBonusText}`,
+          );
         }
       },
       canAttackNode: (nodeId) => {
         const state = get();
         if (state.selectedNode === null) return false;
-        
+
         return gameLogicCanAttackNode(state.nodes, state.selectedNode, nodeId);
       },
       addBattleLogEntry: (type, message) => {
         set((state) => ({
-          battleLog: [...state.battleLog, {
-            timestamp: Date.now(),
-            type,
-            message
-          }]
+          battleLog: [
+            ...state.battleLog,
+            {
+              timestamp: Date.now(),
+              type,
+              message,
+            },
+          ],
         }));
       },
       resetGame: () => {
         const initialState = getInitialState();
-        
+
         // Clear localStorage to ensure a true reset
-        localStorage.removeItem('ashes-of-aeloria-game-state');
-        
-        set(() => ({ 
+        localStorage.removeItem("ashes-of-aeloria-game-state");
+
+        set(() => ({
           ...initialState,
           battleLog: [
             {
               timestamp: Date.now(),
-              type: 'info',
-              message: 'Game reset! Welcome to Ashes of Aeloria! Begin your conquest by recruiting commanders and expanding your territory.'
-            }
-          ]
+              type: "info",
+              message:
+                "Game reset! Welcome to Ashes of Aeloria! Begin your conquest by recruiting commanders and expanding your territory.",
+            },
+          ],
         }));
       },
       repairMapConnections: () => {
@@ -1103,21 +1289,24 @@ export const useGameStore = create<GameStore>()(
         const originalMap = generateInitialMap();
 
         set((state) => ({
-          nodes: state.nodes.map(node => {
-            const originalNode = originalMap.find(n => n.id === node.id);
+          nodes: state.nodes.map((node) => {
+            const originalNode = originalMap.find((n) => n.id === node.id);
             if (originalNode) {
               return {
                 ...node,
-                connections: originalNode.connections // Restore original connections
+                connections: originalNode.connections, // Restore original connections
               };
             }
             return node;
           }),
-          battleLog: [...state.battleLog, {
-            timestamp: Date.now(),
-            type: 'info',
-            message: 'Map connections repaired!'
-          }]
+          battleLog: [
+            ...state.battleLog,
+            {
+              timestamp: Date.now(),
+              type: "info",
+              message: "Map connections repaired!",
+            },
+          ],
         }));
       },
       initializeMission: (campaignId: string) => {
@@ -1130,37 +1319,40 @@ export const useGameStore = create<GameStore>()(
 
         // Apply campaign-specific starting conditions
         switch (campaignId) {
-          case 'chapter_1_awakening':
+          case "chapter_1_awakening":
             missionResources = {
               ...missionResources,
               gold: 300,
               supplies: 75,
-              mana: 25
+              mana: 25,
             };
-            missionMessage = 'The Awakening begins! Rally the survivors and reclaim your homeland.';
+            missionMessage =
+              "The Awakening begins! Rally the survivors and reclaim your homeland.";
             break;
-          case 'chapter_2_reclamation':
+          case "chapter_2_reclamation":
             missionResources = {
               ...missionResources,
               gold: 500,
               supplies: 150,
               mana: 75,
-              knowledge: 50
+              knowledge: 50,
             };
-            missionMessage = 'The Reclamation starts! Use your growing knowledge to expand your territory.';
+            missionMessage =
+              "The Reclamation starts! Use your growing knowledge to expand your territory.";
             break;
-          case 'chapter_3_alliance':
+          case "chapter_3_alliance":
             missionResources = {
               ...missionResources,
               gold: 750,
               supplies: 200,
               mana: 100,
               knowledge: 100,
-              influence: 25
+              influence: 25,
             };
-            missionMessage = 'Forge alliances! Diplomacy and influence will be key to success.';
+            missionMessage =
+              "Forge alliances! Diplomacy and influence will be key to success.";
             break;
-          case 'chapter_4_purification':
+          case "chapter_4_purification":
             missionResources = {
               ...missionResources,
               gold: 1000,
@@ -1168,11 +1360,12 @@ export const useGameStore = create<GameStore>()(
               mana: 150,
               knowledge: 150,
               culture: 50,
-              materials: 150
+              materials: 150,
             };
-            missionMessage = 'The Purification begins! Cleanse the corruption and restore the land.';
+            missionMessage =
+              "The Purification begins! Cleanse the corruption and restore the land.";
             break;
-          case 'chapter_5_ascension':
+          case "chapter_5_ascension":
             missionResources = {
               ...missionResources,
               gold: 1500,
@@ -1182,9 +1375,10 @@ export const useGameStore = create<GameStore>()(
               culture: 100,
               influence: 75,
               materials: 200,
-              artifacts: 5
+              artifacts: 5,
             };
-            missionMessage = 'The final Ascension! Use all your power to rebuild Aeloria completely.';
+            missionMessage =
+              "The final Ascension! Use all your power to rebuild Aeloria completely.";
             break;
           default:
             missionMessage = `Started mission: ${campaignId}`;
@@ -1198,23 +1392,26 @@ export const useGameStore = create<GameStore>()(
           battleLog: [
             {
               timestamp: Date.now(),
-              type: 'info',
-              message: missionMessage
-            }
-          ]
+              type: "info",
+              message: missionMessage,
+            },
+          ],
         }));
 
-        get().addBattleLogEntry('info', 'Campaign mission initialized! Build your forces and begin your conquest!');
+        get().addBattleLogEntry(
+          "info",
+          "Campaign mission initialized! Build your forces and begin your conquest!",
+        );
       },
       endMission: () => {
         set((state) => ({
           currentMission: null,
-          missionStarted: false
+          missionStarted: false,
         }));
-      }
+      },
     }),
     {
-      name: 'ashes-of-aeloria-game-state',
+      name: "ashes-of-aeloria-game-state",
       version: 1, // Increment this when making breaking changes to the state structure
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
@@ -1245,7 +1442,7 @@ export const useGameStore = create<GameStore>()(
         statistics: state.statistics,
         victoryProgress: state.victoryProgress,
         legacyData: state.legacyData,
-        historicalRecords: state.historicalRecords.slice(-50) // Keep last 50 historical records
+        historicalRecords: state.historicalRecords.slice(-50), // Keep last 50 historical records
       }),
       migrate: (persistedState: any, version: number) => {
         // Handle migration between versions if needed
@@ -1256,12 +1453,14 @@ export const useGameStore = create<GameStore>()(
             // Preserve node ownership and garrison changes but restore connections
             persistedState.nodes = persistedState.nodes.map((node: any) => {
               const originalNode = validMap.find((n: any) => n.id === node.id);
-              return originalNode ? {
-                ...originalNode,
-                owner: node.owner || originalNode.owner,
-                garrison: node.garrison || originalNode.garrison,
-                starLevel: node.starLevel || originalNode.starLevel
-              } : node;
+              return originalNode
+                ? {
+                    ...originalNode,
+                    owner: node.owner || originalNode.owner,
+                    garrison: node.garrison || originalNode.garrison,
+                    starLevel: node.starLevel || originalNode.starLevel,
+                  }
+                : node;
             });
           }
         }
@@ -1273,45 +1472,55 @@ export const useGameStore = create<GameStore>()(
             // Check if connections are broken and auto-repair
             const originalMap = generateInitialMap();
             let needsRepair = false;
-            
+
             if (state.nodes) {
               for (const node of state.nodes) {
-                const originalNode = originalMap.find(n => n.id === node.id);
-                if (originalNode && JSON.stringify(node.connections) !== JSON.stringify(originalNode.connections)) {
+                const originalNode = originalMap.find((n) => n.id === node.id);
+                if (
+                  originalNode &&
+                  JSON.stringify(node.connections) !==
+                    JSON.stringify(originalNode.connections)
+                ) {
                   needsRepair = true;
                   break;
                 }
               }
-              
+
               if (needsRepair) {
                 // Auto-repair connections
-                state.nodes = state.nodes.map(node => {
-                  const originalNode = originalMap.find(n => n.id === node.id);
-                  return originalNode ? {
-                    ...node,
-                    connections: originalNode.connections
-                  } : node;
+                state.nodes = state.nodes.map((node) => {
+                  const originalNode = originalMap.find(
+                    (n) => n.id === node.id,
+                  );
+                  return originalNode
+                    ? {
+                        ...node,
+                        connections: originalNode.connections,
+                      }
+                    : node;
                 });
-                
+
                 // Add a log entry about the repair
                 state.battleLog = [
                   ...(state.battleLog || []),
                   {
                     timestamp: Date.now(),
-                    type: 'info' as const,
-                    message: 'Map connections automatically repaired after loading saved game.'
-                  }
+                    type: "info" as const,
+                    message:
+                      "Map connections automatically repaired after loading saved game.",
+                  },
                 ];
-                
-                console.log('🔧 Auto-repaired map connections after loading from localStorage');
+
+                console.log(
+                  "🔧 Auto-repaired map connections after loading from localStorage",
+                );
               } else {
-                console.log('✅ Map connections are valid');
+                console.log("✅ Map connections are valid");
               }
             }
           }
         };
       },
-    }
-  )
+    },
+  ),
 );
-

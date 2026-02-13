@@ -9,7 +9,7 @@ This document describes the clean, modular architecture implementation for Ashes
 ### Core Principles Applied
 
 - ✅ **Single Responsibility Principle**: Each component/function has one clear purpose
-- ✅ **Type Safety**: Full TypeScript coverage with comprehensive interfaces  
+- ✅ **Type Safety**: Full TypeScript coverage with comprehensive interfaces
 - ✅ **Reusable Components**: Generic, composable UI components
 - ✅ **Separation of Concerns**: Clear boundaries between UI, business logic, and data
 - ✅ **Modern React Patterns**: Hooks, functional components, clean state management
@@ -54,7 +54,7 @@ src/
 ├── constants/                 # Centralized configuration
 │   └── index.ts               # All constants and configuration
 ├── stores/                    # State management (existing)
-├── types/                     # TypeScript definitions (existing) 
+├── types/                     # TypeScript definitions (existing)
 ├── utils/                     # Pure utility functions (existing)
 ├── data/                      # Static game data (existing)
 └── CleanApp.tsx              # Clean, modular main app component
@@ -65,39 +65,47 @@ src/
 ### 1. Business Logic Extraction
 
 **Before**: Components mixed UI logic with business logic
+
 ```tsx
 // Old approach - mixed concerns in component
 const InfoPanel = () => {
-  const attackNode = useGameStore(state => state.attackNode);
-  const canAttackNode = useGameStore(state => state.canAttackNode);
+  const attackNode = useGameStore((state) => state.attackNode);
+  const canAttackNode = useGameStore((state) => state.canAttackNode);
   // ... lots of game logic in component
-  
+
   const handleAttack = (nodeId) => {
     if (selectedNode !== null && canAttackNode(nodeId)) {
       attackNode(nodeId);
       // Handle success/error inline
     }
   };
-}
+};
 ```
 
 **After**: Clean separation with custom hooks
+
 ```tsx
 // New approach - business logic in hooks
 const useGameActions = () => {
-  const initiateAttack = useCallback((defenderNodeId: number) => {
-    // Validation and error handling
-    if (selectedNode === null) {
-      return { success: false, message: ERROR_MESSAGES.NO_NODE_SELECTED };
-    }
-    
-    if (!canAttackNode(defenderNodeId)) {
-      return { success: false, message: ERROR_MESSAGES.INVALID_ATTACK_TARGET };
-    }
+  const initiateAttack = useCallback(
+    (defenderNodeId: number) => {
+      // Validation and error handling
+      if (selectedNode === null) {
+        return { success: false, message: ERROR_MESSAGES.NO_NODE_SELECTED };
+      }
 
-    attackNode(defenderNodeId);
-    return { success: true, message: 'Attack initiated!' };
-  }, [selectedNode, canAttackNode, attackNode]);
+      if (!canAttackNode(defenderNodeId)) {
+        return {
+          success: false,
+          message: ERROR_MESSAGES.INVALID_ATTACK_TARGET,
+        };
+      }
+
+      attackNode(defenderNodeId);
+      return { success: true, message: "Attack initiated!" };
+    },
+    [selectedNode, canAttackNode, attackNode],
+  );
 
   return { initiateAttack };
 };
@@ -106,7 +114,7 @@ const useGameActions = () => {
 const NodeInfo = ({ onAttack }) => {
   const { initiateAttack } = useGameActions();
   const { showSuccess, showError } = useGameContext();
-  
+
   const handleAttack = async (nodeId) => {
     const result = initiateAttack(nodeId);
     if (result.success) {
@@ -121,6 +129,7 @@ const NodeInfo = ({ onAttack }) => {
 ### 2. Enhanced UI Components
 
 **Enhanced Button Component**:
+
 - Multiple variants (primary, secondary, success, danger, warning, ghost)
 - Loading states with spinner animation
 - Icon support (left/right)
@@ -141,6 +150,7 @@ const NodeInfo = ({ onAttack }) => {
 ```
 
 **Toast Notification System**:
+
 - Portal-based rendering for proper z-index
 - Auto-dismiss with configurable duration
 - Multiple notification types
@@ -150,6 +160,7 @@ const NodeInfo = ({ onAttack }) => {
 ### 3. Centralized Configuration
 
 **Constants Management**:
+
 ```tsx
 export const GAME_CONFIG = {
   INITIAL_GOLD: 500,
@@ -160,9 +171,9 @@ export const GAME_CONFIG = {
 
 export const UI_CONFIG = {
   COLORS: {
-    PLAYER: '#22c55e',
-    ENEMY: '#ef4444',
-    NEUTRAL: '#6b7280',
+    PLAYER: "#22c55e",
+    ENEMY: "#ef4444",
+    NEUTRAL: "#6b7280",
   },
   MIN_TOUCH_TARGET: 44,
   // ... all UI constants
@@ -172,6 +183,7 @@ export const UI_CONFIG = {
 ### 4. Feature-Specific Components
 
 **Modular Resource Display**:
+
 ```tsx
 interface ResourceDisplayProps {
   resources: Resources;
@@ -184,13 +196,14 @@ export const ResourceDisplay: React.FC<ResourceDisplayProps> = ({
   resources,
   income,
   showIncome = false,
-  className = ''
+  className = "",
 }) => {
   // Pure presentational component with configurable display
 };
 ```
 
 **Self-Contained Game Status**:
+
 ```tsx
 interface GameStatusProps {
   turn: number;
@@ -203,7 +216,7 @@ export const GameStatus: React.FC<GameStatusProps> = ({
   turn,
   phase,
   onEndTurn,
-  canEndTurn = true
+  canEndTurn = true,
 }) => {
   // Handles all game status display logic
   // Visual feedback for different phases
@@ -214,8 +227,11 @@ export const GameStatus: React.FC<GameStatusProps> = ({
 ### 5. Context-Based Global State
 
 **Game Provider**:
+
 ```tsx
-export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const {
     notifications,
     showSuccess,
@@ -223,7 +239,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     showWarning,
     showInfo,
     removeNotification,
-    clearAllNotifications
+    clearAllNotifications,
   } = useNotifications();
 
   const contextValue = {
@@ -233,13 +249,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     showWarning,
     showInfo,
     removeNotification,
-    clearAllNotifications
+    clearAllNotifications,
   };
 
   return (
-    <GameContext.Provider value={contextValue}>
-      {children}
-    </GameContext.Provider>
+    <GameContext.Provider value={contextValue}>{children}</GameContext.Provider>
   );
 };
 ```
@@ -247,30 +261,35 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 ## 📊 Benefits Achieved
 
 ### 1. **Maintainability**
+
 - **Easy to find code**: Clear directory structure and naming conventions
 - **Easy to modify**: Single responsibility principle makes changes isolated
 - **Easy to test**: Pure functions and isolated components
 - **Clear dependencies**: Explicit imports and type definitions
 
 ### 2. **Type Safety**
+
 - **Compile-time error prevention**: Full TypeScript coverage
 - **IntelliSense support**: Better developer experience
 - **Refactoring confidence**: Type system catches breaking changes
 - **Self-documenting code**: Interfaces describe expected data
 
 ### 3. **Reusability**
+
 - **Generic UI components**: Button, Toast, Card can be used anywhere
 - **Composable business logic**: Custom hooks encapsulate reusable behavior
 - **Configurable displays**: Props control component behavior
 - **Modular architecture**: Easy to extract components for other projects
 
 ### 4. **Performance**
+
 - **Efficient re-renders**: Zustand's selective subscriptions
 - **Component isolation**: Changes don't trigger unnecessary updates
 - **Optimized callbacks**: useCallback prevents function recreation
 - **Minimal prop drilling**: Context and hooks reduce component depth
 
 ### 5. **User Experience**
+
 - **Consistent feedback**: Centralized notification system
 - **Loading states**: Visual feedback for async operations
 - **Error handling**: Graceful error display and recovery
@@ -281,13 +300,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 ### Using Enhanced Components
 
 ```tsx
-import { 
-  Button, 
-  Toast, 
-  ResourceDisplay, 
-  GameStatus 
-} from '@/components/features';
-import { useGameActions, useNotifications } from '@/hooks';
+import {
+  Button,
+  Toast,
+  ResourceDisplay,
+  GameStatus,
+} from "@/components/features";
+import { useGameActions, useNotifications } from "@/hooks";
 
 const MyGameComponent = () => {
   const { resources, phase, turn, completeTurn } = useGameActions();
@@ -302,21 +321,14 @@ const MyGameComponent = () => {
 
   return (
     <div>
-      <ResourceDisplay 
-        resources={resources} 
-        showIncome={true} 
-      />
-      
-      <GameStatus
-        turn={turn}
-        phase={phase}
-        onEndTurn={handleEndTurn}
-      />
-      
+      <ResourceDisplay resources={resources} showIncome={true} />
+
+      <GameStatus turn={turn} phase={phase} onEndTurn={handleEndTurn} />
+
       <Button
         variant="primary"
         onClick={handleEndTurn}
-        disabled={phase !== 'player'}
+        disabled={phase !== "player"}
       >
         End Turn
       </Button>
@@ -332,7 +344,7 @@ const MyGameComponent = () => {
 const NewFeatureComponent: React.FC<NewFeatureProps> = ({ prop1, prop2 }) => {
   const { gameAction } = useGameActions();
   const { showSuccess } = useGameContext();
-  
+
   const handleAction = () => {
     const result = gameAction();
     if (result.success) {
@@ -342,25 +354,23 @@ const NewFeatureComponent: React.FC<NewFeatureProps> = ({ prop1, prop2 }) => {
 
   return (
     <Card>
-      <Button onClick={handleAction}>
-        Perform Action
-      </Button>
+      <Button onClick={handleAction}>Perform Action</Button>
     </Card>
   );
 };
 
 // 2. Export from features index
-export { NewFeatureComponent } from './NewFeatureComponent';
+export { NewFeatureComponent } from "./NewFeatureComponent";
 
 // 3. Use in any parent component
-import { NewFeatureComponent } from '@/components/features';
+import { NewFeatureComponent } from "@/components/features";
 ```
 
 ## 🔄 Migration from Old Architecture
 
 ### Component Updates
 
-1. **InfoPanel** → **EnhancedInfoPanel**: 
+1. **InfoPanel** → **EnhancedInfoPanel**:
    - Extracted business logic to `useGameActions`
    - Split into modular `NodeInfo` and `CommanderInfo` components
    - Added proper error handling and user feedback
@@ -390,12 +400,14 @@ import { NewFeatureComponent } from '@/components/features';
 ## 🎯 Next Steps
 
 ### Phase 2 Enhancements (Planned)
+
 - **Error Boundaries**: Graceful error handling and recovery
 - **Loading States**: Enhanced loading indicators for async operations
 - **Animation System**: Framer Motion integration for smooth transitions
 - **Accessibility**: Complete ARIA label coverage and keyboard navigation
 
 ### Phase 3 Performance (Planned)
+
 - **React.memo**: Optimize expensive component renders
 - **Virtual Scrolling**: Handle large lists of commanders/nodes
 - **Code Splitting**: Lazy load feature components

@@ -4,12 +4,12 @@
  * Shows detailed information about selected nodes
  */
 
-import React from 'react';
-import { Card } from '../ui/Card';
-import { Button } from '../ui/EnhancedButton';
-import { gameData } from '../../data/gameData';
-import { calculateEffectiveGarrison } from '../../utils/gameLogic';
-import type { GameNode, Resources } from '../../types/game';
+import React from "react";
+import { Card } from "../ui/Card";
+import { Button } from "../ui/EnhancedButton";
+import { gameData } from "../../data/gameData";
+import { calculateEffectiveGarrison } from "../../utils/gameLogic";
+import type { GameNode, Resources } from "../../types/game";
 
 interface NodeInfoProps {
   node: GameNode;
@@ -33,27 +33,33 @@ interface NodeStatProps {
   color?: string;
 }
 
-const NodeStat: React.FC<NodeStatProps> = ({ label, value, icon, color = 'text-iron-dark' }) => (
+const NodeStat: React.FC<NodeStatProps> = ({
+  label,
+  value,
+  icon,
+  color = "text-iron-dark",
+}) => (
   <div className="flex justify-between items-center py-1 px-2 bg-bronze/5 rounded border border-bronze/20">
     <span className="text-sm text-parchment-dark font-parchment flex items-center gap-1">
       {icon && <span>{icon}</span>}
       {label}:
     </span>
-    <span className={`text-sm font-frontier font-bold ${color}`}>
-      {value}
-    </span>
+    <span className={`text-sm font-frontier font-bold ${color}`}>{value}</span>
   </div>
 );
 
 const OwnerBadge: React.FC<{ owner: string }> = ({ owner }) => {
-  const colorClasses = {
-    player: 'bg-forest/20 text-forest border-forest',
-    enemy: 'bg-blood/20 text-blood border-blood',
-    neutral: 'bg-iron/20 text-iron border-iron'
-  }[owner] || 'bg-iron/20 text-iron border-iron';
+  const colorClasses =
+    {
+      player: "bg-forest/20 text-forest border-forest",
+      enemy: "bg-blood/20 text-blood border-blood",
+      neutral: "bg-iron/20 text-iron border-iron",
+    }[owner] || "bg-iron/20 text-iron border-iron";
 
   return (
-    <span className={`px-3 py-1 rounded-full text-xs font-frontier font-bold border-2 ${colorClasses}`}>
+    <span
+      className={`px-3 py-1 rounded-full text-xs font-frontier font-bold border-2 ${colorClasses}`}
+    >
       {owner.charAt(0).toUpperCase() + owner.slice(1)}
     </span>
   );
@@ -67,25 +73,35 @@ export const NodeInfo: React.FC<NodeInfoProps> = ({
   onAttack,
   attackableNodes = [],
   commanderInfo,
-  className = ''
+  className = "",
 }) => {
   const nodeTypeData = gameData.nodeTypes[node.type];
-  
+
   // Calculate effective garrison with commander bonuses
-  const effectiveGarrison = commanderInfo ? 
-    calculateEffectiveGarrison(node, commanderInfo.commanders) : 
-    { baseGarrison: node.garrison, commanderBonus: 0, totalPower: node.garrison };
+  const effectiveGarrison = commanderInfo
+    ? calculateEffectiveGarrison(node, commanderInfo.commanders)
+    : {
+        baseGarrison: node.garrison,
+        commanderBonus: 0,
+        totalPower: node.garrison,
+      };
 
   return (
     <Card className={`p-4 ${className}`}>
-      <h3 className="text-lg font-frontier font-bold mb-4 text-iron-dark text-battle-worn">🏰 Stronghold Details</h3>
-      
+      <h3 className="text-lg font-frontier font-bold mb-4 text-iron-dark text-battle-worn">
+        🏰 Stronghold Details
+      </h3>
+
       {/* Node Header */}
       <div className="flex items-center gap-3 p-3 bg-bronze-texture rounded-lg mb-4 border-2 border-bronze">
         <span className="text-2xl">{nodeTypeData.icon}</span>
         <div className="flex-1">
-          <div className="font-frontier font-bold text-parchment-light">{nodeTypeData.name}</div>
-          <div className="text-xs text-parchment font-parchment">{nodeTypeData.description}</div>
+          <div className="font-frontier font-bold text-parchment-light">
+            {nodeTypeData.name}
+          </div>
+          <div className="text-xs text-parchment font-parchment">
+            {nodeTypeData.description}
+          </div>
         </div>
         <OwnerBadge owner={node.owner} />
       </div>
@@ -93,7 +109,7 @@ export const NodeInfo: React.FC<NodeInfoProps> = ({
       {/* Node Stats */}
       <div className="space-y-1 mb-4">
         <NodeStat label="Star Level" value={node.starLevel} icon="⭐" />
-        
+
         {/* Enhanced Garrison Display */}
         {effectiveGarrison.commanderBonus > 0 ? (
           <div className="flex justify-between items-center py-1">
@@ -106,14 +122,15 @@ export const NodeInfo: React.FC<NodeInfoProps> = ({
                 {effectiveGarrison.totalPower}
               </span>
               <span className="text-xs text-gray-500 ml-1">
-                ({effectiveGarrison.baseGarrison} + {effectiveGarrison.commanderBonus})
+                ({effectiveGarrison.baseGarrison} +{" "}
+                {effectiveGarrison.commanderBonus})
               </span>
             </div>
           </div>
         ) : (
           <NodeStat label="Garrison" value={node.garrison} icon="🛡️" />
         )}
-        
+
         <NodeStat
           label="War Coffers/Campaign"
           value={nodeTypeData.goldGeneration}
@@ -151,7 +168,7 @@ export const NodeInfo: React.FC<NodeInfoProps> = ({
       )}
 
       {/* Player Actions */}
-      {node.owner === 'player' && (
+      {node.owner === "player" && (
         <div className="space-y-2">
           {/* Upgrade Button */}
           {canUpgrade && onUpgrade && (
@@ -180,7 +197,7 @@ export const NodeInfo: React.FC<NodeInfoProps> = ({
                 ⚔ Assault Targets:
               </div>
               <div className="space-y-1">
-                {attackableNodes.map(target => (
+                {attackableNodes.map((target) => (
                   <Button
                     key={target.id}
                     variant="attack"
@@ -200,12 +217,13 @@ export const NodeInfo: React.FC<NodeInfoProps> = ({
       )}
 
       {/* Enemy/Neutral Node Info */}
-      {node.owner !== 'player' && (
+      {node.owner !== "player" && (
         <div className="text-center text-sm text-parchment-dark italic font-parchment">
-          {node.owner === 'enemy' ? '⛔ Enemy-held territory' : '🏳 Neutral lands'}
+          {node.owner === "enemy"
+            ? "⛔ Enemy-held territory"
+            : "🏳 Neutral lands"}
         </div>
       )}
     </Card>
   );
 };
-

@@ -1,6 +1,6 @@
 // Performance and async operation hooks
-import { useState, useCallback, useRef, useEffect } from 'react';
-import type { AsyncOperationState, GameError } from '../types/improved';
+import { useState, useCallback, useRef, useEffect } from "react";
+import type { AsyncOperationState, GameError } from "../types/improved";
 
 interface UseAsyncOperationOptions<T> {
   initialData?: T;
@@ -12,21 +12,21 @@ interface UseAsyncOperationOptions<T> {
 
 export const useAsyncOperation = <T>(
   operation: () => Promise<T>,
-  options: UseAsyncOperationOptions<T> = {}
+  options: UseAsyncOperationOptions<T> = {},
 ) => {
   const {
     initialData = null,
     onSuccess,
     onError,
     retryAttempts = 0,
-    retryDelay = 1000
+    retryDelay = 1000,
   } = options;
 
   const [state, setState] = useState<AsyncOperationState<T>>({
     data: initialData,
     loading: false,
     error: null,
-    lastUpdated: null
+    lastUpdated: null,
   });
 
   const mountedRef = useRef(true);
@@ -39,79 +39,88 @@ export const useAsyncOperation = <T>(
   }, []);
 
   const createGameError = (error: unknown, context?: string): GameError => {
-    const message = error instanceof Error ? error.message : 'Unknown error';
+    const message = error instanceof Error ? error.message : "Unknown error";
     return {
-      code: 'ASYNC_OPERATION_ERROR',
+      code: "ASYNC_OPERATION_ERROR",
       message,
       details: { originalError: error },
       timestamp: Date.now(),
-      severity: 'medium',
-      context
+      severity: "medium",
+      context,
     };
   };
 
-  const executeWithRetry = useCallback(async (
-    operationFn: () => Promise<T>,
-    attempt: number = 0
-  ): Promise<void> => {
-    try {
-      const result = await operationFn();
+  const executeWithRetry = useCallback(
+    async (
+      operationFn: () => Promise<T>,
+      attempt: number = 0,
+    ): Promise<void> => {
+      try {
+        const result = await operationFn();
 
-      if (!mountedRef.current) return;
+        if (!mountedRef.current) return;
 
-      setState({
-        data: result,
-        loading: false,
-        error: null,
-        lastUpdated: Date.now()
-      });
+        setState({
+          data: result,
+          loading: false,
+          error: null,
+          lastUpdated: Date.now(),
+        });
 
-      retryCountRef.current = 0;
-      onSuccess?.(result);
-    } catch (error) {
-      if (!mountedRef.current) return;
+        retryCountRef.current = 0;
+        onSuccess?.(result);
+      } catch (error) {
+        if (!mountedRef.current) return;
 
-      const gameError = createGameError(error, `Attempt ${attempt + 1}`);
+        const gameError = createGameError(error, `Attempt ${attempt + 1}`);
 
-      if (attempt < retryAttempts) {
-        // Retry after delay
-        setTimeout(() => {
-          if (mountedRef.current) {
-            executeWithRetry(operationFn, attempt + 1);
-          }
-        }, retryDelay * Math.pow(2, attempt)); // Exponential backoff
-        return;
+        if (attempt < retryAttempts) {
+          // Retry after delay
+          setTimeout(
+            () => {
+              if (mountedRef.current) {
+                executeWithRetry(operationFn, attempt + 1);
+              }
+            },
+            retryDelay * Math.pow(2, attempt),
+          ); // Exponential backoff
+          return;
+        }
+
+        setState((prev) => ({
+          ...prev,
+          loading: false,
+          error: gameError,
+        }));
+
+        onError?.(gameError);
       }
+    },
+    [retryAttempts, retryDelay, onSuccess, onError],
+  );
 
-      setState(prev => ({
+  const execute = useCallback(
+    async (customOperation?: () => Promise<T>) => {
+      if (!mountedRef.current) return;
+
+      setState((prev) => ({
         ...prev,
-        loading: false,
-        error: gameError
+        loading: true,
+        error: null,
       }));
 
-      onError?.(gameError);
-    }
-  }, [retryAttempts, retryDelay, onSuccess, onError]);
-
-  const execute = useCallback(async (customOperation?: () => Promise<T>) => {
-    if (!mountedRef.current) return;
-
-    setState(prev => ({
-      ...prev,
-      loading: true,
-      error: null
-    }));
-
-    retryCountRef.current = 0;
-    await executeWithRetry(customOperation || operation);
-  }, [operation, executeWithRetry]);
+      retryCountRef.current = 0;
+      await executeWithRetry(customOperation || operation);
+    },
+    [operation, executeWithRetry],
+  );
 
   const reset = useCallback(() => {
     setState({
       data: initialData,
       loading: false,
       error: null,
-      lastUpdated: null
+      lastUpdated: null,
     });
     retryCountRef.current = 0;
   }, [initialData]);
@@ -127,7 +136,9 @@ export const useAsyncOperation = <T>(
     execute,
     reset,
     retry,
-    isStale: state.lastUpdated ? Date.now() - state.lastUpdated > 300000 : false // 5 minutes
+    isStale: state.lastUpdated
+      ? Date.now() - state.lastUpdated > 300000
+      : false, // 5 minutes
   };
 };
 
@@ -135,7 +146,7 @@ export const useAsyncOperation = <T>(
 export const useDebouncedAsyncOperation = <T>(
   operation: () => Promise<T>,
   delay: number = 300,
-  options: UseAsyncOperationOptions<T> = {}
+  options: UseAsyncOperationOptions<T> = {},
 ) => {
   const asyncOp = useAsyncOperation(operation, options);
   const timeoutRef = useRef<NodeJS.Timeout>();
@@ -161,7 +172,7 @@ export const useDebouncedAsyncOperation = <T>(
   return {
     ...asyncOp,
     execute: debouncedExecute,
-    executeImmediately: asyncOp.execute
+    executeImmediately: asyncOp.execute,
   };
 };
 
@@ -204,34 +215,37 @@ export const useLoadingState = (minimumDuration: number = 500) => {
     loading,
     actuallyLoading,
     startLoading,
-    stopLoading
+    stopLoading,
   };
 };
 
 // Hook for optimistic updates
 export const useOptimisticUpdate = <T>(
   currentValue: T,
-  updateOperation: (newValue: T) => Promise<T>
+  updateOperation: (newValue: T) => Promise<T>,
 ) => {
   const [optimisticValue, setOptimisticValue] = useState(currentValue);
   const [isReverting, setIsReverting] = useState(false);
 
-  const update = useCallback(async (newValue: T) => {
-    const previousValue = optimisticValue;
-    setOptimisticValue(newValue);
-    setIsReverting(false);
+  const update = useCallback(
+    async (newValue: T) => {
+      const previousValue = optimisticValue;
+      setOptimisticValue(newValue);
+      setIsReverting(false);
 
-    try {
-      const result = await updateOperation(newValue);
-      setOptimisticValue(result);
-      return result;
-    } catch (error) {
-      // Revert to previous value on error
-      setOptimisticValue(previousValue);
-      setIsReverting(true);
-      throw error;
-    }
-  }, [optimisticValue, updateOperation]);
+      try {
+        const result = await updateOperation(newValue);
+        setOptimisticValue(result);
+        return result;
+      } catch (error) {
+        // Revert to previous value on error
+        setOptimisticValue(previousValue);
+        setIsReverting(true);
+        throw error;
+      }
+    },
+    [optimisticValue, updateOperation],
+  );
 
   // Update optimistic value when current value changes externally
   useEffect(() => {
@@ -243,6 +257,6 @@ export const useOptimisticUpdate = <T>(
   return {
     value: optimisticValue,
     update,
-    isReverting
+    isReverting,
   };
 };

@@ -1,5 +1,5 @@
-import type { GameData } from '../types/game';
-import { gameBalance } from '../constants/gameBalance';
+import type { GameData } from "../types/game";
+import { gameBalance } from "../constants/gameBalance";
 
 export const gameData: GameData = {
   nodeTypes: {
@@ -11,7 +11,7 @@ export const gameData: GameData = {
       suppliesGeneration: gameBalance.NODE_GENERATION.CITY.supplies,
       manaGeneration: gameBalance.NODE_GENERATION.CITY.mana,
       defensiveBonus: gameBalance.NODE_GENERATION.CITY.defensiveBonus,
-      description: "Generates gold and supplies, enables troop recruitment"
+      description: "Generates gold and supplies, enables troop recruitment",
     },
     resource: {
       name: "Resource Node",
@@ -21,7 +21,7 @@ export const gameData: GameData = {
       suppliesGeneration: gameBalance.NODE_GENERATION.RESOURCE.supplies,
       manaGeneration: gameBalance.NODE_GENERATION.RESOURCE.mana,
       defensiveBonus: gameBalance.NODE_GENERATION.RESOURCE.defensiveBonus,
-      description: "Provides valuable resources for your empire"
+      description: "Provides valuable resources for your empire",
     },
     fortress: {
       name: "Fortress",
@@ -31,7 +31,7 @@ export const gameData: GameData = {
       suppliesGeneration: gameBalance.NODE_GENERATION.FORTRESS.supplies,
       manaGeneration: gameBalance.NODE_GENERATION.FORTRESS.mana,
       defensiveBonus: gameBalance.NODE_GENERATION.FORTRESS.defensiveBonus,
-      description: "Defensive stronghold with high garrison value"
+      description: "Defensive stronghold with high garrison value",
     },
     shrine: {
       name: "Shrine",
@@ -41,7 +41,7 @@ export const gameData: GameData = {
       suppliesGeneration: gameBalance.NODE_GENERATION.SHRINE.supplies,
       manaGeneration: gameBalance.NODE_GENERATION.SHRINE.mana,
       defensiveBonus: gameBalance.NODE_GENERATION.SHRINE.defensiveBonus,
-      description: "Ancient site that provides magical power"
+      description: "Ancient site that provides magical power",
     },
     stronghold: {
       name: "Enemy Stronghold",
@@ -51,8 +51,8 @@ export const gameData: GameData = {
       suppliesGeneration: gameBalance.NODE_GENERATION.STRONGHOLD.supplies,
       manaGeneration: gameBalance.NODE_GENERATION.STRONGHOLD.mana,
       defensiveBonus: gameBalance.NODE_GENERATION.STRONGHOLD.defensiveBonus,
-      description: "Heavily fortified enemy position"
-    }
+      description: "Heavily fortified enemy position",
+    },
   },
   commanderClasses: {
     knight: {
@@ -63,7 +63,7 @@ export const gameData: GameData = {
       baseAttack: gameBalance.COMMANDER_STATS.KNIGHT.baseAttack,
       baseDefense: gameBalance.COMMANDER_STATS.KNIGHT.baseDefense,
       specialAbility: "Shield Wall - Increases army defense by 50%",
-      cost: gameBalance.COMMANDER_STATS.KNIGHT.cost
+      cost: gameBalance.COMMANDER_STATS.KNIGHT.cost,
     },
     mage: {
       name: "Mage",
@@ -73,7 +73,7 @@ export const gameData: GameData = {
       baseAttack: gameBalance.COMMANDER_STATS.MAGE.baseAttack,
       baseDefense: gameBalance.COMMANDER_STATS.MAGE.baseDefense,
       specialAbility: "Fireball - Deals AOE damage to enemy army",
-      cost: gameBalance.COMMANDER_STATS.MAGE.cost
+      cost: gameBalance.COMMANDER_STATS.MAGE.cost,
     },
     ranger: {
       name: "Ranger",
@@ -83,7 +83,7 @@ export const gameData: GameData = {
       baseAttack: gameBalance.COMMANDER_STATS.RANGER.baseAttack,
       baseDefense: gameBalance.COMMANDER_STATS.RANGER.baseDefense,
       specialAbility: "Stealth - Can scout enemy nodes without detection",
-      cost: gameBalance.COMMANDER_STATS.RANGER.cost
+      cost: gameBalance.COMMANDER_STATS.RANGER.cost,
     },
     warlord: {
       name: "Warlord",
@@ -93,34 +93,34 @@ export const gameData: GameData = {
       baseAttack: gameBalance.COMMANDER_STATS.WARLORD.baseAttack,
       baseDefense: gameBalance.COMMANDER_STATS.WARLORD.baseDefense,
       specialAbility: "Rally - Increases entire army combat effectiveness",
-      cost: gameBalance.COMMANDER_STATS.WARLORD.cost
-    }
+      cost: gameBalance.COMMANDER_STATS.WARLORD.cost,
+    },
   },
   races: {
     human: {
       name: "Human",
       icon: "👤",
       bonus: "Versatile - 10% bonus to all resources",
-      color: "#2196F3"
+      color: "#2196F3",
     },
     elf: {
       name: "Elf",
       icon: "🧝",
       bonus: "Magical Affinity - 20% bonus to mana generation",
-      color: "#4CAF50"
+      color: "#4CAF50",
     },
     orc: {
       name: "Orc",
       icon: "👹",
       bonus: "Brutal Strength - 15% bonus to combat damage",
-      color: "#FF5722"
+      color: "#FF5722",
     },
     undead: {
       name: "Undead",
       icon: "💀",
       bonus: "Undying - Commanders revive with 50% health after defeat",
-      color: "#9C27B0"
-    }
+      color: "#9C27B0",
+    },
   },
   troopTypes: {
     soldiers: {
@@ -131,7 +131,7 @@ export const gameData: GameData = {
       cost: 20,
       strongAgainst: ["cavalry"],
       weakAgainst: ["archers"],
-      description: "Balanced infantry units"
+      description: "Balanced infantry units",
     },
     archers: {
       name: "Archers",
@@ -141,7 +141,7 @@ export const gameData: GameData = {
       cost: 25,
       strongAgainst: ["soldiers"],
       weakAgainst: ["cavalry"],
-      description: "Ranged units effective against infantry"
+      description: "Ranged units effective against infantry",
     },
     cavalry: {
       name: "Cavalry",
@@ -151,7 +151,7 @@ export const gameData: GameData = {
       cost: 40,
       strongAgainst: ["archers"],
       weakAgainst: ["soldiers"],
-      description: "Fast mounted units"
+      description: "Fast mounted units",
     },
     mages: {
       name: "Mages",
@@ -161,7 +161,7 @@ export const gameData: GameData = {
       cost: 60,
       strongAgainst: [],
       weakAgainst: [],
-      description: "Magical support units that disrupt enemy formations"
+      description: "Magical support units that disrupt enemy formations",
     },
     engineers: {
       name: "Engineers",
@@ -171,7 +171,7 @@ export const gameData: GameData = {
       cost: 45,
       strongAgainst: [],
       weakAgainst: ["cavalry"],
-      description: "Technical specialists for siege warfare and construction"
+      description: "Technical specialists for siege warfare and construction",
     },
     scouts: {
       name: "Scouts",
@@ -181,7 +181,7 @@ export const gameData: GameData = {
       cost: 30,
       strongAgainst: [],
       weakAgainst: ["soldiers"],
-      description: "Fast reconnaissance units for gathering intelligence"
+      description: "Fast reconnaissance units for gathering intelligence",
     },
     healers: {
       name: "Healers",
@@ -191,7 +191,7 @@ export const gameData: GameData = {
       cost: 35,
       strongAgainst: [],
       weakAgainst: [],
-      description: "Medical support units that can restore army health"
+      description: "Medical support units that can restore army health",
     },
     specialists: {
       name: "Specialists",
@@ -201,167 +201,257 @@ export const gameData: GameData = {
       cost: 80,
       strongAgainst: [],
       weakAgainst: [],
-      description: "Elite units with specialized equipment and training"
-    }
+      description: "Elite units with specialized equipment and training",
+    },
   },
   factions: {
     ironborn: {
       name: "The Ironborn Clans",
-      description: "Hardy survivors who adapted to harsh conditions through strength and unity",
+      description:
+        "Hardy survivors who adapted to harsh conditions through strength and unity",
       color: "#607D8B",
       icon: "⚒️",
       ideology: "Strength through adversity, honor in struggle",
-      strengths: ["Military prowess", "Resource extraction", "Harsh environment adaptation"],
-      weaknesses: ["Cultural inflexibility", "Limited magic use", "Diplomatic stubbornness"],
-      preferredDiplomacy: ["Military alliance", "Trade agreement", "Non-aggression pact"],
+      strengths: [
+        "Military prowess",
+        "Resource extraction",
+        "Harsh environment adaptation",
+      ],
+      weaknesses: [
+        "Cultural inflexibility",
+        "Limited magic use",
+        "Diplomatic stubbornness",
+      ],
+      preferredDiplomacy: [
+        "Military alliance",
+        "Trade agreement",
+        "Non-aggression pact",
+      ],
       territorialAmbitions: 7,
       militaryFocus: 9,
       economicFocus: 6,
       culturalFocus: 4,
       technologicalFocus: 5,
-      initialDisposition: -20
+      initialDisposition: -20,
     },
     mystics: {
       name: "The Mystic Circle",
-      description: "Keepers of ancient magical knowledge seeking to restore the balance",
+      description:
+        "Keepers of ancient magical knowledge seeking to restore the balance",
       color: "#9C27B0",
       icon: "🔮",
       ideology: "Magic as the path to restoration, wisdom over might",
-      strengths: ["Magical mastery", "Ancient knowledge", "Corruption resistance"],
-      weaknesses: ["Physical frailty", "Resource dependence", "Isolation tendencies"],
-      preferredDiplomacy: ["Research agreement", "Cultural exchange", "Magical alliance"],
+      strengths: [
+        "Magical mastery",
+        "Ancient knowledge",
+        "Corruption resistance",
+      ],
+      weaknesses: [
+        "Physical frailty",
+        "Resource dependence",
+        "Isolation tendencies",
+      ],
+      preferredDiplomacy: [
+        "Research agreement",
+        "Cultural exchange",
+        "Magical alliance",
+      ],
       territorialAmbitions: 3,
       militaryFocus: 4,
       economicFocus: 5,
       culturalFocus: 9,
       technologicalFocus: 8,
-      initialDisposition: 10
+      initialDisposition: 10,
     },
     merchants: {
       name: "The Merchant Federation",
-      description: "Pragmatic traders focused on rebuilding through commerce and cooperation",
+      description:
+        "Pragmatic traders focused on rebuilding through commerce and cooperation",
       color: "#FF9800",
       icon: "💰",
       ideology: "Prosperity through trade, cooperation over conflict",
-      strengths: ["Economic efficiency", "Trade networks", "Diplomatic flexibility"],
-      weaknesses: ["Military weakness", "Corruption vulnerability", "Wealth inequality"],
-      preferredDiplomacy: ["Trade agreement", "Economic alliance", "Mutual defense"],
+      strengths: [
+        "Economic efficiency",
+        "Trade networks",
+        "Diplomatic flexibility",
+      ],
+      weaknesses: [
+        "Military weakness",
+        "Corruption vulnerability",
+        "Wealth inequality",
+      ],
+      preferredDiplomacy: [
+        "Trade agreement",
+        "Economic alliance",
+        "Mutual defense",
+      ],
       territorialAmbitions: 5,
       militaryFocus: 3,
       economicFocus: 9,
       culturalFocus: 6,
       technologicalFocus: 7,
-      initialDisposition: 30
+      initialDisposition: 30,
     },
     nomads: {
       name: "The Wandering Tribes",
-      description: "Mobile communities that have mastered survival in the changed world",
+      description:
+        "Mobile communities that have mastered survival in the changed world",
       color: "#795548",
       icon: "🐎",
       ideology: "Freedom through mobility, adaptation over resistance",
       strengths: ["Mobility", "Survival skills", "Environmental knowledge"],
-      weaknesses: ["Infrastructure limitations", "Technology lag", "Settlement vulnerability"],
-      preferredDiplomacy: ["Safe passage", "Resource exchange", "Temporary alliance"],
+      weaknesses: [
+        "Infrastructure limitations",
+        "Technology lag",
+        "Settlement vulnerability",
+      ],
+      preferredDiplomacy: [
+        "Safe passage",
+        "Resource exchange",
+        "Temporary alliance",
+      ],
       territorialAmbitions: 2,
       militaryFocus: 6,
       economicFocus: 5,
       culturalFocus: 7,
       technologicalFocus: 4,
-      initialDisposition: 0
+      initialDisposition: 0,
     },
     scholars: {
       name: "The Academy of Restoration",
-      description: "Dedicated researchers working to recover lost knowledge and technology",
+      description:
+        "Dedicated researchers working to recover lost knowledge and technology",
       color: "#2196F3",
       icon: "📚",
       ideology: "Knowledge is power, research leads to salvation",
-      strengths: ["Research speed", "Technology recovery", "Knowledge preservation"],
-      weaknesses: ["Military inexperience", "Practical application gaps", "Resource inefficiency"],
-      preferredDiplomacy: ["Research sharing", "Academic alliance", "Knowledge exchange"],
+      strengths: [
+        "Research speed",
+        "Technology recovery",
+        "Knowledge preservation",
+      ],
+      weaknesses: [
+        "Military inexperience",
+        "Practical application gaps",
+        "Resource inefficiency",
+      ],
+      preferredDiplomacy: [
+        "Research sharing",
+        "Academic alliance",
+        "Knowledge exchange",
+      ],
       territorialAmbitions: 4,
       militaryFocus: 2,
       economicFocus: 6,
       culturalFocus: 8,
       technologicalFocus: 10,
-      initialDisposition: 20
+      initialDisposition: 20,
     },
     rebels: {
       name: "The Liberation Front",
-      description: "Revolutionary faction seeking to overthrow old power structures",
+      description:
+        "Revolutionary faction seeking to overthrow old power structures",
       color: "#F44336",
       icon: "✊",
       ideology: "Freedom from oppression, power to the people",
       strengths: ["Guerrilla tactics", "Popular support", "Rapid mobilization"],
-      weaknesses: ["Internal divisions", "Resource scarcity", "Diplomatic isolation"],
-      preferredDiplomacy: ["Revolutionary alliance", "Popular uprising support", "Anti-establishment pact"],
+      weaknesses: [
+        "Internal divisions",
+        "Resource scarcity",
+        "Diplomatic isolation",
+      ],
+      preferredDiplomacy: [
+        "Revolutionary alliance",
+        "Popular uprising support",
+        "Anti-establishment pact",
+      ],
       territorialAmbitions: 6,
       militaryFocus: 8,
       economicFocus: 4,
       culturalFocus: 7,
       technologicalFocus: 5,
-      initialDisposition: -40
+      initialDisposition: -40,
     },
     guardians: {
       name: "The Guardian Order",
-      description: "Protectors dedicated to preserving what remains and preventing further catastrophe",
+      description:
+        "Protectors dedicated to preserving what remains and preventing further catastrophe",
       color: "#4CAF50",
       icon: "🛡️",
       ideology: "Protection above expansion, preservation over progress",
-      strengths: ["Defensive expertise", "Environmental protection", "Moral authority"],
-      weaknesses: ["Expansion reluctance", "Technological conservatism", "Resource limitations"],
-      preferredDiplomacy: ["Mutual protection", "Environmental accord", "Defensive alliance"],
+      strengths: [
+        "Defensive expertise",
+        "Environmental protection",
+        "Moral authority",
+      ],
+      weaknesses: [
+        "Expansion reluctance",
+        "Technological conservatism",
+        "Resource limitations",
+      ],
+      preferredDiplomacy: [
+        "Mutual protection",
+        "Environmental accord",
+        "Defensive alliance",
+      ],
       territorialAmbitions: 3,
       militaryFocus: 7,
       economicFocus: 5,
       culturalFocus: 6,
       technologicalFocus: 6,
-      initialDisposition: 15
+      initialDisposition: 15,
     },
     survivors: {
       name: "The Survivor Coalition",
-      description: "Diverse group of settlements united by necessity and mutual aid",
+      description:
+        "Diverse group of settlements united by necessity and mutual aid",
       color: "#9E9E9E",
       icon: "🤝",
       ideology: "Unity in diversity, survival through cooperation",
       strengths: ["Adaptability", "Resource sharing", "Crisis management"],
-      weaknesses: ["Leadership conflicts", "Strategic inconsistency", "Limited specialization"],
+      weaknesses: [
+        "Leadership conflicts",
+        "Strategic inconsistency",
+        "Limited specialization",
+      ],
       preferredDiplomacy: ["Mutual aid", "Resource sharing", "Crisis alliance"],
       territorialAmbitions: 5,
       militaryFocus: 5,
       economicFocus: 7,
       culturalFocus: 5,
       technologicalFocus: 6,
-      initialDisposition: 25
-    }
+      initialDisposition: 25,
+    },
   },
   technologies: {
     agriculture: {
       name: "Advanced Agriculture",
-      description: "Improved farming techniques for higher yields and crop diversity",
+      description:
+        "Improved farming techniques for higher yields and crop diversity",
       category: "Survival",
       researchCost: 100,
       prerequisites: [],
       unlocks: ["Granary", "Irrigation", "Crop Rotation"],
       effects: [
         { type: "resource_bonus", value: 25, target: "food" },
-        { type: "population_bonus", value: 10, target: "growth" }
+        { type: "population_bonus", value: 10, target: "growth" },
       ],
       discoveredBy: [],
-      lostKnowledge: false
+      lostKnowledge: false,
     },
     metalworking: {
       name: "Advanced Metalworking",
-      description: "Sophisticated techniques for forging stronger metals and alloys",
+      description:
+        "Sophisticated techniques for forging stronger metals and alloys",
       category: "Crafting",
       researchCost: 150,
       prerequisites: [],
       unlocks: ["Forge", "Advanced Weapons", "Metal Armor"],
       effects: [
         { type: "unit_bonus", value: 15, target: "attack" },
-        { type: "building_unlock", value: 1, target: "workshop" }
+        { type: "building_unlock", value: 1, target: "workshop" },
       ],
       discoveredBy: [],
-      lostKnowledge: false
+      lostKnowledge: false,
     },
     magic: {
       name: "Arcane Studies",
@@ -372,10 +462,10 @@ export const gameData: GameData = {
       unlocks: ["Mage Tower", "Enchantments", "Magical Wards"],
       effects: [
         { type: "resource_bonus", value: 30, target: "mana" },
-        { type: "unit_bonus", value: 20, target: "magical_damage" }
+        { type: "unit_bonus", value: 20, target: "magical_damage" },
       ],
       discoveredBy: [],
-      lostKnowledge: true
+      lostKnowledge: true,
     },
     engineering: {
       name: "Engineering",
@@ -386,10 +476,10 @@ export const gameData: GameData = {
       unlocks: ["Siege Engines", "Advanced Construction", "Mechanical Devices"],
       effects: [
         { type: "building_unlock", value: 1, target: "laboratory" },
-        { type: "resource_bonus", value: 20, target: "construction_speed" }
+        { type: "resource_bonus", value: 20, target: "construction_speed" },
       ],
       discoveredBy: [],
-      lostKnowledge: false
+      lostKnowledge: false,
     },
     medicine: {
       name: "Medical Knowledge",
@@ -400,10 +490,10 @@ export const gameData: GameData = {
       unlocks: ["Hospital", "Disease Resistance", "Surgery"],
       effects: [
         { type: "population_bonus", value: 15, target: "health" },
-        { type: "unit_bonus", value: 25, target: "healing" }
+        { type: "unit_bonus", value: 25, target: "healing" },
       ],
       discoveredBy: [],
-      lostKnowledge: false
+      lostKnowledge: false,
     },
     architecture: {
       name: "Advanced Architecture",
@@ -414,10 +504,10 @@ export const gameData: GameData = {
       unlocks: ["Monument", "Advanced Fortifications", "City Planning"],
       effects: [
         { type: "building_unlock", value: 1, target: "monument" },
-        { type: "resource_bonus", value: 30, target: "cultural_influence" }
+        { type: "resource_bonus", value: 30, target: "cultural_influence" },
       ],
       discoveredBy: [],
-      lostKnowledge: true
+      lostKnowledge: true,
     },
     warfare: {
       name: "Military Tactics",
@@ -428,24 +518,25 @@ export const gameData: GameData = {
       unlocks: ["Elite Units", "Battle Formations", "Siege Tactics"],
       effects: [
         { type: "unit_bonus", value: 20, target: "combat_effectiveness" },
-        { type: "unit_bonus", value: 15, target: "coordination" }
+        { type: "unit_bonus", value: 15, target: "coordination" },
       ],
       discoveredBy: [],
-      lostKnowledge: false
+      lostKnowledge: false,
     },
     trade: {
       name: "Commerce and Trade",
-      description: "Systems for efficient resource exchange and economic growth",
+      description:
+        "Systems for efficient resource exchange and economic growth",
       category: "Economics",
       researchCost: 110,
       prerequisites: [],
       unlocks: ["Market", "Trade Routes", "Currency System"],
       effects: [
         { type: "trade_bonus", value: 25, target: "profit" },
-        { type: "resource_bonus", value: 15, target: "gold" }
+        { type: "resource_bonus", value: 15, target: "gold" },
       ],
       discoveredBy: [],
-      lostKnowledge: false
+      lostKnowledge: false,
     },
     navigation: {
       name: "Navigation and Cartography",
@@ -456,10 +547,10 @@ export const gameData: GameData = {
       unlocks: ["Exploration Expeditions", "Accurate Maps", "Safe Travel"],
       effects: [
         { type: "exploration_bonus", value: 30, target: "discovery_chance" },
-        { type: "exploration_bonus", value: 20, target: "travel_safety" }
+        { type: "exploration_bonus", value: 20, target: "travel_safety" },
       ],
       discoveredBy: [],
-      lostKnowledge: false
+      lostKnowledge: false,
     },
     scholarship: {
       name: "Advanced Scholarship",
@@ -470,11 +561,11 @@ export const gameData: GameData = {
       unlocks: ["University", "Research Networks", "Knowledge Preservation"],
       effects: [
         { type: "resource_bonus", value: 40, target: "research_speed" },
-        { type: "building_unlock", value: 1, target: "library" }
+        { type: "building_unlock", value: 1, target: "library" },
       ],
       discoveredBy: [],
-      lostKnowledge: true
-    }
+      lostKnowledge: true,
+    },
   },
   buildings: {},
   artifacts: {},
@@ -487,46 +578,82 @@ export const gameData: GameData = {
       name: "Clear Weather",
       description: "Bright, sunny conditions ideal for most activities",
       effects: [
-        { type: "production", modifier: 10, description: "Increased outdoor work efficiency" },
-        { type: "morale", modifier: 5, description: "Population feels optimistic" }
+        {
+          type: "production",
+          modifier: 10,
+          description: "Increased outdoor work efficiency",
+        },
+        {
+          type: "morale",
+          modifier: 5,
+          description: "Population feels optimistic",
+        },
       ],
       frequency: 30,
       seasonality: ["spring", "summer"],
-      magicalInfluence: false
+      magicalInfluence: false,
     },
     rain: {
       name: "Rainfall",
       description: "Steady rain that nourishes crops but hampers travel",
       effects: [
-        { type: "production", modifier: -10, description: "Outdoor work slowed" },
-        { type: "travel", modifier: -15, description: "Muddy roads slow movement" }
+        {
+          type: "production",
+          modifier: -10,
+          description: "Outdoor work slowed",
+        },
+        {
+          type: "travel",
+          modifier: -15,
+          description: "Muddy roads slow movement",
+        },
       ],
       frequency: 25,
       seasonality: ["spring", "autumn"],
-      magicalInfluence: false
+      magicalInfluence: false,
     },
     storm: {
       name: "Thunderstorm",
       description: "Violent storms with lightning and strong winds",
       effects: [
-        { type: "travel", modifier: -30, description: "Dangerous travel conditions" },
-        { type: "combat", modifier: -20, description: "Poor visibility affects battles" },
-        { type: "production", modifier: -25, description: "Work halted for safety" }
+        {
+          type: "travel",
+          modifier: -30,
+          description: "Dangerous travel conditions",
+        },
+        {
+          type: "combat",
+          modifier: -20,
+          description: "Poor visibility affects battles",
+        },
+        {
+          type: "production",
+          modifier: -25,
+          description: "Work halted for safety",
+        },
       ],
       frequency: 10,
       seasonality: ["summer", "autumn"],
-      magicalInfluence: false
+      magicalInfluence: false,
     },
     fog: {
       name: "Dense Fog",
       description: "Thick fog that reduces visibility significantly",
       effects: [
-        { type: "travel", modifier: -20, description: "Navigation becomes difficult" },
-        { type: "combat", modifier: -15, description: "Reduced battlefield awareness" }
+        {
+          type: "travel",
+          modifier: -20,
+          description: "Navigation becomes difficult",
+        },
+        {
+          type: "combat",
+          modifier: -15,
+          description: "Reduced battlefield awareness",
+        },
       ],
       frequency: 15,
       seasonality: ["autumn", "winter"],
-      magicalInfluence: false
+      magicalInfluence: false,
     },
     snow: {
       name: "Snowfall",
@@ -534,52 +661,81 @@ export const gameData: GameData = {
       effects: [
         { type: "travel", modifier: -25, description: "Snow blocks roads" },
         { type: "production", modifier: -15, description: "Cold slows work" },
-        { type: "health", modifier: -10, description: "Risk of cold-related illness" }
+        {
+          type: "health",
+          modifier: -10,
+          description: "Risk of cold-related illness",
+        },
       ],
       frequency: 20,
       seasonality: ["winter"],
-      magicalInfluence: false
+      magicalInfluence: false,
     },
     heat_wave: {
       name: "Heat Wave",
       description: "Extreme heat that stresses people and animals",
       effects: [
         { type: "health", modifier: -15, description: "Heat exhaustion risk" },
-        { type: "production", modifier: -20, description: "Work slowed by extreme heat" },
-        { type: "morale", modifier: -10, description: "Population discomfort" }
+        {
+          type: "production",
+          modifier: -20,
+          description: "Work slowed by extreme heat",
+        },
+        { type: "morale", modifier: -10, description: "Population discomfort" },
       ],
       frequency: 8,
       seasonality: ["summer"],
-      magicalInfluence: false
+      magicalInfluence: false,
     },
     ash_fall: {
       name: "Ash Fall",
-      description: "Residual ash from ancient disasters still occasionally falls",
+      description:
+        "Residual ash from ancient disasters still occasionally falls",
       effects: [
         { type: "health", modifier: -20, description: "Respiratory problems" },
-        { type: "production", modifier: -30, description: "Ash clogs machinery" },
-        { type: "morale", modifier: -15, description: "Reminder of past catastrophe" }
+        {
+          type: "production",
+          modifier: -30,
+          description: "Ash clogs machinery",
+        },
+        {
+          type: "morale",
+          modifier: -15,
+          description: "Reminder of past catastrophe",
+        },
       ],
       frequency: 5,
       seasonality: ["spring", "summer", "autumn", "winter"],
-      magicalInfluence: true
+      magicalInfluence: true,
     },
     magical_storm: {
       name: "Magical Storm",
       description: "Chaotic magical energies manifest as a supernatural storm",
       effects: [
-        { type: "travel", modifier: -40, description: "Magical interference with navigation" },
-        { type: "production", modifier: 15, description: "Magical boost to certain activities" },
-        { type: "combat", modifier: -25, description: "Unpredictable magical effects" }
+        {
+          type: "travel",
+          modifier: -40,
+          description: "Magical interference with navigation",
+        },
+        {
+          type: "production",
+          modifier: 15,
+          description: "Magical boost to certain activities",
+        },
+        {
+          type: "combat",
+          modifier: -25,
+          description: "Unpredictable magical effects",
+        },
       ],
       frequency: 3,
       seasonality: ["spring", "summer", "autumn", "winter"],
-      magicalInfluence: true
-    }
+      magicalInfluence: true,
+    },
   },
   equipmentTypes: {},
   magicalSchools: {},
-  historicalFigures: {}
+  historicalFigures: {},
 } as const;
 
 export const gameConstants = {
@@ -604,7 +760,7 @@ export const gameConstants = {
     farm: 2,
     workshop: 4,
     library: 6,
-    monument: 2
+    monument: 2,
   },
   POPULATION_GROWTH_RATE: 0.02,
   CULTURAL_INFLUENCE_RADIUS: 200,
@@ -622,5 +778,5 @@ export const gameConstants = {
   MAX_SIMULTANEOUS_EVENTS: 3,
   QUEST_GENERATION_RATE: 0.15,
   ACHIEVEMENT_POINT_VALUE: 100,
-  VICTORY_CONDITION_SCALING: 1.2
+  VICTORY_CONDITION_SCALING: 1.2,
 } as const;

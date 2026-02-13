@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useGameLogic } from '../../hooks/useGameLogic';
-import { useGameStore } from '../../stores/useGameStore';
-import { Button } from '../ui/Button';
-import { GameplayTestPanel } from '../testing/GameplayTestPanel';
+import React, { useState } from "react";
+import { useGameLogic } from "../../hooks/useGameLogic";
+import { useGameStore } from "../../stores/useGameStore";
+import { Button } from "../ui/Button";
+import { GameplayTestPanel } from "../testing/GameplayTestPanel";
 
 interface GameHeaderProps {
   showMissionSelect?: boolean;
@@ -15,11 +15,13 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
   showMissionSelect = false,
   onReturnToMissionSelect,
   currentMission,
-  onRestartMission
+  onRestartMission,
 }) => {
   const { turn } = useGameLogic();
-  const resetGame = useGameStore(state => state.resetGame);
-  const repairMapConnections = useGameStore(state => state.repairMapConnections);
+  const resetGame = useGameStore((state) => state.resetGame);
+  const repairMapConnections = useGameStore(
+    (state) => state.repairMapConnections,
+  );
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showTestPanel, setShowTestPanel] = useState(false);
 
@@ -44,7 +46,9 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
     <>
       <header className="bg-bronze-texture border-b-4 border-bronze px-4 lg:px-6 py-3 lg:py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
         <div className="flex items-center space-x-4">
-          <h1 className="text-xl lg:text-2xl font-frontier font-bold m-0 text-ember-enhanced">⚔ Ashes of Aeloria Campaign</h1>
+          <h1 className="text-xl lg:text-2xl font-frontier font-bold m-0 text-ember-enhanced">
+            ⚔ Ashes of Aeloria Campaign
+          </h1>
         </div>
         <div className="flex gap-3 lg:gap-6 items-center">
           {showMissionSelect && onReturnToMissionSelect && (
@@ -68,8 +72,12 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
               🔄 Restart Mission
             </Button>
           )}
-          <span className="font-frontier font-bold px-3 lg:px-4 py-1.5 lg:py-2 bg-metal-texture text-light-enhanced rounded-md text-sm lg:text-base border-2 border-iron">Turn: {turn}</span>
-          <span className="font-frontier font-bold px-3 lg:px-4 py-1.5 lg:py-2 bg-metal-texture text-light-enhanced rounded-md text-sm lg:text-base border-2 border-iron">Phase: Player</span>
+          <span className="font-frontier font-bold px-3 lg:px-4 py-1.5 lg:py-2 bg-metal-texture text-light-enhanced rounded-md text-sm lg:text-base border-2 border-iron">
+            Turn: {turn}
+          </span>
+          <span className="font-frontier font-bold px-3 lg:px-4 py-1.5 lg:py-2 bg-metal-texture text-light-enhanced rounded-md text-sm lg:text-base border-2 border-iron">
+            Phase: Player
+          </span>
           <Button
             variant="secondary"
             size="sm"
@@ -103,9 +111,12 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
       {showResetConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
           <div className="bg-parchment p-6 lg:p-8 rounded-lg border-4 border-bronze bg-metal-texture text-center w-full max-w-sm">
-            <h2 className="text-xl lg:text-2xl mb-4 font-frontier font-bold text-iron-dark text-battle-worn">🔄 Reset Campaign</h2>
+            <h2 className="text-xl lg:text-2xl mb-4 font-frontier font-bold text-iron-dark text-battle-worn">
+              🔄 Reset Campaign
+            </h2>
             <p className="mb-6 text-iron leading-normal text-sm lg:text-base font-parchment">
-              Are you sure you want to reset the campaign? All progress will be lost and you will start from the first mission.
+              Are you sure you want to reset the campaign? All progress will be
+              lost and you will start from the first mission.
             </p>
             <div className="flex gap-3 justify-center">
               <Button

@@ -3,46 +3,51 @@
  * Integrated campaign mission selection within the battle system
  */
 
-import React, { useState } from 'react';
-import { campaignChapters } from '../../data/campaignData';
-import { useCampaignLogic } from '../../hooks/useCampaignLogic';
-import { Card } from '../ui/Card';
-import { Button } from '../ui/Button';
-import type { CampaignChapter } from '../../data/campaignData';
+import React, { useState } from "react";
+import { campaignChapters } from "../../data/campaignData";
+import { useCampaignLogic } from "../../hooks/useCampaignLogic";
+import { Card } from "../ui/Card";
+import { Button } from "../ui/Button";
+import type { CampaignChapter } from "../../data/campaignData";
 
 interface MissionSelectionCanvasProps {
   onMissionStart?: (missionId: string) => void;
 }
 
-export const MissionSelectionCanvas: React.FC<MissionSelectionCanvasProps> = ({ onMissionStart }) => {
+export const MissionSelectionCanvas: React.FC<MissionSelectionCanvasProps> = ({
+  onMissionStart,
+}) => {
   const [selectedMission, setSelectedMission] = useState<string | null>(null);
 
   const {
     isChapterUnlocked,
     isChapterCompleted,
     isChapterActive,
-    getChapterProgress
+    getChapterProgress,
   } = useCampaignLogic(selectedMission);
 
-  console.log('MissionSelectionCanvas mounted, campaignChapters:', campaignChapters.length);
+  console.log(
+    "MissionSelectionCanvas mounted, campaignChapters:",
+    campaignChapters.length,
+  );
 
   const handleMissionSelect = (chapterId: string) => {
-    console.log('Mission selected:', chapterId);
+    console.log("Mission selected:", chapterId);
     setSelectedMission(chapterId);
   };
 
   const handleStartMission = () => {
-    console.log('handleStartMission called, selectedMission:', selectedMission);
+    console.log("handleStartMission called, selectedMission:", selectedMission);
     if (selectedMission) {
       if (onMissionStart) {
-        console.log('Calling onMissionStart with:', selectedMission);
+        console.log("Calling onMissionStart with:", selectedMission);
         onMissionStart(selectedMission);
       } else {
         // TODO: Initialize battle with selected mission parameters
-        console.log('Starting mission (no callback):', selectedMission);
+        console.log("Starting mission (no callback):", selectedMission);
       }
     } else {
-      console.log('No mission selected');
+      console.log("No mission selected");
     }
   };
 
@@ -56,7 +61,7 @@ export const MissionSelectionCanvas: React.FC<MissionSelectionCanvasProps> = ({ 
       isUnlocked,
       isCompleted,
       isActive,
-      prerequisites: chapter.prerequisites
+      prerequisites: chapter.prerequisites,
     });
 
     return (
@@ -64,14 +69,14 @@ export const MissionSelectionCanvas: React.FC<MissionSelectionCanvasProps> = ({ 
         key={chapter.id}
         className={`p-4 transition-all duration-300 border-2 ${
           selectedMission === chapter.id
-            ? 'border-ember bg-ember/20 animate-ember-glow cursor-pointer'
-            : (isUnlocked || chapter.id === 'chapter_1_awakening')
-            ? 'border-bronze hover:border-crystal hover:bg-crystal/10 cursor-pointer'
-            : 'border-iron bg-iron/20 opacity-60 cursor-not-allowed'
+            ? "border-ember bg-ember/20 animate-ember-glow cursor-pointer"
+            : isUnlocked || chapter.id === "chapter_1_awakening"
+              ? "border-bronze hover:border-crystal hover:bg-crystal/10 cursor-pointer"
+              : "border-iron bg-iron/20 opacity-60 cursor-not-allowed"
         }`}
         onClick={() => {
-          console.log('Card clicked:', chapter.id, 'isUnlocked:', isUnlocked);
-          if (isUnlocked || chapter.id === 'chapter_1_awakening') {
+          console.log("Card clicked:", chapter.id, "isUnlocked:", isUnlocked);
+          if (isUnlocked || chapter.id === "chapter_1_awakening") {
             handleMissionSelect(chapter.id);
           }
         }}
@@ -80,17 +85,24 @@ export const MissionSelectionCanvas: React.FC<MissionSelectionCanvasProps> = ({ 
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
             <div className="text-2xl">
-              {isCompleted ? '✅' : isActive ? '⚔️' : isUnlocked ? '🗺️' : '🔒'}
+              {isCompleted ? "✅" : isActive ? "⚔️" : isUnlocked ? "🗺️" : "🔒"}
             </div>
             <div>
-              <h3 className="font-frontier font-bold text-lg text-iron-dark">{chapter.title}</h3>
-              <p className="text-sm text-parchment-dark font-parchment">{chapter.subtitle}</p>
+              <h3 className="font-frontier font-bold text-lg text-iron-dark">
+                {chapter.title}
+              </h3>
+              <p className="text-sm text-parchment-dark font-parchment">
+                {chapter.subtitle}
+              </p>
             </div>
           </div>
           <div className="text-right">
             <div className="flex gap-1 mb-1">
               {Array.from({ length: 5 }, (_, i) => (
-                <span key={i} className={`text-sm ${i < chapter.starRating ? 'text-amber' : 'text-iron'}`}>
+                <span
+                  key={i}
+                  className={`text-sm ${i < chapter.starRating ? "text-amber" : "text-iron"}`}
+                >
                   ⭐
                 </span>
               ))}
@@ -102,14 +114,20 @@ export const MissionSelectionCanvas: React.FC<MissionSelectionCanvasProps> = ({ 
         </div>
 
         {/* Mission Description */}
-        <p className="text-sm text-parchment mb-3 font-parchment">{chapter.description}</p>
+        <p className="text-sm text-parchment mb-3 font-parchment">
+          {chapter.description}
+        </p>
 
         {/* Progress Bar (if active) */}
         {isActive && (
           <div className="mb-3">
             <div className="flex justify-between text-xs mb-1">
-              <span className="text-parchment-dark font-parchment">Mission Progress</span>
-              <span className="font-frontier font-bold text-iron-dark">{progress}%</span>
+              <span className="text-parchment-dark font-parchment">
+                Mission Progress
+              </span>
+              <span className="font-frontier font-bold text-iron-dark">
+                {progress}%
+              </span>
             </div>
             <div className="w-full bg-iron-dark rounded-full h-2 border border-bronze">
               <div
@@ -122,10 +140,17 @@ export const MissionSelectionCanvas: React.FC<MissionSelectionCanvasProps> = ({ 
 
         {/* Victory Conditions Preview */}
         <div className="space-y-1">
-          <h4 className="text-xs font-frontier font-bold text-bronze mb-1">Mission Objectives:</h4>
+          <h4 className="text-xs font-frontier font-bold text-bronze mb-1">
+            Mission Objectives:
+          </h4>
           {chapter.victoryConditions.slice(0, 2).map((condition) => (
-            <div key={condition.id} className="text-xs text-parchment-dark font-parchment flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full ${condition.completed ? 'bg-forest' : 'bg-iron'}`} />
+            <div
+              key={condition.id}
+              className="text-xs text-parchment-dark font-parchment flex items-center gap-2"
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${condition.completed ? "bg-forest" : "bg-iron"}`}
+              />
               <span>{condition.description}</span>
             </div>
           ))}
@@ -158,7 +183,9 @@ export const MissionSelectionCanvas: React.FC<MissionSelectionCanvasProps> = ({ 
     );
   };
 
-  const selectedChapter = campaignChapters.find(c => c.id === selectedMission);
+  const selectedChapter = campaignChapters.find(
+    (c) => c.id === selectedMission,
+  );
 
   return (
     <div className="h-full flex flex-col bg-stone-texture p-4">
@@ -168,7 +195,8 @@ export const MissionSelectionCanvas: React.FC<MissionSelectionCanvasProps> = ({ 
           🗺️ Campaign Missions
         </h2>
         <p className="text-on-dark font-parchment">
-          Select a mission to begin your campaign through the restoration of Aeloria
+          Select a mission to begin your campaign through the restoration of
+          Aeloria
         </p>
       </div>
 
@@ -189,16 +217,27 @@ export const MissionSelectionCanvas: React.FC<MissionSelectionCanvasProps> = ({ 
 
               <div className="space-y-3">
                 <div>
-                  <h4 className="font-frontier font-bold text-sm text-bronze mb-1">Core Challenge:</h4>
-                  <p className="text-sm text-parchment-dark font-parchment">{selectedChapter.coreChallenge}</p>
+                  <h4 className="font-frontier font-bold text-sm text-bronze mb-1">
+                    Core Challenge:
+                  </h4>
+                  <p className="text-sm text-parchment-dark font-parchment">
+                    {selectedChapter.coreChallenge}
+                  </p>
                 </div>
 
                 <div>
-                  <h4 className="font-frontier font-bold text-sm text-bronze mb-1">Victory Conditions:</h4>
+                  <h4 className="font-frontier font-bold text-sm text-bronze mb-1">
+                    Victory Conditions:
+                  </h4>
                   <div className="space-y-1">
                     {selectedChapter.victoryConditions.map((condition) => (
-                      <div key={condition.id} className="text-sm text-parchment-dark font-parchment flex items-start gap-2">
-                        <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${condition.completed ? 'bg-forest' : 'bg-iron'}`} />
+                      <div
+                        key={condition.id}
+                        className="text-sm text-parchment-dark font-parchment flex items-start gap-2"
+                      >
+                        <span
+                          className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${condition.completed ? "bg-forest" : "bg-iron"}`}
+                        />
                         <span>{condition.description}</span>
                       </div>
                     ))}
@@ -207,11 +246,19 @@ export const MissionSelectionCanvas: React.FC<MissionSelectionCanvasProps> = ({ 
 
                 {selectedChapter.specialRules.length > 0 && (
                   <div>
-                    <h4 className="font-frontier font-bold text-sm text-bronze mb-1">Special Rules:</h4>
+                    <h4 className="font-frontier font-bold text-sm text-bronze mb-1">
+                      Special Rules:
+                    </h4>
                     <div className="space-y-1">
                       {selectedChapter.specialRules.map((rule) => (
-                        <div key={rule.id} className="text-sm text-crystal font-parchment">
-                          <span className="font-frontier font-bold">{rule.name}:</span> {rule.description}
+                        <div
+                          key={rule.id}
+                          className="text-sm text-crystal font-parchment"
+                        >
+                          <span className="font-frontier font-bold">
+                            {rule.name}:
+                          </span>{" "}
+                          {rule.description}
                         </div>
                       ))}
                     </div>
@@ -230,7 +277,9 @@ export const MissionSelectionCanvas: React.FC<MissionSelectionCanvasProps> = ({ 
                   className="font-frontier font-bold"
                   leftIcon="⚔️"
                 >
-                  {isChapterActive(selectedChapter) ? 'Continue Mission' : 'Start Mission'}
+                  {isChapterActive(selectedChapter)
+                    ? "Continue Mission"
+                    : "Start Mission"}
                 </Button>
               ) : (
                 <Button

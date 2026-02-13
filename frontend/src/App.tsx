@@ -1,11 +1,11 @@
-import React from 'react';
-import { GameProvider } from './providers/GameProvider';
-import { GamePage } from './pages/GamePage';
-import './styles/globals.css';
+import React from "react";
+import { GameProvider } from "./providers/GameProvider";
+import { GamePage } from "./pages/GamePage";
+import "./styles/globals.css";
 
 // Setup console testing in development
-if (process.env.NODE_ENV === 'development') {
-  import('./utils/consoleTestingSetup');
+if (process.env.NODE_ENV === "development") {
+  import("./utils/consoleTestingSetup");
 }
 
 function App() {
