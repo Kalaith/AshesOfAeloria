@@ -3,7 +3,7 @@
  * Centralized state management for all game modals
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback } from 'react';
 
 interface ModalState {
   recruitment: boolean;
@@ -19,11 +19,11 @@ export const useModals = () => {
   const [modals, setModals] = useState<ModalState>(initialModalState);
 
   const openModal = useCallback((modalName: keyof ModalState) => {
-    setModals((prev) => ({ ...prev, [modalName]: true }));
+    setModals(prev => ({ ...prev, [modalName]: true }));
   }, []);
 
   const closeModal = useCallback((modalName: keyof ModalState) => {
-    setModals((prev) => ({ ...prev, [modalName]: false }));
+    setModals(prev => ({ ...prev, [modalName]: false }));
   }, []);
 
   const closeAllModals = useCallback(() => {
@@ -36,9 +36,9 @@ export const useModals = () => {
     closeModal,
     closeAllModals,
     // Convenience methods
-    openRecruitment: () => openModal("recruitment"),
-    closeRecruitment: () => closeModal("recruitment"),
-    openHelp: () => openModal("help"),
-    closeHelp: () => closeModal("help"),
+    openRecruitment: () => openModal('recruitment'),
+    closeRecruitment: () => closeModal('recruitment'),
+    openHelp: () => openModal('help'),
+    closeHelp: () => closeModal('help'),
   };
 };

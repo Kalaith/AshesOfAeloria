@@ -3,39 +3,33 @@
  * Clean implementation without external dependencies
  */
 
-import React, { useState } from "react";
-import { Card } from "../ui/Card";
-import { Button } from "../ui/EnhancedButton";
-import { useGameActions } from "../../hooks/useGameActions";
-import { useGameStore } from "../../stores/useGameStore";
-import { gameData } from "../../data/gameData";
-import type { Commander } from "../../types/game";
+import React, { useState } from 'react';
+import { Card } from '../ui/Card';
+import { Button } from '../ui/EnhancedButton';
+import { useGameActions } from '../../hooks/useGameActions';
+import { useGameStore } from '../../stores/useGameStore';
+import { gameData } from '../../data/gameData';
+import type { Commander } from '../../types/game';
 
 export const EnhancedCommandersPanel: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"player" | "enemy">("player");
+  const [activeTab, setActiveTab] = useState<'player' | 'enemy'>('player');
 
-  const {
-    selectCommanderAction,
-    assignCommander,
-    unassignCommanderAction,
-    canPerformActions,
-  } = useGameActions();
+  const { selectCommanderAction, assignCommander, unassignCommanderAction, canPerformActions } =
+    useGameActions();
 
   const { commanders, selectedCommander, nodes } = useGameStore();
 
   // Filter commanders based on active tab
-  const filteredCommanders = commanders.filter((commander) => {
-    if (activeTab === "player") {
-      return commander.owner === "player"; // Player commanders
+  const filteredCommanders = commanders.filter(commander => {
+    if (activeTab === 'player') {
+      return commander.owner === 'player'; // Player commanders
     } else {
-      return commander.owner === "enemy"; // Enemy commanders
+      return commander.owner === 'enemy'; // Enemy commanders
     }
   });
 
   const handleCommanderSelect = (commanderId: number) => {
-    selectCommanderAction(
-      selectedCommander === commanderId ? null : commanderId,
-    );
+    selectCommanderAction(selectedCommander === commanderId ? null : commanderId);
   };
 
   const handleAssign = (commanderId: number, nodeId: number) => {
@@ -49,12 +43,12 @@ export const EnhancedCommandersPanel: React.FC = () => {
   };
 
   const getPlayerNodes = () => {
-    return nodes.filter((node) => node.owner === "player");
+    return nodes.filter(node => node.owner === 'player');
   };
 
   const getAssignedNode = (commander: Commander) => {
     if (!commander.assignedNode) return null;
-    return nodes.find((node) => node.id === commander.assignedNode);
+    return nodes.find(node => node.id === commander.assignedNode);
   };
 
   const renderCommander = (commander: Commander) => {
@@ -68,7 +62,7 @@ export const EnhancedCommandersPanel: React.FC = () => {
       <div
         key={commander.id}
         className={`p-3 border rounded-lg cursor-pointer transition-all duration-200 commander-card-enhanced ${
-          isSelected ? "selected" : "hover:border-bronze hover:shadow-lg"
+          isSelected ? 'selected' : 'hover:border-bronze hover:shadow-lg'
         }`}
         onClick={() => handleCommanderSelect(commander.id)}
       >
@@ -76,21 +70,17 @@ export const EnhancedCommandersPanel: React.FC = () => {
         <div className="flex items-center gap-2 mb-2">
           <span className="text-lg">{commanderClass.icon}</span>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium text-dark-enhanced truncate">
-              {commander.name}
-            </div>
+            <div className="text-sm font-medium text-dark-enhanced truncate">{commander.name}</div>
             <div className="text-xs text-dark-enhanced opacity-80">
               Level {commander.level} • {race.name} {commanderClass.name}
             </div>
           </div>
           <div
             className={`text-xs px-2 py-1 rounded ${
-              assignedNode
-                ? "bg-green-100 text-green-700"
-                : "bg-gray-100 text-gray-600"
+              assignedNode ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
             }`}
           >
-            {assignedNode ? "Assigned" : "Available"}
+            {assignedNode ? 'Assigned' : 'Available'}
           </div>
         </div>
 
@@ -120,14 +110,14 @@ export const EnhancedCommandersPanel: React.FC = () => {
         )}
 
         {/* Actions (only for player commanders and when it's player turn) */}
-        {activeTab === "player" && canPerformActions && (
+        {activeTab === 'player' && canPerformActions && (
           <div className="space-y-1">
             {assignedNode ? (
               <Button
                 variant="secondary"
                 size="xs"
                 fullWidth
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
                   handleUnassign(commander.id);
                 }}
@@ -136,13 +126,13 @@ export const EnhancedCommandersPanel: React.FC = () => {
               </Button>
             ) : playerNodes.length > 0 ? (
               <div className="space-y-1">
-                {playerNodes.slice(0, 2).map((node) => (
+                {playerNodes.slice(0, 2).map(node => (
                   <Button
                     key={node.id}
                     variant="primary"
                     size="xs"
                     fullWidth
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       handleAssign(commander.id, node.id);
                     }}
@@ -157,9 +147,7 @@ export const EnhancedCommandersPanel: React.FC = () => {
                 )}
               </div>
             ) : (
-              <div className="text-xs text-gray-500 text-center">
-                No available nodes
-              </div>
+              <div className="text-xs text-gray-500 text-center">No available nodes</div>
             )}
           </div>
         )}
@@ -179,17 +167,17 @@ export const EnhancedCommandersPanel: React.FC = () => {
       {/* Tab Navigation */}
       <div className="flex mb-4 bg-bronze/10 rounded-lg p-1">
         <button
-          onClick={() => setActiveTab("player")}
+          onClick={() => setActiveTab('player')}
           className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors tab-button-enhanced ${
-            activeTab === "player" ? "active" : ""
+            activeTab === 'player' ? 'active' : ''
           }`}
         >
           Your Commanders
         </button>
         <button
-          onClick={() => setActiveTab("enemy")}
+          onClick={() => setActiveTab('enemy')}
           className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors tab-button-enhanced ${
-            activeTab === "enemy" ? "active" : ""
+            activeTab === 'enemy' ? 'active' : ''
           }`}
         >
           Enemy Forces
@@ -202,13 +190,11 @@ export const EnhancedCommandersPanel: React.FC = () => {
           filteredCommanders.map(renderCommander)
         ) : (
           <div className="text-center py-6 text-gray-500">
-            <div className="text-3xl mb-2">
-              {activeTab === "player" ? "👑" : "⚔️"}
-            </div>
+            <div className="text-3xl mb-2">{activeTab === 'player' ? '👑' : '⚔️'}</div>
             <div className="text-sm">
-              {activeTab === "player"
-                ? "No commanders recruited yet. Recruit your first commander to begin your conquest!"
-                : "No enemy commanders visible. They may be planning their next move..."}
+              {activeTab === 'player'
+                ? 'No commanders recruited yet. Recruit your first commander to begin your conquest!'
+                : 'No enemy commanders visible. They may be planning their next move...'}
             </div>
           </div>
         )}

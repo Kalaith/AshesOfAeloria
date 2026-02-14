@@ -3,18 +3,12 @@
  * Supports multiple variants, sizes, states, and accessibility
  */
 
-import React, { forwardRef } from "react";
-import { uiConfig } from "../../constants";
+import React, { forwardRef } from 'react';
+import { uiConfig } from '../../constants';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?:
-    | "primary"
-    | "secondary"
-    | "success"
-    | "danger"
-    | "warning"
-    | "ghost";
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'ghost';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   fullWidth?: boolean;
   loading?: boolean;
   leftIcon?: React.ReactNode;
@@ -24,59 +18,52 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const variantClassesByVariant = {
   primary:
-    "bg-mana text-light-enhanced border-mana hover:bg-mana-light hover:animate-ember-glow focus:ring-mana",
+    'bg-mana text-light-enhanced border-mana hover:bg-mana-light hover:animate-ember-glow focus:ring-mana',
   secondary:
-    "bg-iron text-light-enhanced border-iron hover:bg-iron-light hover:animate-forge-flicker focus:ring-iron",
+    'bg-iron text-light-enhanced border-iron hover:bg-iron-light hover:animate-forge-flicker focus:ring-iron',
   success:
-    "bg-forest text-light-enhanced border-forest hover:bg-forest-light hover:animate-forge-flicker focus:ring-forest",
+    'bg-forest text-light-enhanced border-forest hover:bg-forest-light hover:animate-forge-flicker focus:ring-forest',
   danger:
-    "bg-blood text-light-enhanced border-blood hover:bg-blood-light hover:animate-battle-shake focus:ring-blood",
+    'bg-blood text-light-enhanced border-blood hover:bg-blood-light hover:animate-battle-shake focus:ring-blood',
   warning:
-    "bg-amber text-dark-enhanced border-amber hover:bg-amber-light hover:animate-ember-glow focus:ring-amber",
-  ghost:
-    "bg-transparent hover:bg-mana/10 text-dark-enhanced border-mana/30 focus:ring-mana",
+    'bg-amber text-dark-enhanced border-amber hover:bg-amber-light hover:animate-ember-glow focus:ring-amber',
+  ghost: 'bg-transparent hover:bg-mana/10 text-dark-enhanced border-mana/30 focus:ring-mana',
 } as const;
 
 const sizeClassesBySize = {
-  xs: "px-2 py-1 text-xs",
-  sm: "px-3 py-1.5 text-sm",
-  md: "px-4 py-2 text-sm",
-  lg: "px-6 py-3 text-base",
-  xl: "px-8 py-4 text-lg",
+  xs: 'px-2 py-1 text-xs',
+  sm: 'px-3 py-1.5 text-sm',
+  md: 'px-4 py-2 text-sm',
+  lg: 'px-6 py-3 text-base',
+  xl: 'px-8 py-4 text-lg',
 } as const;
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
-      variant = "primary",
-      size = "md",
+      variant = 'primary',
+      size = 'md',
       fullWidth = false,
       loading = false,
       leftIcon,
       rightIcon,
       disabled,
-      className = "",
+      className = '',
       children,
       ...props
     },
-    ref,
+    ref
   ) => {
     const baseClasses =
-      "inline-flex items-center justify-center border-2 font-frontier font-bold rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed";
+      'inline-flex items-center justify-center border-2 font-frontier font-bold rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed';
 
     const variantClasses = variantClassesByVariant[variant];
     const sizeClasses = sizeClassesBySize[size];
-    const widthClasses = fullWidth ? "w-full" : "";
+    const widthClasses = fullWidth ? 'w-full' : '';
 
-    const combinedClassName = [
-      baseClasses,
-      variantClasses,
-      sizeClasses,
-      widthClasses,
-      className,
-    ]
+    const combinedClassName = [baseClasses, variantClasses, sizeClasses, widthClasses, className]
       .filter(Boolean)
-      .join(" ");
+      .join(' ');
 
     const isDisabled = disabled || loading;
 
@@ -92,11 +79,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
         {loading && (
           <span className="mr-2 -ml-1">
-            <svg
-              className="animate-spin h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
+            <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
               <circle
                 className="opacity-25"
                 cx="12"
@@ -116,12 +99,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
         <span>{children}</span>
 
-        {rightIcon && !loading && (
-          <span className="ml-2 -mr-1">{rightIcon}</span>
-        )}
+        {rightIcon && !loading && <span className="ml-2 -mr-1">{rightIcon}</span>}
       </button>
     );
-  },
+  }
 );
 
-Button.displayName = "Button";
+Button.displayName = 'Button';

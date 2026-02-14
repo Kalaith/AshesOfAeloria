@@ -1,17 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // Custom hook for campaign logic separation
-import { useCallback, useMemo } from "react";
-import { useGameStore } from "../stores/useGameStore";
-import {
-  getChapterById,
-  getAvailableResearchNodes,
-} from "../data/campaignData";
-import { safeArrayAccess } from "../utils/guards";
-import {
-  validateChapterId,
-  type ChapterId,
-} from "../validators/gameValidators";
-import type { CampaignChapter, ResearchNode } from "../data/campaignData";
+import { useCallback, useMemo } from 'react';
+import { useGameStore } from '../stores/useGameStore';
+import { getChapterById, getAvailableResearchNodes } from '../data/campaignData';
+import { safeArrayAccess } from '../utils/guards';
+import { validateChapterId, type ChapterId } from '../validators/gameValidators';
+import type { CampaignChapter, ResearchNode } from '../data/campaignData';
 
 export interface CampaignLogicState {
   currentChapter: CampaignChapter | null;
@@ -35,18 +29,13 @@ export const useCampaignLogic = (selectedChapterId: string | null = null) => {
   // Memoized state calculations
   const state: CampaignLogicState = useMemo(() => {
     const completedChapters: string[] = [];
-    const completedResearch = safeArrayAccess(
-      gameState.research?.completedTechnologies,
-    ).map((tech) => String(tech));
+    const completedResearch = safeArrayAccess(gameState.research?.completedTechnologies).map(tech =>
+      String(tech)
+    );
 
     return {
-      currentChapter: selectedChapterId
-        ? (getChapterById(selectedChapterId) ?? null)
-        : null,
-      availableResearch: getAvailableResearchNodes(
-        completedResearch,
-        completedChapters,
-      ),
+      currentChapter: selectedChapterId ? (getChapterById(selectedChapterId) ?? null) : null,
+      availableResearch: getAvailableResearchNodes(completedResearch, completedChapters),
       completedChapters,
       completedResearch,
     };
@@ -69,7 +58,7 @@ export const useCampaignLogic = (selectedChapterId: string | null = null) => {
       gameState.resources.culture,
       gameState.resources.energy,
       gameState.resources.artifacts,
-    ],
+    ]
   );
 
   // Action functions
@@ -77,9 +66,8 @@ export const useCampaignLogic = (selectedChapterId: string | null = null) => {
     () => ({
       isChapterUnlocked: (chapter: CampaignChapter): boolean => {
         return (
-          chapter.prerequisites.every((prereq) =>
-            state.completedChapters.includes(prereq),
-          ) || chapter.prerequisites.length === 0
+          chapter.prerequisites.every(prereq => state.completedChapters.includes(prereq)) ||
+          chapter.prerequisites.length === 0
         );
       },
 
@@ -101,7 +89,7 @@ export const useCampaignLogic = (selectedChapterId: string | null = null) => {
       getChapterProgress: (chapter: CampaignChapter): number => {
         const totalConditions = chapter.victoryConditions.length;
         const completedConditions = chapter.victoryConditions.filter(
-          (condition) => condition.completed,
+          condition => condition.completed
         ).length;
         return totalConditions > 0 ? completedConditions / totalConditions : 0;
       },
@@ -111,7 +99,7 @@ export const useCampaignLogic = (selectedChapterId: string | null = null) => {
         return validation.success;
       },
     }),
-    [state, resources, gameState.currentMission],
+    [state, resources, gameState.currentMission]
   );
 
   return {

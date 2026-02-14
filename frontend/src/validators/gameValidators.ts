@@ -2,15 +2,15 @@
 // Input Validation and Data Sanitization
 // Provides validation functions for user inputs and external data
 
-import { campaignChapters } from "../data/campaignData";
-import { gameBalance } from "../constants/gameBalance";
-import { isNonEmptyString, isValidNumber } from "../utils/guards";
+import { campaignChapters } from '../data/campaignData';
+import { gameBalance } from '../constants/gameBalance';
+import { isNonEmptyString, isValidNumber } from '../utils/guards';
 
 // Branded types for better type safety
-export type ChapterId = string & { __brand: "ChapterId" };
-export type CommanderId = string & { __brand: "CommanderId" };
-export type NodeId = number & { __brand: "NodeId" };
-export type ResearchId = string & { __brand: "ResearchId" };
+export type ChapterId = string & { __brand: 'ChapterId' };
+export type CommanderId = string & { __brand: 'CommanderId' };
+export type NodeId = number & { __brand: 'NodeId' };
+export type ResearchId = string & { __brand: 'ResearchId' };
 
 /**
  * Validation result type
@@ -30,10 +30,10 @@ export type ValidationResult<T> =
  */
 export const validateChapterId = (id: unknown): ValidationResult<ChapterId> => {
   if (!isNonEmptyString(id)) {
-    return { success: false, error: "Chapter ID must be a non-empty string" };
+    return { success: false, error: 'Chapter ID must be a non-empty string' };
   }
 
-  const validChapter = campaignChapters.find((chapter) => chapter.id === id);
+  const validChapter = campaignChapters.find(chapter => chapter.id === id);
   if (!validChapter) {
     return { success: false, error: `Invalid chapter ID: ${id}` };
   }
@@ -44,18 +44,16 @@ export const validateChapterId = (id: unknown): ValidationResult<ChapterId> => {
 /**
  * Validate commander ID
  */
-export const validateCommanderId = (
-  id: unknown,
-): ValidationResult<CommanderId> => {
+export const validateCommanderId = (id: unknown): ValidationResult<CommanderId> => {
   if (!isNonEmptyString(id)) {
-    return { success: false, error: "Commander ID must be a non-empty string" };
+    return { success: false, error: 'Commander ID must be a non-empty string' };
   }
 
   // Simple format validation - should be alphanumeric with optional underscores/hyphens
   if (!/^[a-zA-Z0-9_-]+$/.test(id)) {
     return {
       success: false,
-      error: "Commander ID contains invalid characters",
+      error: 'Commander ID contains invalid characters',
     };
   }
 
@@ -67,11 +65,11 @@ export const validateCommanderId = (
  */
 export const validateNodeId = (id: unknown): ValidationResult<NodeId> => {
   if (!isValidNumber(id)) {
-    return { success: false, error: "Node ID must be a valid number" };
+    return { success: false, error: 'Node ID must be a valid number' };
   }
 
   if (id < 0 || !Number.isInteger(id)) {
-    return { success: false, error: "Node ID must be a non-negative integer" };
+    return { success: false, error: 'Node ID must be a non-negative integer' };
   }
 
   return { success: true, data: id as NodeId };
@@ -80,15 +78,13 @@ export const validateNodeId = (id: unknown): ValidationResult<NodeId> => {
 /**
  * Validate resource amount
  */
-export const validateResourceAmount = (
-  amount: unknown,
-): ValidationResult<number> => {
+export const validateResourceAmount = (amount: unknown): ValidationResult<number> => {
   if (!isValidNumber(amount)) {
-    return { success: false, error: "Resource amount must be a valid number" };
+    return { success: false, error: 'Resource amount must be a valid number' };
   }
 
   if (amount < 0) {
-    return { success: false, error: "Resource amount cannot be negative" };
+    return { success: false, error: 'Resource amount cannot be negative' };
   }
 
   if (amount > gameBalance.RESOURCES.MAX_RESOURCE_STORAGE) {
@@ -104,17 +100,15 @@ export const validateResourceAmount = (
 /**
  * Validate commander level
  */
-export const validateCommanderLevel = (
-  level: unknown,
-): ValidationResult<number> => {
+export const validateCommanderLevel = (level: unknown): ValidationResult<number> => {
   if (!isValidNumber(level)) {
-    return { success: false, error: "Commander level must be a valid number" };
+    return { success: false, error: 'Commander level must be a valid number' };
   }
 
   if (!Number.isInteger(level) || level < 1) {
     return {
       success: false,
-      error: "Commander level must be a positive integer",
+      error: 'Commander level must be a positive integer',
     };
   }
 
@@ -131,18 +125,12 @@ export const validateCommanderLevel = (
 /**
  * Validate star rating
  */
-export const validateStarRating = (
-  rating: unknown,
-): ValidationResult<number> => {
+export const validateStarRating = (rating: unknown): ValidationResult<number> => {
   if (!isValidNumber(rating)) {
-    return { success: false, error: "Star rating must be a valid number" };
+    return { success: false, error: 'Star rating must be a valid number' };
   }
 
-  if (
-    !Number.isInteger(rating) ||
-    rating < 0 ||
-    rating > gameBalance.UI.MAX_STAR_RATING
-  ) {
+  if (!Number.isInteger(rating) || rating < 0 || rating > gameBalance.UI.MAX_STAR_RATING) {
     return {
       success: false,
       error: `Star rating must be between 0 and ${gameBalance.UI.MAX_STAR_RATING}`,
@@ -155,13 +143,11 @@ export const validateStarRating = (
 /**
  * Validate faction relationship value
  */
-export const validateFactionRelationship = (
-  value: unknown,
-): ValidationResult<number> => {
+export const validateFactionRelationship = (value: unknown): ValidationResult<number> => {
   if (!isValidNumber(value)) {
     return {
       success: false,
-      error: "Faction relationship must be a valid number",
+      error: 'Faction relationship must be a valid number',
     };
   }
 
@@ -183,14 +169,14 @@ export const validateFactionRelationship = (
  */
 export const sanitizeUserInput = (input: unknown): string => {
   if (!isNonEmptyString(input)) {
-    return "";
+    return '';
   }
 
   // Remove potentially dangerous characters
   return input
-    .replace(/[<>]/g, "") // Remove angle brackets
-    .replace(/javascript:/gi, "") // Remove javascript: protocol
-    .replace(/on\w+=/gi, "") // Remove event handlers
+    .replace(/[<>]/g, '') // Remove angle brackets
+    .replace(/javascript:/gi, '') // Remove javascript: protocol
+    .replace(/on\w+=/gi, '') // Remove event handlers
     .trim()
     .slice(0, 1000); // Limit length
 };
@@ -198,22 +184,20 @@ export const sanitizeUserInput = (input: unknown): string => {
 /**
  * Validate and sanitize search query
  */
-export const validateSearchQuery = (
-  query: unknown,
-): ValidationResult<string> => {
+export const validateSearchQuery = (query: unknown): ValidationResult<string> => {
   const sanitized = sanitizeUserInput(query);
 
   if (sanitized.length < 2) {
     return {
       success: false,
-      error: "Search query must be at least 2 characters long",
+      error: 'Search query must be at least 2 characters long',
     };
   }
 
   if (sanitized.length > 100) {
     return {
       success: false,
-      error: "Search query is too long (max 100 characters)",
+      error: 'Search query is too long (max 100 characters)',
     };
   }
 
@@ -226,7 +210,7 @@ export const validateSearchQuery = (
 export const safeValidate = <T>(
   validator: (input: unknown) => ValidationResult<T>,
   input: unknown,
-  fallback: T,
+  fallback: T
 ): T => {
   try {
     const result = validator(input);
@@ -241,7 +225,7 @@ export const safeValidate = <T>(
  */
 export const validateBatch = <T extends Record<string, unknown>>(
   validators: { [K in keyof T]: (input: unknown) => ValidationResult<T[K]> },
-  inputs: Record<keyof T, unknown>,
+  inputs: Record<keyof T, unknown>
 ): ValidationResult<T> => {
   const result = {} as T;
   const errors: string[] = [];
@@ -256,7 +240,7 @@ export const validateBatch = <T extends Record<string, unknown>>(
   }
 
   if (errors.length > 0) {
-    return { success: false, error: errors.join(", ") };
+    return { success: false, error: errors.join(', ') };
   }
 
   return { success: true, data: result };

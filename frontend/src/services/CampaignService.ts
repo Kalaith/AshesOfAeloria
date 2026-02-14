@@ -5,27 +5,21 @@ import {
   researchTree,
   getChapterById,
   getAvailableResearchNodes,
-} from "../data/campaignData";
-import type { CampaignChapter, ResearchNode } from "../data/campaignData";
-import type { ChapterId, ResearchId } from "../types/improved";
-import { validateChapterId } from "../validators/gameValidators";
-import { safeArrayAccess } from "../utils/guards";
+} from '../data/campaignData';
+import type { CampaignChapter, ResearchNode } from '../data/campaignData';
+import type { ChapterId, ResearchId } from '../types/improved';
+import { validateChapterId } from '../validators/gameValidators';
+import { safeArrayAccess } from '../utils/guards';
 
 export interface CampaignServiceInterface {
   getAllChapters(): CampaignChapter[];
   getChapter(id: string): CampaignChapter | null;
   getAvailableChapters(completedChapters: string[]): CampaignChapter[];
   getAllResearchNodes(): ResearchNode[];
-  getAvailableResearch(
-    completedResearch: string[],
-    completedChapters: string[],
-  ): ResearchNode[];
+  getAvailableResearch(completedResearch: string[], completedChapters: string[]): ResearchNode[];
   getResearchNode(id: string): ResearchNode | null;
   calculateChapterProgress(chapter: CampaignChapter): number;
-  isChapterUnlocked(
-    chapter: CampaignChapter,
-    completedChapters: string[],
-  ): boolean;
+  isChapterUnlocked(chapter: CampaignChapter, completedChapters: string[]): boolean;
 }
 
 export class StaticCampaignService implements CampaignServiceInterface {
@@ -54,34 +48,26 @@ export class StaticCampaignService implements CampaignServiceInterface {
   getAvailableChapters(completedChapters: string[]): CampaignChapter[] {
     const completed = safeArrayAccess(completedChapters);
 
-    return this.chapters.filter((chapter) =>
-      this.isChapterUnlocked(chapter, completed),
-    );
+    return this.chapters.filter(chapter => this.isChapterUnlocked(chapter, completed));
   }
 
   getAllResearchNodes(): ResearchNode[] {
     return [...this.researchNodes];
   }
 
-  getAvailableResearch(
-    completedResearch: string[],
-    completedChapters: string[],
-  ): ResearchNode[] {
+  getAvailableResearch(completedResearch: string[], completedChapters: string[]): ResearchNode[] {
     const safeCompletedResearch = safeArrayAccess(completedResearch);
     const safeCompletedChapters = safeArrayAccess(completedChapters);
 
-    return getAvailableResearchNodes(
-      safeCompletedResearch,
-      safeCompletedChapters,
-    );
+    return getAvailableResearchNodes(safeCompletedResearch, safeCompletedChapters);
   }
 
   getResearchNode(id: string): ResearchNode | null {
-    if (!id || typeof id !== "string") {
+    if (!id || typeof id !== 'string') {
       return null;
     }
 
-    return this.researchNodes.find((node) => node.id === id) || null;
+    return this.researchNodes.find(node => node.id === id) || null;
   }
 
   calculateChapterProgress(chapter: CampaignChapter): number {
@@ -91,16 +77,13 @@ export class StaticCampaignService implements CampaignServiceInterface {
 
     const totalConditions = chapter.victoryConditions.length;
     const completedConditions = chapter.victoryConditions.filter(
-      (condition) => condition.completed,
+      condition => condition.completed
     ).length;
 
     return completedConditions / totalConditions;
   }
 
-  isChapterUnlocked(
-    chapter: CampaignChapter,
-    completedChapters: string[],
-  ): boolean {
+  isChapterUnlocked(chapter: CampaignChapter, completedChapters: string[]): boolean {
     const completed = safeArrayAccess(completedChapters);
 
     // First chapter is always unlocked
@@ -109,7 +92,7 @@ export class StaticCampaignService implements CampaignServiceInterface {
     }
 
     // All prerequisites must be completed
-    return chapter.prerequisites.every((prereq) => completed.includes(prereq));
+    return chapter.prerequisites.every(prereq => completed.includes(prereq));
   }
 }
 

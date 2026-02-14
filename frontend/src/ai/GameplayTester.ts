@@ -10,22 +10,16 @@ import {
   type AIStrategy,
   type GameTestResult,
   type AIDecision,
-} from "./AIPlayer";
-import type {
-  GameState,
-  Resources,
-  GameNode,
-  NodeType,
-  CommanderClass,
-} from "../types/game.d";
+} from './AIPlayer';
+import type { GameState, Resources, GameNode, NodeType, CommanderClass } from '../types/game.d';
 import {
   generateInitialMap,
   createCommander,
   calculateIncome,
   resolveBattle,
   calculateEffectiveGarrison,
-} from "../utils/gameLogic";
-import { gameData } from "../data/gameData";
+} from '../utils/gameLogic';
+import { gameData } from '../data/gameData';
 
 export interface TestConfiguration {
   maxTurns: number;
@@ -33,7 +27,7 @@ export interface TestConfiguration {
   playerStrategy: AIStrategy;
   enemyStrategy?: AIStrategy; // If not provided, uses existing enemy AI
   campaignId?: string;
-  logLevel: "minimal" | "detailed" | "verbose";
+  logLevel: 'minimal' | 'detailed' | 'verbose';
 }
 
 export interface BalanceReport {
@@ -52,20 +46,18 @@ export class GameplayTester {
   private results: GameTestResult[] = [];
   private balanceIssues: Set<string> = new Set();
   private readonly recruitableCommanderClasses: readonly CommanderClass[] = [
-    "knight",
-    "mage",
-    "ranger",
-    "warlord",
+    'knight',
+    'mage',
+    'ranger',
+    'warlord',
   ] as const;
 
   constructor() {}
 
   private isRecruitableCommanderClass(
-    value: string,
+    value: string
   ): value is (typeof this.recruitableCommanderClasses)[number] {
-    return (this.recruitableCommanderClasses as readonly string[]).includes(
-      value,
-    );
+    return (this.recruitableCommanderClasses as readonly string[]).includes(value);
   }
 
   /**
@@ -73,7 +65,7 @@ export class GameplayTester {
    */
   async runTests(config: TestConfiguration): Promise<BalanceReport> {
     console.log(
-      `🤖 Starting gameplay tests: ${config.iterations} iterations with ${config.playerStrategy.name} strategy`,
+      `🤖 Starting gameplay tests: ${config.iterations} iterations with ${config.playerStrategy.name} strategy`
     );
 
     this.results = [];
@@ -93,11 +85,11 @@ export class GameplayTester {
 
       // Progress update
       console.log(
-        `📊 Completed ${Math.min(i + batchSize, promises.length)}/${promises.length} tests`,
+        `📊 Completed ${Math.min(i + batchSize, promises.length)}/${promises.length} tests`
       );
 
       // Small delay to prevent UI blocking
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise(resolve => setTimeout(resolve, 10));
     }
 
     return this.generateBalanceReport(config);
@@ -108,7 +100,7 @@ export class GameplayTester {
    */
   private async runSingleGame(
     config: TestConfiguration,
-    gameIndex: number,
+    gameIndex: number
   ): Promise<GameTestResult> {
     // Initialize game state
     let gameState = this.initializeGameState(config.campaignId);
@@ -118,25 +110,17 @@ export class GameplayTester {
 
     const decisions: AIDecision[] = [];
     let turn = 0;
-    let winner: "player" | "enemy" | "draw" = "draw";
+    let winner: 'player' | 'enemy' | 'draw' = 'draw';
 
-    if (config.logLevel === "verbose") {
-      console.log(
-        `🎮 Starting game ${gameIndex + 1} - Player: ${config.playerStrategy.name}`,
-      );
+    if (config.logLevel === 'verbose') {
+      console.log(`🎮 Starting game ${gameIndex + 1} - Player: ${config.playerStrategy.name}`);
 
       // Log initial state
-      const playerNodes = gameState.nodes.filter(
-        (n) => n.owner === "player",
-      ).length;
-      const enemyNodes = gameState.nodes.filter(
-        (n) => n.owner === "enemy",
-      ).length;
-      const neutralNodes = gameState.nodes.filter(
-        (n) => n.owner === "neutral",
-      ).length;
+      const playerNodes = gameState.nodes.filter(n => n.owner === 'player').length;
+      const enemyNodes = gameState.nodes.filter(n => n.owner === 'enemy').length;
+      const neutralNodes = gameState.nodes.filter(n => n.owner === 'neutral').length;
       console.log(
-        `Initial state: Player: ${playerNodes}, Enemy: ${enemyNodes}, Neutral: ${neutralNodes}`,
+        `Initial state: Player: ${playerNodes}, Enemy: ${enemyNodes}, Neutral: ${neutralNodes}`
       );
     }
 
@@ -146,23 +130,18 @@ export class GameplayTester {
       gameState.turn = turn;
 
       // Player turn (AI)
-      if (gameState.phase === "player") {
-        gameState = await this.executePlayerTurn(
-          gameState,
-          playerAI,
-          decisions,
-          config.logLevel,
-        );
+      if (gameState.phase === 'player') {
+        gameState = await this.executePlayerTurn(gameState, playerAI, decisions, config.logLevel);
       }
 
       // Enemy turn (existing AI)
-      if (gameState.phase === "enemy") {
+      if (gameState.phase === 'enemy') {
         gameState = await this.executeEnemyTurn(gameState, config.logLevel);
       }
 
       // Check victory conditions
       const victoryCheck = this.checkVictoryConditions(gameState);
-      if (victoryCheck !== "ongoing") {
+      if (victoryCheck !== 'ongoing') {
         winner = victoryCheck;
         break;
       }
@@ -172,41 +151,32 @@ export class GameplayTester {
 
       // Early exit if game becomes unwinnable
       if (this.isGameStalemate(gameState, turn)) {
-        winner = "draw";
+        winner = 'draw';
         break;
       }
     }
 
     // Analyze final state for balance issues
-    const balanceIssues = this.analyzeForBalanceIssues(
-      gameState,
-      turn,
-      decisions,
-    );
+    const balanceIssues = this.analyzeForBalanceIssues(gameState, turn, decisions);
 
     const result: GameTestResult = {
       winner,
       turns: turn,
       finalState: {
-        playerNodes: gameState.nodes.filter((n) => n.owner === "player").length,
-        enemyNodes: gameState.nodes.filter((n) => n.owner === "enemy").length,
+        playerNodes: gameState.nodes.filter(n => n.owner === 'player').length,
+        enemyNodes: gameState.nodes.filter(n => n.owner === 'enemy').length,
         playerResources: { ...gameState.resources },
         enemyResources: this.estimateEnemyResources(gameState),
-        playerCommanders: gameState.commanders.filter(
-          (c) => c.owner === "player",
-        ).length,
-        enemyCommanders: gameState.commanders.filter((c) => c.owner === "enemy")
-          .length,
+        playerCommanders: gameState.commanders.filter(c => c.owner === 'player').length,
+        enemyCommanders: gameState.commanders.filter(c => c.owner === 'enemy').length,
       },
       strategy: config.playerStrategy,
       decisions,
       balanceIssues,
     };
 
-    if (config.logLevel !== "minimal") {
-      console.log(
-        `🏁 Game ${gameIndex + 1} finished: ${winner} wins in ${turn} turns`,
-      );
+    if (config.logLevel !== 'minimal') {
+      console.log(`🏁 Game ${gameIndex + 1} finished: ${winner} wins in ${turn} turns`);
     }
 
     return result;
@@ -220,20 +190,20 @@ export class GameplayTester {
       // Player starting territory
       {
         id: 1,
-        type: "city",
+        type: 'city',
         x: 200,
         y: 300,
-        owner: "player",
+        owner: 'player',
         starLevel: 1,
         garrison: 100,
         connections: [2, 3, 5],
       },
       {
         id: 2,
-        type: "resource",
+        type: 'resource',
         x: 300,
         y: 200,
-        owner: "player",
+        owner: 'player',
         starLevel: 1,
         garrison: 75,
         connections: [1, 4, 5],
@@ -242,40 +212,40 @@ export class GameplayTester {
       // Neutral territory (contested)
       {
         id: 3,
-        type: "resource",
+        type: 'resource',
         x: 200,
         y: 400,
-        owner: "neutral",
+        owner: 'neutral',
         starLevel: 1,
         garrison: 60,
         connections: [1, 6],
       },
       {
         id: 4,
-        type: "fortress",
+        type: 'fortress',
         x: 400,
         y: 150,
-        owner: "neutral",
+        owner: 'neutral',
         starLevel: 2,
         garrison: 120,
         connections: [2, 5, 7],
       },
       {
         id: 5,
-        type: "shrine",
+        type: 'shrine',
         x: 400,
         y: 300,
-        owner: "neutral",
+        owner: 'neutral',
         starLevel: 1,
         garrison: 80,
         connections: [1, 2, 4, 6, 7, 8],
       },
       {
         id: 6,
-        type: "resource",
+        type: 'resource',
         x: 200,
         y: 500,
-        owner: "neutral",
+        owner: 'neutral',
         starLevel: 1,
         garrison: 60,
         connections: [3, 5, 8],
@@ -284,32 +254,32 @@ export class GameplayTester {
       // Enemy starting territory (equal to player)
       {
         id: 7,
-        type: "city",
+        type: 'city',
         x: 600,
         y: 300,
-        owner: "enemy",
+        owner: 'enemy',
         starLevel: 1,
         garrison: 100,
         connections: [4, 5, 8],
       },
       {
         id: 8,
-        type: "resource",
+        type: 'resource',
         x: 500,
         y: 400,
-        owner: "enemy",
+        owner: 'enemy',
         starLevel: 1,
         garrison: 75,
         connections: [5, 6, 7],
       },
-    ].map((node) => ({
+    ].map(node => ({
       ...node,
       name: `${node.type} ${node.id}`,
       description: `A ${node.type} in the realm`,
-      population: node.type === "city" ? 1000 : 500,
+      population: node.type === 'city' ? 1000 : 500,
       buildings: [],
       technologies: [],
-      environmentState: "stable" as const,
+      environmentState: 'stable' as const,
       corruption: 0,
       culturalInfluence: {},
       economicData: {
@@ -332,8 +302,8 @@ export class GameplayTester {
 
     // Create initial commanders
     const initialCommanders = [
-      createCommander(1, "knight", "human", "player"),
-      createCommander(1000, "knight", "orc", "enemy"),
+      createCommander(1, 'knight', 'human', 'player'),
+      createCommander(1000, 'knight', 'orc', 'enemy'),
     ];
 
     // Assign commanders to starting positions
@@ -357,10 +327,10 @@ export class GameplayTester {
     if (campaignId) {
       // Apply campaign-specific starting conditions
       switch (campaignId) {
-        case "chapter_1_awakening":
+        case 'chapter_1_awakening':
           resources = { ...resources, gold: 300, supplies: 75, mana: 25 };
           break;
-        case "chapter_2_reclamation":
+        case 'chapter_2_reclamation':
           resources = {
             ...resources,
             gold: 500,
@@ -375,7 +345,7 @@ export class GameplayTester {
 
     return {
       turn: 1,
-      phase: "player",
+      phase: 'player',
       resources,
       commanders: initialCommanders,
       nodes: initialNodes,
@@ -423,7 +393,7 @@ export class GameplayTester {
     gameState: GameState,
     playerAI: AIPlayer,
     decisions: AIDecision[],
-    logLevel: string,
+    logLevel: string
   ): Promise<GameState> {
     const aiDecisions = playerAI.analyzeGameState(gameState);
 
@@ -435,47 +405,39 @@ export class GameplayTester {
       if (actionsThisTurn >= maxActions) break;
 
       const previousState = JSON.stringify(
-        gameState.nodes.map((n) => ({ id: n.id, owner: n.owner })),
+        gameState.nodes.map(n => ({ id: n.id, owner: n.owner }))
       );
       gameState = this.executeDecision(gameState, decision, logLevel);
-      const newState = JSON.stringify(
-        gameState.nodes.map((n) => ({ id: n.id, owner: n.owner })),
-      );
+      const newState = JSON.stringify(gameState.nodes.map(n => ({ id: n.id, owner: n.owner })));
 
       decisions.push(decision);
       actionsThisTurn++;
 
       // If the decision actually changed the game state, log it
-      if (previousState !== newState && logLevel === "verbose") {
+      if (previousState !== newState && logLevel === 'verbose') {
         console.log(`🎯 Executed: ${decision.type} - ${decision.reasoning}`);
       }
     }
 
-    gameState.phase = "enemy";
+    gameState.phase = 'enemy';
     return gameState;
   }
 
   /**
    * Execute enemy turn (improved AI)
    */
-  private async executeEnemyTurn(
-    gameState: GameState,
-    logLevel: string,
-  ): Promise<GameState> {
-    const enemyNodes = gameState.nodes.filter((n) => n.owner === "enemy");
-    const playerNodes = gameState.nodes.filter((n) => n.owner === "player");
-    const neutralNodes = gameState.nodes.filter((n) => n.owner === "neutral");
+  private async executeEnemyTurn(gameState: GameState, logLevel: string): Promise<GameState> {
+    const enemyNodes = gameState.nodes.filter(n => n.owner === 'enemy');
+    const playerNodes = gameState.nodes.filter(n => n.owner === 'player');
+    const neutralNodes = gameState.nodes.filter(n => n.owner === 'neutral');
 
     // Enemy recruitment (limited and costly)
-    const enemyCommanders = gameState.commanders.filter(
-      (c) => c.owner === "enemy",
-    );
+    const enemyCommanders = gameState.commanders.filter(c => c.owner === 'enemy');
     const maxEnemyCommanders = Math.floor(enemyNodes.length * 1.2); // Slightly fewer than player
 
     if (enemyCommanders.length < maxEnemyCommanders) {
-      const commanderClasses = ["knight", "mage", "ranger", "warlord"] as const;
-      const randomClass =
-        commanderClasses[Math.floor(Math.random() * commanderClasses.length)];
+      const commanderClasses = ['knight', 'mage', 'ranger', 'warlord'] as const;
+      const randomClass = commanderClasses[Math.floor(Math.random() * commanderClasses.length)];
 
       // Enemy has limited "budget" - gets harder to recruit as game goes on
       const recruitmentCost = gameData.commanderClasses[randomClass].cost;
@@ -483,25 +445,16 @@ export class GameplayTester {
       const canAfford = enemyIncome.gold * gameState.turn > recruitmentCost * 2; // Simplified budget check
 
       if (canAfford) {
-        const newId = Math.max(0, ...gameState.commanders.map((c) => c.id)) + 1;
-        const enemyCommander = createCommander(
-          newId,
-          randomClass,
-          "orc",
-          "enemy",
-        );
+        const newId = Math.max(0, ...gameState.commanders.map(c => c.id)) + 1;
+        const enemyCommander = createCommander(newId, randomClass, 'orc', 'enemy');
 
         gameState.commanders.push(enemyCommander);
 
-        if (logLevel === "verbose") {
-          console.log(
-            `👹 Enemy recruited ${enemyCommander.name} (${randomClass})`,
-          );
+        if (logLevel === 'verbose') {
+          console.log(`👹 Enemy recruited ${enemyCommander.name} (${randomClass})`);
         }
-      } else if (logLevel === "verbose") {
-        console.log(
-          `👹 Enemy cannot afford to recruit ${randomClass} (${recruitmentCost} cost)`,
-        );
+      } else if (logLevel === 'verbose') {
+        console.log(`👹 Enemy cannot afford to recruit ${randomClass} (${recruitmentCost} cost)`);
       }
     }
 
@@ -518,30 +471,23 @@ export class GameplayTester {
     // Evaluate all attack opportunities
     for (const enemyNode of enemyNodes) {
       const enemyCommanders = gameState.commanders.filter(
-        (c) => c.owner === "enemy" && c.assignedNode === enemyNode.id,
+        c => c.owner === 'enemy' && c.assignedNode === enemyNode.id
       );
 
       const enemyStrength =
         enemyNode.garrison +
-        enemyCommanders.reduce(
-          (sum, cmd) => sum + (cmd.attack + cmd.defense) * 0.3,
-          0,
-        );
+        enemyCommanders.reduce((sum, cmd) => sum + (cmd.attack + cmd.defense) * 0.3, 0);
 
       for (const connectionId of enemyNode.connections) {
-        const targetNode = allTargets.find((n) => n.id === connectionId);
+        const targetNode = allTargets.find(n => n.id === connectionId);
         if (targetNode) {
           const targetCommanders = gameState.commanders.filter(
-            (c) =>
-              c.owner === targetNode.owner && c.assignedNode === targetNode.id,
+            c => c.owner === targetNode.owner && c.assignedNode === targetNode.id
           );
 
           const defenderStrength =
             targetNode.garrison +
-            targetCommanders.reduce(
-              (sum, cmd) => sum + (cmd.attack + cmd.defense) * 0.3,
-              0,
-            );
+            targetCommanders.reduce((sum, cmd) => sum + (cmd.attack + cmd.defense) * 0.3, 0);
 
           const advantage = enemyStrength / Math.max(defenderStrength, 1);
 
@@ -568,47 +514,33 @@ export class GameplayTester {
 
       if (victory) {
         // Enemy captures the node
-        const nodeIndex = gameState.nodes.findIndex(
-          (n) => n.id === bestAttack.target.id,
-        );
+        const nodeIndex = gameState.nodes.findIndex(n => n.id === bestAttack.target.id);
         if (nodeIndex !== -1) {
           gameState.nodes[nodeIndex] = {
             ...bestAttack.target,
-            owner: "enemy",
-            garrison: Math.max(
-              10,
-              Math.floor(bestAttack.attacker.garrison * 0.6),
-            ),
+            owner: 'enemy',
+            garrison: Math.max(10, Math.floor(bestAttack.attacker.garrison * 0.6)),
           };
 
           // Reduce attacker's garrison
-          const attackerIndex = gameState.nodes.findIndex(
-            (n) => n.id === bestAttack.attacker.id,
-          );
+          const attackerIndex = gameState.nodes.findIndex(n => n.id === bestAttack.attacker.id);
           if (attackerIndex !== -1) {
             gameState.nodes[attackerIndex] = {
               ...bestAttack.attacker,
-              garrison: Math.max(
-                10,
-                Math.floor(bestAttack.attacker.garrison * 0.8),
-              ),
+              garrison: Math.max(10, Math.floor(bestAttack.attacker.garrison * 0.8)),
             };
           }
         }
 
-        if (logLevel === "verbose") {
+        if (logLevel === 'verbose') {
           console.log(
-            `👹 Enemy captured ${gameData.nodeTypes[bestAttack.target.type].name} (${bestAttack.strength} vs ${bestAttack.defenderStrength})`,
+            `👹 Enemy captured ${gameData.nodeTypes[bestAttack.target.type].name} (${bestAttack.strength} vs ${bestAttack.defenderStrength})`
           );
         }
       } else {
         // Failed attack, reduce garrisons
-        const nodeIndex = gameState.nodes.findIndex(
-          (n) => n.id === bestAttack.target.id,
-        );
-        const attackerIndex = gameState.nodes.findIndex(
-          (n) => n.id === bestAttack.attacker.id,
-        );
+        const nodeIndex = gameState.nodes.findIndex(n => n.id === bestAttack.target.id);
+        const attackerIndex = gameState.nodes.findIndex(n => n.id === bestAttack.attacker.id);
 
         if (nodeIndex !== -1) {
           gameState.nodes[nodeIndex] = {
@@ -620,51 +552,38 @@ export class GameplayTester {
         if (attackerIndex !== -1) {
           gameState.nodes[attackerIndex] = {
             ...bestAttack.attacker,
-            garrison: Math.max(
-              5,
-              Math.floor(bestAttack.attacker.garrison * 0.8),
-            ),
+            garrison: Math.max(5, Math.floor(bestAttack.attacker.garrison * 0.8)),
           };
         }
 
-        if (logLevel === "verbose") {
+        if (logLevel === 'verbose') {
           console.log(
-            `👹 Enemy failed to capture ${gameData.nodeTypes[bestAttack.target.type].name}`,
+            `👹 Enemy failed to capture ${gameData.nodeTypes[bestAttack.target.type].name}`
           );
         }
       }
     }
 
-    gameState.phase = "player";
+    gameState.phase = 'player';
     return gameState;
   }
 
   /**
    * Execute a specific AI decision
    */
-  private executeDecision(
-    gameState: GameState,
-    decision: AIDecision,
-    logLevel: string,
-  ): GameState {
+  private executeDecision(gameState: GameState, decision: AIDecision, logLevel: string): GameState {
     try {
       switch (decision.type) {
-        case "recruit":
+        case 'recruit':
           if (decision.commanderClass) {
-            const validClass = this.isRecruitableCommanderClass(
-              decision.commanderClass,
-            )
+            const validClass = this.isRecruitableCommanderClass(decision.commanderClass)
               ? decision.commanderClass
-              : "knight";
+              : 'knight';
 
             // Get actual cost from game data
             const commanderCost = gameData.commanderClasses[validClass].cost;
-            const playerCommanders = gameState.commanders.filter(
-              (c) => c.owner === "player",
-            );
-            const playerNodes = gameState.nodes.filter(
-              (n) => n.owner === "player",
-            );
+            const playerCommanders = gameState.commanders.filter(c => c.owner === 'player');
+            const playerNodes = gameState.nodes.filter(n => n.owner === 'player');
 
             // Limit commanders to 1.5x number of nodes (prevents spam)
             const maxCommanders = Math.floor(playerNodes.length * 1.5);
@@ -673,56 +592,44 @@ export class GameplayTester {
               gameState.resources.gold >= commanderCost &&
               playerCommanders.length < maxCommanders
             ) {
-              const newId =
-                Math.max(0, ...gameState.commanders.map((c) => c.id)) + 1;
-              const newCommander = createCommander(
-                newId,
-                validClass,
-                "human",
-                "player",
-              );
+              const newId = Math.max(0, ...gameState.commanders.map(c => c.id)) + 1;
+              const newCommander = createCommander(newId, validClass, 'human', 'player');
 
               gameState.commanders.push(newCommander);
               gameState.resources.gold -= commanderCost;
 
-              if (logLevel === "verbose") {
+              if (logLevel === 'verbose') {
                 console.log(
-                  `🛡️ Recruited ${newCommander.name} (${validClass}) for ${commanderCost} gold`,
+                  `🛡️ Recruited ${newCommander.name} (${validClass}) for ${commanderCost} gold`
                 );
               }
-            } else if (logLevel === "verbose") {
+            } else if (logLevel === 'verbose') {
               if (gameState.resources.gold < commanderCost) {
                 console.log(
-                  `❌ Cannot recruit ${validClass}: need ${commanderCost} gold, have ${gameState.resources.gold}`,
+                  `❌ Cannot recruit ${validClass}: need ${commanderCost} gold, have ${gameState.resources.gold}`
                 );
               } else {
                 console.log(
-                  `❌ Cannot recruit ${validClass}: at commander limit ${playerCommanders.length}/${maxCommanders}`,
+                  `❌ Cannot recruit ${validClass}: at commander limit ${playerCommanders.length}/${maxCommanders}`
                 );
               }
             }
           }
           break;
 
-        case "attack":
+        case 'attack':
           if (decision.target) {
-            gameState = this.executeAttack(
-              gameState,
-              decision.target,
-              logLevel,
-            );
+            gameState = this.executeAttack(gameState, decision.target, logLevel);
           }
           break;
 
-        case "upgrade":
+        case 'upgrade':
           if (decision.target) {
-            const node = gameState.nodes.find((n) => n.id === decision.target);
-            if (node && node.owner === "player" && node.starLevel < 5) {
+            const node = gameState.nodes.find(n => n.id === decision.target);
+            if (node && node.owner === 'player' && node.starLevel < 5) {
               const cost = this.calculateUpgradeCost(node);
               if (gameState.resources.gold >= cost) {
-                const nodeIndex = gameState.nodes.findIndex(
-                  (n) => n.id === decision.target,
-                );
+                const nodeIndex = gameState.nodes.findIndex(n => n.id === decision.target);
                 if (nodeIndex !== -1) {
                   gameState.nodes[nodeIndex] = {
                     ...node,
@@ -731,9 +638,9 @@ export class GameplayTester {
                   };
                   gameState.resources.gold -= cost;
 
-                  if (logLevel === "verbose") {
+                  if (logLevel === 'verbose') {
                     console.log(
-                      `⭐ Upgraded ${gameData.nodeTypes[node.type].name} to ${node.starLevel + 1} stars`,
+                      `⭐ Upgraded ${gameData.nodeTypes[node.type].name} to ${node.starLevel + 1} stars`
                     );
                   }
                 }
@@ -742,14 +649,12 @@ export class GameplayTester {
           }
           break;
 
-        case "assign":
+        case 'assign':
           if (decision.target && decision.commanderId) {
-            const commander = gameState.commanders.find(
-              (c) => c.id === decision.commanderId,
-            );
+            const commander = gameState.commanders.find(c => c.id === decision.commanderId);
             if (commander && !commander.assignedNode) {
               const commanderIndex = gameState.commanders.findIndex(
-                (c) => c.id === decision.commanderId,
+                c => c.id === decision.commanderId
               );
               if (commanderIndex !== -1) {
                 gameState.commanders[commanderIndex] = {
@@ -757,10 +662,8 @@ export class GameplayTester {
                   assignedNode: decision.target,
                 };
 
-                if (logLevel === "verbose") {
-                  console.log(
-                    `📍 Assigned ${commander.name} to node ${decision.target}`,
-                  );
+                if (logLevel === 'verbose') {
+                  console.log(`📍 Assigned ${commander.name} to node ${decision.target}`);
                 }
               }
             }
@@ -777,12 +680,8 @@ export class GameplayTester {
   /**
    * Execute attack decision
    */
-  private executeAttack(
-    gameState: GameState,
-    targetNodeId: number,
-    logLevel: string,
-  ): GameState {
-    const targetNode = gameState.nodes.find((n) => n.id === targetNodeId);
+  private executeAttack(gameState: GameState, targetNodeId: number, logLevel: string): GameState {
+    const targetNode = gameState.nodes.find(n => n.id === targetNodeId);
     if (!targetNode) {
       console.log(`❌ Attack failed: Target node ${targetNodeId} not found`);
       return gameState;
@@ -790,13 +689,11 @@ export class GameplayTester {
 
     // Find all possible attacking nodes
     const playerNodes = gameState.nodes.filter(
-      (n) => n.owner === "player" && n.connections.includes(targetNodeId),
+      n => n.owner === 'player' && n.connections.includes(targetNodeId)
     );
 
     if (playerNodes.length === 0) {
-      console.log(
-        `❌ Attack failed: No adjacent player nodes to attack ${targetNodeId}`,
-      );
+      console.log(`❌ Attack failed: No adjacent player nodes to attack ${targetNodeId}`);
       return gameState;
     }
 
@@ -805,14 +702,14 @@ export class GameplayTester {
 
     for (const attackerNode of playerNodes) {
       const attackerCommanders = gameState.commanders.filter(
-        (c) => c.owner === "player" && c.assignedNode === attackerNode.id,
+        c => c.owner === 'player' && c.assignedNode === attackerNode.id
       );
 
       // Use base garrison + reduced commander bonuses (commanders are support, not overpowered)
       const baseStrength = attackerNode.garrison;
       const commanderBonus = attackerCommanders.reduce(
         (sum, cmd) => sum + (cmd.attack + cmd.defense) * 0.3,
-        0,
+        0
       ); // 30% of full stats
       const totalStrength = baseStrength + commanderBonus;
 
@@ -828,63 +725,46 @@ export class GameplayTester {
 
     if (bestAttacker) {
       const defenderCommanders = gameState.commanders.filter(
-        (c) => c.owner === targetNode.owner && c.assignedNode === targetNode.id,
+        c => c.owner === targetNode.owner && c.assignedNode === targetNode.id
       );
 
       // Calculate defender strength (same 30% commander effectiveness as attackers)
       const defenderStrength =
         targetNode.garrison +
-        defenderCommanders.reduce(
-          (sum, cmd) => sum + (cmd.attack + cmd.defense) * 0.3,
-          0,
-        );
+        defenderCommanders.reduce((sum, cmd) => sum + (cmd.attack + cmd.defense) * 0.3, 0);
 
       // Require significant advantage to win: attacker needs 1.5x advantage
       const victory = bestAttacker.strength > defenderStrength * 1.5;
 
       if (victory) {
         // Player captures the node
-        const nodeIndex = gameState.nodes.findIndex(
-          (n) => n.id === targetNodeId,
-        );
+        const nodeIndex = gameState.nodes.findIndex(n => n.id === targetNodeId);
         if (nodeIndex !== -1) {
           gameState.nodes[nodeIndex] = {
             ...targetNode,
-            owner: "player",
-            garrison: Math.max(
-              10,
-              Math.floor(bestAttacker.node.garrison * 0.6),
-            ), // Reduced garrison after attack
+            owner: 'player',
+            garrison: Math.max(10, Math.floor(bestAttacker.node.garrison * 0.6)), // Reduced garrison after attack
           };
 
           // Reduce attacker's garrison too
-          const attackerIndex = gameState.nodes.findIndex(
-            (n) => n.id === bestAttacker.node.id,
-          );
+          const attackerIndex = gameState.nodes.findIndex(n => n.id === bestAttacker.node.id);
           if (attackerIndex !== -1) {
             gameState.nodes[attackerIndex] = {
               ...bestAttacker.node,
-              garrison: Math.max(
-                10,
-                Math.floor(bestAttacker.node.garrison * 0.8),
-              ),
+              garrison: Math.max(10, Math.floor(bestAttacker.node.garrison * 0.8)),
             };
           }
         }
 
-        if (logLevel === "verbose") {
+        if (logLevel === 'verbose') {
           console.log(
-            `⚔️ Player captured ${gameData.nodeTypes[targetNode.type].name} (${bestAttacker.strength} vs ${defenderStrength})`,
+            `⚔️ Player captured ${gameData.nodeTypes[targetNode.type].name} (${bestAttacker.strength} vs ${defenderStrength})`
           );
         }
       } else {
         // Attack failed, reduce both garrisons slightly
-        const nodeIndex = gameState.nodes.findIndex(
-          (n) => n.id === targetNodeId,
-        );
-        const attackerIndex = gameState.nodes.findIndex(
-          (n) => n.id === bestAttacker.node.id,
-        );
+        const nodeIndex = gameState.nodes.findIndex(n => n.id === targetNodeId);
+        const attackerIndex = gameState.nodes.findIndex(n => n.id === bestAttacker.node.id);
 
         if (nodeIndex !== -1) {
           gameState.nodes[nodeIndex] = {
@@ -900,9 +780,9 @@ export class GameplayTester {
           };
         }
 
-        if (logLevel === "verbose") {
+        if (logLevel === 'verbose') {
           console.log(
-            `❌ Failed to capture ${gameData.nodeTypes[targetNode.type].name} (${bestAttacker.strength} vs ${defenderStrength})`,
+            `❌ Failed to capture ${gameData.nodeTypes[targetNode.type].name} (${bestAttacker.strength} vs ${defenderStrength})`
           );
         }
       }
@@ -914,9 +794,7 @@ export class GameplayTester {
   /**
    * Calculate upgrade cost for a node
    */
-  private calculateUpgradeCost(
-    node: Pick<GameNode, "starLevel" | "type">,
-  ): number {
+  private calculateUpgradeCost(node: Pick<GameNode, 'starLevel' | 'type'>): number {
     const baseMultiplier: Partial<Record<NodeType, number>> = {
       city: 1.5,
       fortress: 2.0,
@@ -924,9 +802,7 @@ export class GameplayTester {
       resource: 1.0,
       shrine: 1.8,
     };
-    return Math.floor(
-      200 * node.starLevel * (baseMultiplier[node.type] || 1.0),
-    );
+    return Math.floor(200 * node.starLevel * (baseMultiplier[node.type] || 1.0));
   }
 
   /**
@@ -934,7 +810,7 @@ export class GameplayTester {
    */
   private progressTurn(gameState: GameState): GameState {
     // Collect resources
-    const playerNodes = gameState.nodes.filter((n) => n.owner === "player");
+    const playerNodes = gameState.nodes.filter(n => n.owner === 'player');
     const income = calculateIncome(playerNodes);
 
     gameState.resources.gold += income.gold;
@@ -942,8 +818,8 @@ export class GameplayTester {
     gameState.resources.mana += income.mana;
 
     // Reinforce garrisons (both player and enemy)
-    gameState.nodes = gameState.nodes.map((node) => {
-      if (node.owner === "player" || node.owner === "enemy") {
+    gameState.nodes = gameState.nodes.map(node => {
+      if (node.owner === 'player' || node.owner === 'enemy') {
         const reinforcementsByType: Partial<Record<NodeType, number>> = {
           city: 20,
           fortress: 15,
@@ -970,40 +846,32 @@ export class GameplayTester {
   /**
    * Check victory conditions
    */
-  private checkVictoryConditions(
-    gameState: GameState,
-  ): "player" | "enemy" | "draw" | "ongoing" {
-    const playerNodes = gameState.nodes.filter(
-      (n) => n.owner === "player",
-    ).length;
-    const enemyNodes = gameState.nodes.filter(
-      (n) => n.owner === "enemy",
-    ).length;
-    const neutralNodes = gameState.nodes.filter(
-      (n) => n.owner === "neutral",
-    ).length;
+  private checkVictoryConditions(gameState: GameState): 'player' | 'enemy' | 'draw' | 'ongoing' {
+    const playerNodes = gameState.nodes.filter(n => n.owner === 'player').length;
+    const enemyNodes = gameState.nodes.filter(n => n.owner === 'enemy').length;
+    const neutralNodes = gameState.nodes.filter(n => n.owner === 'neutral').length;
     const totalNodes = gameState.nodes.length;
 
     // Debug logging
     if (gameState.turn % 10 === 0) {
       console.log(
-        `Turn ${gameState.turn}: Player: ${playerNodes}, Enemy: ${enemyNodes}, Neutral: ${neutralNodes}`,
+        `Turn ${gameState.turn}: Player: ${playerNodes}, Enemy: ${enemyNodes}, Neutral: ${neutralNodes}`
       );
     }
 
     // Elimination victory (more decisive)
-    if (enemyNodes === 0 && playerNodes > 0) return "player";
-    if (playerNodes === 0 && enemyNodes > 0) return "enemy";
+    if (enemyNodes === 0 && playerNodes > 0) return 'player';
+    if (playerNodes === 0 && enemyNodes > 0) return 'enemy';
 
     // Territorial victory (control 60% of map, lowered threshold)
-    if (playerNodes >= totalNodes * 0.6) return "player";
-    if (enemyNodes >= totalNodes * 0.6) return "enemy";
+    if (playerNodes >= totalNodes * 0.6) return 'player';
+    if (enemyNodes >= totalNodes * 0.6) return 'enemy';
 
     // Significant advantage victory (control 2x more than opponent)
-    if (playerNodes >= enemyNodes * 3 && playerNodes >= 5) return "player";
-    if (enemyNodes >= playerNodes * 3 && enemyNodes >= 5) return "enemy";
+    if (playerNodes >= enemyNodes * 3 && playerNodes >= 5) return 'player';
+    if (enemyNodes >= playerNodes * 3 && enemyNodes >= 5) return 'enemy';
 
-    return "ongoing";
+    return 'ongoing';
   }
 
   /**
@@ -1013,12 +881,8 @@ export class GameplayTester {
     // Only consider stalemate after a significant number of turns
     if (turn < 150) return false;
 
-    const playerNodes = gameState.nodes.filter(
-      (n) => n.owner === "player",
-    ).length;
-    const enemyNodes = gameState.nodes.filter(
-      (n) => n.owner === "enemy",
-    ).length;
+    const playerNodes = gameState.nodes.filter(n => n.owner === 'player').length;
+    const enemyNodes = gameState.nodes.filter(n => n.owner === 'enemy').length;
 
     // If both sides have similar territory and it's been a long game, it's likely a stalemate
     const territoryDifference = Math.abs(playerNodes - enemyNodes);
@@ -1027,7 +891,7 @@ export class GameplayTester {
 
     if (isLongGame && isBalanced) {
       console.log(
-        `Stalemate detected at turn ${turn}: Player ${playerNodes} vs Enemy ${enemyNodes}`,
+        `Stalemate detected at turn ${turn}: Player ${playerNodes} vs Enemy ${enemyNodes}`
       );
       return true;
     }
@@ -1039,7 +903,7 @@ export class GameplayTester {
    * Estimate enemy resources (since enemy AI doesn't track them explicitly)
    */
   private estimateEnemyResources(gameState: GameState): Resources {
-    const enemyNodes = gameState.nodes.filter((n) => n.owner === "enemy");
+    const enemyNodes = gameState.nodes.filter(n => n.owner === 'enemy');
     const income = calculateIncome(enemyNodes);
 
     // Rough estimate based on income and turns
@@ -1063,46 +927,34 @@ export class GameplayTester {
   private analyzeForBalanceIssues(
     gameState: GameState,
     turns: number,
-    decisions: AIDecision[],
+    decisions: AIDecision[]
   ): string[] {
     const issues: string[] = [];
 
-    const playerNodes = gameState.nodes.filter(
-      (n) => n.owner === "player",
-    ).length;
-    const enemyNodes = gameState.nodes.filter(
-      (n) => n.owner === "enemy",
-    ).length;
+    const playerNodes = gameState.nodes.filter(n => n.owner === 'player').length;
+    const enemyNodes = gameState.nodes.filter(n => n.owner === 'enemy').length;
 
     // Check for resource imbalances
     if (gameState.resources.gold > 10000) {
-      issues.push("Excessive gold accumulation - economy may be too generous");
+      issues.push('Excessive gold accumulation - economy may be too generous');
     }
 
     // Check for military imbalances
-    const playerCommanders = gameState.commanders.filter(
-      (c) => c.owner === "player",
-    ).length;
-    const enemyCommanders = gameState.commanders.filter(
-      (c) => c.owner === "enemy",
-    ).length;
+    const playerCommanders = gameState.commanders.filter(c => c.owner === 'player').length;
+    const enemyCommanders = gameState.commanders.filter(c => c.owner === 'enemy').length;
 
     if (playerCommanders > enemyCommanders * 3) {
-      issues.push(
-        "Player military advantage too large - recruitment costs may be too low",
-      );
+      issues.push('Player military advantage too large - recruitment costs may be too low');
     }
 
     // Check for territory stagnation
     if (turns > 50 && Math.abs(playerNodes - enemyNodes) < 2) {
-      issues.push(
-        "Territory stagnation - attack/defense balance may need adjustment",
-      );
+      issues.push('Territory stagnation - attack/defense balance may need adjustment');
     }
 
     // Check for one-sided games
     if (playerNodes > enemyNodes * 3 || enemyNodes > playerNodes * 3) {
-      issues.push("Highly unbalanced territorial control");
+      issues.push('Highly unbalanced territorial control');
     }
 
     return issues;
@@ -1113,43 +965,26 @@ export class GameplayTester {
    */
   private generateBalanceReport(config: TestConfiguration): BalanceReport {
     const totalGames = this.results.length;
-    const playerWins = this.results.filter(
-      (r: GameTestResult) => r.winner === "player",
-    ).length;
-    const enemyWins = this.results.filter(
-      (r: GameTestResult) => r.winner === "enemy",
-    ).length;
-    const draws = this.results.filter(
-      (r: GameTestResult) => r.winner === "draw",
-    ).length;
+    const playerWins = this.results.filter((r: GameTestResult) => r.winner === 'player').length;
+    const enemyWins = this.results.filter((r: GameTestResult) => r.winner === 'enemy').length;
+    const draws = this.results.filter((r: GameTestResult) => r.winner === 'draw').length;
 
     const averageTurns =
-      this.results.reduce(
-        (sum: number, r: GameTestResult) => sum + r.turns,
-        0,
-      ) / totalGames;
+      this.results.reduce((sum: number, r: GameTestResult) => sum + r.turns, 0) / totalGames;
 
     // Collect all balance issues
     const allIssues = this.results.reduce(
       (acc: string[], r: GameTestResult) => acc.concat(r.balanceIssues),
-      [],
+      []
     );
-    const issueFrequency = allIssues.reduce(
-      (acc: Record<string, number>, issue: string) => {
-        acc[issue] = (acc[issue] || 0) + 1;
-        return acc;
-      },
-      {},
-    );
+    const issueFrequency = allIssues.reduce((acc: Record<string, number>, issue: string) => {
+      acc[issue] = (acc[issue] || 0) + 1;
+      return acc;
+    }, {});
 
-    const commonBalanceIssues = (
-      Object.entries(issueFrequency) as Array<[string, number]>
-    )
+    const commonBalanceIssues = (Object.entries(issueFrequency) as Array<[string, number]>)
       .filter(([, count]: [string, number]) => count >= totalGames * 0.2) // Issues in 20%+ of games
-      .map(
-        ([issue, count]: [string, number]) =>
-          `${issue} (${count}/${totalGames} games)`,
-      )
+      .map(([issue, count]: [string, number]) => `${issue} (${count}/${totalGames} games)`)
       .sort((a, b) => b.localeCompare(a));
 
     // Generate recommendations
@@ -1157,7 +992,7 @@ export class GameplayTester {
       playerWins,
       enemyWins,
       totalGames,
-      commonBalanceIssues,
+      commonBalanceIssues
     );
 
     return {
@@ -1182,42 +1017,32 @@ export class GameplayTester {
     playerWins: number,
     enemyWins: number,
     totalGames: number,
-    issues: string[],
+    issues: string[]
   ): string[] {
     const recommendations: string[] = [];
     const playerWinRate = playerWins / totalGames;
 
     if (playerWinRate > 0.7) {
       recommendations.push(
-        "Consider strengthening enemy AI or increasing enemy starting resources",
+        'Consider strengthening enemy AI or increasing enemy starting resources'
       );
-      recommendations.push(
-        "Review attack/defense balance - player may have too much advantage",
-      );
+      recommendations.push('Review attack/defense balance - player may have too much advantage');
     } else if (playerWinRate < 0.3) {
-      recommendations.push(
-        "Consider weakening enemy AI or increasing player starting resources",
-      );
-      recommendations.push(
-        "Review early game balance - player may be at disadvantage",
-      );
+      recommendations.push('Consider weakening enemy AI or increasing player starting resources');
+      recommendations.push('Review early game balance - player may be at disadvantage');
     }
 
-    if (issues.some((issue) => issue.includes("gold accumulation"))) {
-      recommendations.push(
-        "Reduce resource generation rates or increase upgrade costs",
-      );
+    if (issues.some(issue => issue.includes('gold accumulation'))) {
+      recommendations.push('Reduce resource generation rates or increase upgrade costs');
     }
 
-    if (issues.some((issue) => issue.includes("stagnation"))) {
-      recommendations.push(
-        "Increase attack success rates or reduce defensive bonuses",
-      );
-      recommendations.push("Add more dynamic events to break stalemates");
+    if (issues.some(issue => issue.includes('stagnation'))) {
+      recommendations.push('Increase attack success rates or reduce defensive bonuses');
+      recommendations.push('Add more dynamic events to break stalemates');
     }
 
     if (recommendations.length === 0) {
-      recommendations.push("Game balance appears to be in good shape!");
+      recommendations.push('Game balance appears to be in good shape!');
     }
 
     return recommendations;
@@ -1238,20 +1063,20 @@ export class GameplayTester {
               acc[r.winner] = (acc[r.winner] || 0) + 1;
               return acc;
             },
-            {} as Record<string, number>,
+            {} as Record<string, number>
           ),
         },
       },
       null,
-      2,
+      2
     );
   }
 }
 
 // Convenience function to run quick balance tests
 export async function runQuickBalanceTest(
-  strategy: string = "balanced",
-  iterations: number = 10,
+  strategy: string = 'balanced',
+  iterations: number = 10
 ): Promise<BalanceReport> {
   const tester = new GameplayTester();
   const selectedStrategy = aiStrategies[strategy] || aiStrategies.balanced;
@@ -1260,7 +1085,7 @@ export async function runQuickBalanceTest(
     maxTurns: 100,
     iterations,
     playerStrategy: selectedStrategy,
-    logLevel: "minimal",
+    logLevel: 'minimal',
   };
 
   return await tester.runTests(config);

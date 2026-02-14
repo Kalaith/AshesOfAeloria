@@ -1,6 +1,6 @@
 // Performance and async operation hooks
-import { useState, useCallback, useRef, useEffect } from "react";
-import type { AsyncOperationState, GameError } from "../types/improved";
+import { useState, useCallback, useRef, useEffect } from 'react';
+import type { AsyncOperationState, GameError } from '../types/improved';
 
 interface UseAsyncOperationOptions<T> {
   initialData?: T;
@@ -12,15 +12,9 @@ interface UseAsyncOperationOptions<T> {
 
 export const useAsyncOperation = <T>(
   operation: () => Promise<T>,
-  options: UseAsyncOperationOptions<T> = {},
+  options: UseAsyncOperationOptions<T> = {}
 ) => {
-  const {
-    initialData = null,
-    onSuccess,
-    onError,
-    retryAttempts = 0,
-    retryDelay = 1000,
-  } = options;
+  const { initialData = null, onSuccess, onError, retryAttempts = 0, retryDelay = 1000 } = options;
 
   const [state, setState] = useState<AsyncOperationState<T>>({
     data: initialData,
@@ -39,22 +33,19 @@ export const useAsyncOperation = <T>(
   }, []);
 
   const createGameError = (error: unknown, context?: string): GameError => {
-    const message = error instanceof Error ? error.message : "Unknown error";
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return {
-      code: "ASYNC_OPERATION_ERROR",
+      code: 'ASYNC_OPERATION_ERROR',
       message,
       details: { originalError: error },
       timestamp: Date.now(),
-      severity: "medium",
+      severity: 'medium',
       context,
     };
   };
 
   const executeWithRetry = useCallback(
-    async (
-      operationFn: () => Promise<T>,
-      attempt: number = 0,
-    ): Promise<void> => {
+    async (operationFn: () => Promise<T>, attempt: number = 0): Promise<void> => {
       try {
         const result = await operationFn();
 
@@ -82,12 +73,12 @@ export const useAsyncOperation = <T>(
                 executeWithRetry(operationFn, attempt + 1);
               }
             },
-            retryDelay * Math.pow(2, attempt),
+            retryDelay * Math.pow(2, attempt)
           ); // Exponential backoff
           return;
         }
 
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           loading: false,
           error: gameError,
@@ -96,14 +87,14 @@ export const useAsyncOperation = <T>(
         onError?.(gameError);
       }
     },
-    [retryAttempts, retryDelay, onSuccess, onError],
+    [retryAttempts, retryDelay, onSuccess, onError]
   );
 
   const execute = useCallback(
     async (customOperation?: () => Promise<T>) => {
       if (!mountedRef.current) return;
 
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         loading: true,
         error: null,
@@ -112,7 +103,7 @@ export const useAsyncOperation = <T>(
       retryCountRef.current = 0;
       await executeWithRetry(customOperation || operation);
     },
-    [operation, executeWithRetry],
+    [operation, executeWithRetry]
   );
 
   const reset = useCallback(() => {
@@ -136,9 +127,7 @@ export const useAsyncOperation = <T>(
     execute,
     reset,
     retry,
-    isStale: state.lastUpdated
-      ? Date.now() - state.lastUpdated > 300000
-      : false, // 5 minutes
+    isStale: state.lastUpdated ? Date.now() - state.lastUpdated > 300000 : false, // 5 minutes
   };
 };
 
@@ -146,7 +135,7 @@ export const useAsyncOperation = <T>(
 export const useDebouncedAsyncOperation = <T>(
   operation: () => Promise<T>,
   delay: number = 300,
-  options: UseAsyncOperationOptions<T> = {},
+  options: UseAsyncOperationOptions<T> = {}
 ) => {
   const asyncOp = useAsyncOperation(operation, options);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -222,7 +211,7 @@ export const useLoadingState = (minimumDuration: number = 500) => {
 // Hook for optimistic updates
 export const useOptimisticUpdate = <T>(
   currentValue: T,
-  updateOperation: (newValue: T) => Promise<T>,
+  updateOperation: (newValue: T) => Promise<T>
 ) => {
   const [optimisticValue, setOptimisticValue] = useState(currentValue);
   const [isReverting, setIsReverting] = useState(false);
@@ -244,7 +233,7 @@ export const useOptimisticUpdate = <T>(
         throw error;
       }
     },
-    [optimisticValue, updateOperation],
+    [optimisticValue, updateOperation]
   );
 
   // Update optimistic value when current value changes externally

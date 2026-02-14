@@ -143,13 +143,13 @@ export const gameBalance = {
     MIN_TURNS_PER_CHAPTER: 15,
     MAX_TURNS_PER_CHAPTER: 100,
     victoryConditionTypes: [
-      "territory",
-      "population",
-      "research",
-      "alliances",
-      "buildings",
-      "resources",
-      "special",
+      'territory',
+      'population',
+      'research',
+      'alliances',
+      'buildings',
+      'resources',
+      'special',
     ] as const,
   },
 
@@ -165,12 +165,12 @@ export const gameBalance = {
 } as const;
 
 // Derived constants
-export const commanderClasses = Object.keys(
-  gameBalance.COMMANDER_STATS,
-) as ReadonlyArray<keyof typeof gameBalance.COMMANDER_STATS>;
-export const nodeTypes = Object.keys(
-  gameBalance.NODE_GENERATION,
-) as ReadonlyArray<keyof typeof gameBalance.NODE_GENERATION>;
+export const commanderClasses = Object.keys(gameBalance.COMMANDER_STATS) as ReadonlyArray<
+  keyof typeof gameBalance.COMMANDER_STATS
+>;
+export const nodeTypes = Object.keys(gameBalance.NODE_GENERATION) as ReadonlyArray<
+  keyof typeof gameBalance.NODE_GENERATION
+>;
 export const victoryConditionTypes = gameBalance.CAMPAIGN.victoryConditionTypes;
 
 export type CommanderClassName = keyof typeof gameBalance.COMMANDER_STATS;

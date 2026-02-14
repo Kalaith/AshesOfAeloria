@@ -1,12 +1,12 @@
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   children: React.ReactNode;
-  size?: "default" | "large";
+  size?: 'default' | 'large';
   footer?: React.ReactNode;
 }
 
@@ -15,13 +15,13 @@ export const Modal: React.FC<ModalProps> = ({
   onClose,
   title,
   children,
-  size = "default",
+  size = 'default',
   footer,
 }) => {
   const modalContentClass =
-    size === "large"
-      ? "w-full max-w-4xl mx-4 max-h-[90vh] bg-parchment rounded-lg border-4 border-bronze bg-metal-texture relative flex flex-col"
-      : "w-full max-w-lg mx-4 max-h-[90vh] bg-parchment rounded-lg border-4 border-bronze bg-metal-texture relative flex flex-col";
+    size === 'large'
+      ? 'w-full max-w-4xl mx-4 max-h-[90vh] bg-parchment rounded-lg border-4 border-bronze bg-metal-texture relative flex flex-col'
+      : 'w-full max-w-lg mx-4 max-h-[90vh] bg-parchment rounded-lg border-4 border-bronze bg-metal-texture relative flex flex-col';
 
   return (
     <AnimatePresence>
@@ -38,7 +38,7 @@ export const Modal: React.FC<ModalProps> = ({
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-4 lg:p-6 border-b-2 border-bronze bg-bronze-texture">
               <h2 className="text-lg lg:text-xl font-frontier font-bold text-on-bronze pr-4">

@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { useGameStore } from "../../stores/useGameStore";
+import React, { useState } from 'react';
+import { useGameStore } from '../../stores/useGameStore';
 import {
   researchTree,
   getAvailableResearchNodes,
   calculateResearchCost,
-} from "../../data/campaignData";
-import type { ResearchNode } from "../../data/campaignData";
-import type { Technology } from "../../types/game";
+} from '../../data/campaignData';
+import type { ResearchNode } from '../../data/campaignData';
+import type { Technology } from '../../types/game';
 
 interface ResearchTreeProps {
   showOnlyAvailable?: boolean;
@@ -18,11 +18,10 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
   allowResearch = true,
 }) => {
   const [selectedNode, setSelectedNode] = useState<ResearchNode | null>(null);
-  const [filterBranch, setFilterBranch] = useState<string>("all");
+  const [filterBranch, setFilterBranch] = useState<string>('all');
   const gameState = useGameStore();
 
-  const completedResearch = (gameState.research?.completedTechnologies ||
-    []) as string[];
+  const completedResearch = (gameState.research?.completedTechnologies || []) as string[];
   const completedChapters: string[] = [];
   const currentResources = {
     knowledge: gameState.resources.knowledge || 0,
@@ -33,21 +32,18 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
     artifacts: gameState.resources.artifacts || 0,
   };
 
-  const availableNodes = getAvailableResearchNodes(
-    completedResearch,
-    completedChapters,
-  );
-  const branches = [...new Set(researchTree.map((node) => node.branch))];
+  const availableNodes = getAvailableResearchNodes(completedResearch, completedChapters);
+  const branches = [...new Set(researchTree.map(node => node.branch))];
 
-  const filteredNodes = researchTree.filter((node) => {
+  const filteredNodes = researchTree.filter(node => {
     if (
       showOnlyAvailable &&
-      !availableNodes.some((n) => n.id === node.id) &&
+      !availableNodes.some(n => n.id === node.id) &&
       !completedResearch.includes(node.id)
     ) {
       return false;
     }
-    if (filterBranch !== "all" && node.branch !== filterBranch) {
+    if (filterBranch !== 'all' && node.branch !== filterBranch) {
       return false;
     }
     return true;
@@ -56,17 +52,14 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
   const canAfford = (node: ResearchNode): boolean => {
     const cost = calculateResearchCost(node);
     return Object.entries(cost).every(([resource, amount]) => {
-      return (
-        (currentResources[resource as keyof typeof currentResources] || 0) >=
-        amount
-      );
+      return (currentResources[resource as keyof typeof currentResources] || 0) >= amount;
     });
   };
 
   const handleResearch = (node: ResearchNode) => {
     if (!allowResearch) return;
 
-    const isAvailable = availableNodes.some((n) => n.id === node.id);
+    const isAvailable = availableNodes.some(n => n.id === node.id);
     const isCompleted = completedResearch.includes(node.id);
 
     if (!isAvailable || isCompleted || !canAfford(node)) return;
@@ -77,7 +70,7 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
 
   const renderNodeCard = (node: ResearchNode) => {
     const isCompleted = completedResearch.includes(node.id);
-    const isAvailable = availableNodes.some((n) => n.id === node.id);
+    const isAvailable = availableNodes.some(n => n.id === node.id);
     const affordable = canAfford(node);
     const cost = calculateResearchCost(node);
 
@@ -86,12 +79,12 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
         key={node.id}
         className={`relative p-4 rounded-lg border-2 cursor-pointer transition-all ${
           isCompleted
-            ? "border-green-500 bg-green-50"
+            ? 'border-green-500 bg-green-50'
             : isAvailable && affordable
-              ? "border-blue-500 bg-blue-50 hover:bg-blue-100"
+              ? 'border-blue-500 bg-blue-50 hover:bg-blue-100'
               : isAvailable
-                ? "border-yellow-500 bg-yellow-50"
-                : "border-gray-300 bg-gray-100 opacity-60"
+                ? 'border-yellow-500 bg-yellow-50'
+                : 'border-gray-300 bg-gray-100 opacity-60'
         }`}
         onClick={() => setSelectedNode(node)}
       >
@@ -99,9 +92,7 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
         <div className="absolute top-2 right-2 flex space-x-1">
           {isCompleted && <span className="text-green-600 text-sm">✓</span>}
           {node.special && <span className="text-purple-600 text-sm">★</span>}
-          {node.chapterUnlock && (
-            <span className="text-orange-600 text-sm">📖</span>
-          )}
+          {node.chapterUnlock && <span className="text-orange-600 text-sm">📖</span>}
         </div>
 
         {/* Node header */}
@@ -123,9 +114,7 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
           <div className="text-xs font-semibold text-gray-700 mb-1">Cost:</div>
           <div className="flex flex-wrap gap-1">
             {Object.entries(cost).map(([resource, amount]) => {
-              const current =
-                currentResources[resource as keyof typeof currentResources] ||
-                0;
+              const current = currentResources[resource as keyof typeof currentResources] || 0;
               const canAffordResource = current >= amount;
 
               return (
@@ -133,10 +122,10 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
                   key={resource}
                   className={`px-2 py-1 rounded text-xs ${
                     isCompleted
-                      ? "bg-gray-200 text-gray-600"
+                      ? 'bg-gray-200 text-gray-600'
                       : canAffordResource
-                        ? "bg-green-200 text-green-800"
-                        : "bg-red-200 text-red-800"
+                        ? 'bg-green-200 text-green-800'
+                        : 'bg-red-200 text-red-800'
                   }`}
                 >
                   {amount} {resource}
@@ -149,20 +138,18 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
         {/* Prerequisites */}
         {node.prerequisites.length > 0 && (
           <div className="mb-2">
-            <div className="text-xs font-semibold text-gray-700 mb-1">
-              Requires:
-            </div>
+            <div className="text-xs font-semibold text-gray-700 mb-1">Requires:</div>
             <div className="text-xs text-gray-600">
-              {node.prerequisites.map((prereq) => {
+              {node.prerequisites.map(prereq => {
                 const prereqCompleted = completedResearch.includes(prereq);
                 return (
                   <span
                     key={prereq}
                     className={`inline-block mr-1 ${
-                      prereqCompleted ? "text-green-600" : "text-red-600"
+                      prereqCompleted ? 'text-green-600' : 'text-red-600'
                     }`}
                   >
-                    {prereqCompleted ? "✓" : "✗"} {prereq}
+                    {prereqCompleted ? '✓' : '✗'} {prereq}
                   </span>
                 );
               })}
@@ -173,8 +160,7 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
         {/* Chapter unlock requirement */}
         {node.chapterUnlock && (
           <div className="text-xs text-purple-600 mb-2">
-            Unlocked by:{" "}
-            {node.chapterUnlock.replace("chapter_", "").replace(/_/g, " ")}
+            Unlocked by: {node.chapterUnlock.replace('chapter_', '').replace(/_/g, ' ')}
           </div>
         )}
 
@@ -191,18 +177,18 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
         {/* Research button */}
         {allowResearch && isAvailable && !isCompleted && (
           <button
-            onClick={(e) => {
+            onClick={e => {
               e.stopPropagation();
               handleResearch(node);
             }}
             disabled={!affordable}
             className={`mt-3 w-full py-2 px-4 rounded text-sm font-semibold transition-colors ${
               affordable
-                ? "bg-blue-600 hover:bg-blue-700 text-white"
-                : "bg-gray-400 text-gray-600 cursor-not-allowed"
+                ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                : 'bg-gray-400 text-gray-600 cursor-not-allowed'
             }`}
           >
-            {affordable ? "Research" : "Cannot Afford"}
+            {affordable ? 'Research' : 'Cannot Afford'}
           </button>
         )}
       </div>
@@ -214,23 +200,23 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
       {/* Filters */}
       <div className="flex flex-wrap gap-2 mb-6">
         <button
-          onClick={() => setFilterBranch("all")}
+          onClick={() => setFilterBranch('all')}
           className={`px-3 py-1 rounded text-sm ${
-            filterBranch === "all"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 hover:bg-gray-300 text-gray-700"
+            filterBranch === 'all'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
           }`}
         >
           All Branches
         </button>
-        {branches.map((branch) => (
+        {branches.map(branch => (
           <button
             key={branch}
             onClick={() => setFilterBranch(branch)}
             className={`px-3 py-1 rounded text-sm capitalize ${
               filterBranch === branch
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 hover:bg-gray-300 text-gray-700"
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
             }`}
           >
             {branch}
@@ -239,8 +225,8 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
       </div>
 
       {/* Research nodes organized by tier */}
-      {[1, 2, 3, 4].map((tier) => {
-        const tierNodes = filteredNodes.filter((node) => node.tier === tier);
+      {[1, 2, 3, 4].map(tier => {
+        const tierNodes = filteredNodes.filter(node => node.tier === tier);
         if (tierNodes.length === 0) return null;
 
         return (
@@ -249,11 +235,8 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
               <h2 className="text-2xl font-bold text-gray-800">Tier {tier}</h2>
               <div className="flex-1 h-px bg-gray-300" />
               <span className="text-sm text-gray-600">
-                {
-                  tierNodes.filter((n) => completedResearch.includes(n.id))
-                    .length
-                }{" "}
-                / {tierNodes.length} completed
+                {tierNodes.filter(n => completedResearch.includes(n.id)).length} /{' '}
+                {tierNodes.length} completed
               </span>
             </div>
 
@@ -270,9 +253,7 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-start mb-4">
-                <h2 className="text-2xl font-bold text-gray-800">
-                  {selectedNode.name}
-                </h2>
+                <h2 className="text-2xl font-bold text-gray-800">{selectedNode.name}</h2>
                 <button
                   onClick={() => setSelectedNode(null)}
                   className="text-gray-500 hover:text-gray-700 text-xl"
@@ -283,37 +264,31 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
 
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-semibold text-gray-700 mb-1">
-                    Description
-                  </h3>
+                  <h3 className="font-semibold text-gray-700 mb-1">Description</h3>
                   <p className="text-gray-600">{selectedNode.description}</p>
                 </div>
 
                 <div>
                   <h3 className="font-semibold text-gray-700 mb-1">Story</h3>
-                  <p className="italic text-gray-600">
-                    "{selectedNode.storyText}"
-                  </p>
+                  <p className="italic text-gray-600">"{selectedNode.storyText}"</p>
                 </div>
 
                 <div>
                   <h3 className="font-semibold text-gray-700 mb-1">Details</h3>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="font-semibold">Tier:</span>{" "}
-                      {selectedNode.tier}
+                      <span className="font-semibold">Tier:</span> {selectedNode.tier}
                     </div>
                     <div>
-                      <span className="font-semibold">Branch:</span>{" "}
-                      {selectedNode.branch}
+                      <span className="font-semibold">Branch:</span> {selectedNode.branch}
                     </div>
                     <div>
-                      <span className="font-semibold">Special:</span>{" "}
-                      {selectedNode.special ? "Yes" : "No"}
+                      <span className="font-semibold">Special:</span>{' '}
+                      {selectedNode.special ? 'Yes' : 'No'}
                     </div>
                     {selectedNode.chapterUnlock && (
                       <div>
-                        <span className="font-semibold">Chapter Required:</span>{" "}
+                        <span className="font-semibold">Chapter Required:</span>{' '}
                         {selectedNode.chapterUnlock}
                       </div>
                     )}
@@ -325,8 +300,7 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
                   <ul className="space-y-1">
                     {selectedNode.effects.map((effect, index) => (
                       <li key={index} className="text-gray-600">
-                        • <span className="font-semibold">{effect.type}:</span>{" "}
-                        {effect.description}
+                        • <span className="font-semibold">{effect.type}:</span> {effect.description}
                       </li>
                     ))}
                   </ul>
@@ -334,11 +308,9 @@ export const ResearchTree: React.FC<ResearchTreeProps> = ({
 
                 {selectedNode.unlocks.length > 0 && (
                   <div>
-                    <h3 className="font-semibold text-gray-700 mb-1">
-                      Unlocks
-                    </h3>
+                    <h3 className="font-semibold text-gray-700 mb-1">Unlocks</h3>
                     <div className="flex flex-wrap gap-1">
-                      {selectedNode.unlocks.map((unlock) => (
+                      {selectedNode.unlocks.map(unlock => (
                         <span
                           key={unlock}
                           className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm"

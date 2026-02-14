@@ -4,10 +4,10 @@
  * Separates business logic from UI components following clean code principles
  */
 
-import { useCallback } from "react";
-import { useGameStore } from "../stores/useGameStore";
-import { gameConfig, errorMessages, successMessages } from "../constants";
-import type { CommanderClass, Race, GameNode } from "../types/game";
+import { useCallback } from 'react';
+import { useGameStore } from '../stores/useGameStore';
+import { gameConfig, errorMessages, successMessages } from '../constants';
+import type { CommanderClass, Race, GameNode } from '../types/game';
 
 export const useGameActions = () => {
   // Store selectors
@@ -36,10 +36,7 @@ export const useGameActions = () => {
 
   // Commander Management
   const recruitCommander = useCallback(
-    (
-      className: CommanderClass,
-      race: Race,
-    ): { success: boolean; message: string } => {
+    (className: CommanderClass, race: Race): { success: boolean; message: string } => {
       const success = addCommander(className, race);
       return {
         success,
@@ -48,30 +45,25 @@ export const useGameActions = () => {
           : errorMessages.INSUFFICIENT_RESOURCES,
       };
     },
-    [addCommander],
+    [addCommander]
   );
 
   const assignCommander = useCallback(
-    (
-      commanderId: number,
-      nodeId: number,
-    ): { success: boolean; message: string } => {
+    (commanderId: number, nodeId: number): { success: boolean; message: string } => {
       const success = assignCommanderToNode(commanderId, nodeId);
       return {
         success,
-        message: success
-          ? successMessages.COMMANDER_ASSIGNED
-          : errorMessages.NODE_AT_CAPACITY,
+        message: success ? successMessages.COMMANDER_ASSIGNED : errorMessages.NODE_AT_CAPACITY,
       };
     },
-    [assignCommanderToNode],
+    [assignCommanderToNode]
   );
 
   const unassignCommanderAction = useCallback(
     (commanderId: number) => {
       unassignCommander(commanderId);
     },
-    [unassignCommander],
+    [unassignCommander]
   );
 
   // Node Management
@@ -79,14 +71,14 @@ export const useGameActions = () => {
     (nodeId: number | null) => {
       selectNode(nodeId);
     },
-    [selectNode],
+    [selectNode]
   );
 
   const selectCommanderAction = useCallback(
     (commanderId: number | null) => {
       selectCommander(commanderId);
     },
-    [selectCommander],
+    [selectCommander]
   );
 
   // Combat Actions
@@ -104,10 +96,10 @@ export const useGameActions = () => {
       attackNode(defenderNodeId);
       return {
         success: true, // Placeholder - will be based on actual battle result in Phase 2
-        message: "Attack initiated!", // Placeholder message
+        message: 'Attack initiated!', // Placeholder message
       };
     },
-    [selectedNode, canAttackNode, attackNode],
+    [selectedNode, canAttackNode, attackNode]
   );
 
   // Node Upgrades
@@ -134,9 +126,7 @@ export const useGameActions = () => {
     const success = upgradeNode(selectedNode);
     return {
       success,
-      message: success
-        ? successMessages.NODE_UPGRADED
-        : errorMessages.INSUFFICIENT_RESOURCES,
+      message: success ? successMessages.NODE_UPGRADED : errorMessages.INSUFFICIENT_RESOURCES,
       cost,
     };
   }, [selectedNode, getUpgradeCost, canUpgradeNode, upgradeNode]);
@@ -155,7 +145,7 @@ export const useGameActions = () => {
   const getSelectedNodeInfo = useCallback(() => {
     if (selectedNode === null) return null;
 
-    const node = nodes.find((n) => n.id === selectedNode);
+    const node = nodes.find(n => n.id === selectedNode);
     if (!node) return null;
 
     const commanderInfo = getNodeCommanderInfo(selectedNode);
@@ -169,45 +159,39 @@ export const useGameActions = () => {
       commanderInfo,
       upgradeInfo,
       attackableNodes: node.connections
-        .map((id: number) => nodes.find((n) => n.id === id))
+        .map((id: number) => nodes.find(n => n.id === id))
         .filter((n): n is GameNode => {
           if (n === undefined) return false;
-          return n.owner !== "player";
+          return n.owner !== 'player';
         }),
     };
-  }, [
-    selectedNode,
-    nodes,
-    getNodeCommanderInfo,
-    canUpgradeNode,
-    getUpgradeCost,
-  ]);
+  }, [selectedNode, nodes, getNodeCommanderInfo, canUpgradeNode, getUpgradeCost]);
 
   const getSelectedCommanderInfo = useCallback(() => {
     if (selectedCommander === null) return null;
-    return commanders.find((c) => c.id === selectedCommander) || null;
+    return commanders.find(c => c.id === selectedCommander) || null;
   }, [selectedCommander, commanders]);
 
   const getAvailableCommanders = useCallback(() => {
-    return commanders.filter((c) => c.assignedNode === null);
+    return commanders.filter(c => c.assignedNode === null);
   }, [commanders]);
 
   const getAttackableNodes = useCallback(
     (node: GameNode) => {
-      if (!node || node.owner !== "player") return [];
+      if (!node || node.owner !== 'player') return [];
       return node.connections
-        .map((id: number) => nodes.find((n) => n.id === id))
+        .map((id: number) => nodes.find(n => n.id === id))
         .filter((n): n is GameNode => {
           if (n === undefined) return false;
-          return n.owner !== "player";
+          return n.owner !== 'player';
         });
     },
-    [nodes],
+    [nodes]
   );
 
   // Game State Validation
   const canPerformPlayerActions = useCallback(() => {
-    return phase === "player";
+    return phase === 'player';
   }, [phase]);
 
   return {

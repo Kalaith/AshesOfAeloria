@@ -1,26 +1,21 @@
 // Improved Type Definitions with better discriminated unions and type safety
 
 // Branded types for better type safety
-export type CommanderId = string & { readonly __brand: "CommanderId" };
-export type ChapterId = string & { readonly __brand: "ChapterId" };
-export type NodeId = number & { readonly __brand: "NodeId" };
-export type ResearchId = string & { readonly __brand: "ResearchId" };
-export type PlayerId = string & { readonly __brand: "PlayerId" };
-export type FactionId = string & { readonly __brand: "FactionId" };
+export type CommanderId = string & { readonly __brand: 'CommanderId' };
+export type ChapterId = string & { readonly __brand: 'ChapterId' };
+export type NodeId = number & { readonly __brand: 'NodeId' };
+export type ResearchId = string & { readonly __brand: 'ResearchId' };
+export type PlayerId = string & { readonly __brand: 'PlayerId' };
+export type FactionId = string & { readonly __brand: 'FactionId' };
 
 // More specific owner types
-export type PlayerOwner = "player";
-export type AIOwner = "enemy" | "neutral";
+export type PlayerOwner = 'player';
+export type AIOwner = 'enemy' | 'neutral';
 export type FactionOwner = `faction_${string}`;
 export type Owner = PlayerOwner | AIOwner | FactionOwner;
 
 // Game event discriminated unions
-export type GameEventType =
-  | "story"
-  | "random"
-  | "faction"
-  | "discovery"
-  | "battle";
+export type GameEventType = 'story' | 'random' | 'faction' | 'discovery' | 'battle';
 
 export interface BaseGameEvent {
   id: string;
@@ -29,18 +24,18 @@ export interface BaseGameEvent {
 }
 
 export interface StoryEvent extends BaseGameEvent {
-  type: "story";
+  type: 'story';
   chapterId: ChapterId;
   storyData: {
     title: string;
     description: string;
     choices: StoryChoice[];
-    importance: "low" | "medium" | "high" | "critical";
+    importance: 'low' | 'medium' | 'high' | 'critical';
   };
 }
 
 export interface RandomEvent extends BaseGameEvent {
-  type: "random";
+  type: 'random';
   randomData: {
     eventType: string;
     description: string;
@@ -49,7 +44,7 @@ export interface RandomEvent extends BaseGameEvent {
 }
 
 export interface FactionEvent extends BaseGameEvent {
-  type: "faction";
+  type: 'faction';
   factionData: {
     factionId: FactionId;
     relationshipChange: number;
@@ -58,17 +53,17 @@ export interface FactionEvent extends BaseGameEvent {
 }
 
 export interface DiscoveryEvent extends BaseGameEvent {
-  type: "discovery";
+  type: 'discovery';
   discoveryData: {
     nodeId: NodeId;
-    discoveryType: "ruins" | "resource" | "artifact" | "settlement";
+    discoveryType: 'ruins' | 'resource' | 'artifact' | 'settlement';
     description: string;
     rewards: GameEffect[];
   };
 }
 
 export interface BattleEvent extends BaseGameEvent {
-  type: "battle";
+  type: 'battle';
   battleData: {
     attackerId: CommanderId;
     defenderId: CommanderId | null;
@@ -77,12 +72,7 @@ export interface BattleEvent extends BaseGameEvent {
   };
 }
 
-export type GameEvent =
-  | StoryEvent
-  | RandomEvent
-  | FactionEvent
-  | DiscoveryEvent
-  | BattleEvent;
+export type GameEvent = StoryEvent | RandomEvent | FactionEvent | DiscoveryEvent | BattleEvent;
 
 // Choice system with better typing
 export interface StoryChoice {
@@ -91,57 +81,53 @@ export interface StoryChoice {
   description: string;
   requirements: ChoiceRequirement[];
   consequences: GameEffect[];
-  morality: "good" | "neutral" | "evil";
+  morality: 'good' | 'neutral' | 'evil';
   difficulty: 1 | 2 | 3 | 4 | 5;
 }
 
 // Choice requirements discriminated union
 export type ChoiceRequirement =
-  | { type: "resource"; resource: ResourceType; amount: number }
-  | { type: "research"; researchId: ResearchId }
-  | { type: "commander"; commanderClass: CommanderClass }
-  | { type: "faction"; factionId: FactionId; relationship: number }
-  | { type: "level"; minimumLevel: number };
+  | { type: 'resource'; resource: ResourceType; amount: number }
+  | { type: 'research'; researchId: ResearchId }
+  | { type: 'commander'; commanderClass: CommanderClass }
+  | { type: 'faction'; factionId: FactionId; relationship: number }
+  | { type: 'level'; minimumLevel: number };
 
 // Game effects discriminated union
 export type GameEffect =
   | {
-      type: "resource";
+      type: 'resource';
       resource: ResourceType;
       amount: number;
       permanent: boolean;
     }
-  | { type: "research"; researchId: ResearchId; unlock: boolean }
-  | { type: "faction"; factionId: FactionId; relationshipChange: number }
+  | { type: 'research'; researchId: ResearchId; unlock: boolean }
+  | { type: 'faction'; factionId: FactionId; relationshipChange: number }
   | {
-      type: "commander";
-      effect: "create" | "heal" | "levelup";
+      type: 'commander';
+      effect: 'create' | 'heal' | 'levelup';
       commanderId?: CommanderId;
     }
-  | { type: "node"; nodeId: NodeId; effect: "capture" | "upgrade" | "destroy" }
-  | { type: "story"; flag: string; value: boolean };
+  | { type: 'node'; nodeId: NodeId; effect: 'capture' | 'upgrade' | 'destroy' }
+  | { type: 'story'; flag: string; value: boolean };
 
 // Resource types with better organization
-export type BasicResourceType = "gold" | "supplies" | "food";
-export type AdvancedResourceType =
-  | "mana"
-  | "knowledge"
-  | "energy"
-  | "artifacts";
-export type SocialResourceType = "culture" | "influence";
+export type BasicResourceType = 'gold' | 'supplies' | 'food';
+export type AdvancedResourceType = 'mana' | 'knowledge' | 'energy' | 'artifacts';
+export type SocialResourceType = 'culture' | 'influence';
 export type ResourceType =
   | BasicResourceType
   | AdvancedResourceType
   | SocialResourceType
-  | "materials";
+  | 'materials';
 
 // Commander state discriminated union
 export type CommanderState =
-  | { status: "idle"; location: NodeId | null }
-  | { status: "moving"; from: NodeId; to: NodeId; turnsRemaining: number }
-  | { status: "battling"; targetNodeId: NodeId; battleId: string }
-  | { status: "exploring"; targetNodeId: NodeId; progressPercent: number }
-  | { status: "recovering"; turnsRemaining: number; location: NodeId };
+  | { status: 'idle'; location: NodeId | null }
+  | { status: 'moving'; from: NodeId; to: NodeId; turnsRemaining: number }
+  | { status: 'battling'; targetNodeId: NodeId; battleId: string }
+  | { status: 'exploring'; targetNodeId: NodeId; progressPercent: number }
+  | { status: 'recovering'; turnsRemaining: number; location: NodeId };
 
 // Battle result with detailed information
 export interface DetailedBattleResult {
@@ -177,22 +163,16 @@ export interface ResearchNode {
 }
 
 export type ResearchBranch =
-  | "infrastructure"
-  | "military"
-  | "magic"
-  | "corruption"
-  | "environment"
-  | "culture"
-  | "transcendence";
+  | 'infrastructure'
+  | 'military'
+  | 'magic'
+  | 'corruption'
+  | 'environment'
+  | 'culture'
+  | 'transcendence';
 
 export interface ResearchEffect {
-  type:
-    | "production"
-    | "military"
-    | "population"
-    | "culture"
-    | "unlock"
-    | "special";
+  type: 'production' | 'military' | 'population' | 'culture' | 'unlock' | 'special';
   target: string;
   value: number;
   description: string;
@@ -203,13 +183,13 @@ export interface ResearchEffect {
 export interface VictoryCondition {
   id: string;
   type:
-    | "territory"
-    | "population"
-    | "research"
-    | "alliances"
-    | "buildings"
-    | "resources"
-    | "special";
+    | 'territory'
+    | 'population'
+    | 'research'
+    | 'alliances'
+    | 'buildings'
+    | 'resources'
+    | 'special';
   name: string;
   description: string;
   target: number;
@@ -250,7 +230,7 @@ export interface ChapterRule {
   name: string;
   description: string;
   effects: RuleEffect[];
-  duration: "chapter" | "permanent" | "conditional";
+  duration: 'chapter' | 'permanent' | 'conditional';
   condition?: string;
 }
 
@@ -258,17 +238,11 @@ export interface RuleEffect {
   type: string;
   modifier: number;
   target: string;
-  operation: "add" | "multiply" | "set" | "min" | "max";
+  operation: 'add' | 'multiply' | 'set' | 'min' | 'max';
 }
 
 export interface ChapterReward {
-  type:
-    | "research"
-    | "resources"
-    | "commanders"
-    | "buildings"
-    | "legacy"
-    | "unlock";
+  type: 'research' | 'resources' | 'commanders' | 'buildings' | 'legacy' | 'unlock';
   name: string;
   description: string;
   value: number | string;
@@ -281,7 +255,7 @@ export interface GameError {
   message: string;
   details?: Record<string, unknown>;
   timestamp: number;
-  severity: "low" | "medium" | "high" | "critical";
+  severity: 'low' | 'medium' | 'high' | 'critical';
   context?: string;
 }
 
@@ -293,31 +267,24 @@ export type AsyncOperationState<T> = {
 };
 
 // Type guards for discriminated unions
-export const isStoryEvent = (event: GameEvent): event is StoryEvent =>
-  event.type === "story";
-export const isRandomEvent = (event: GameEvent): event is RandomEvent =>
-  event.type === "random";
-export const isFactionEvent = (event: GameEvent): event is FactionEvent =>
-  event.type === "faction";
+export const isStoryEvent = (event: GameEvent): event is StoryEvent => event.type === 'story';
+export const isRandomEvent = (event: GameEvent): event is RandomEvent => event.type === 'random';
+export const isFactionEvent = (event: GameEvent): event is FactionEvent => event.type === 'faction';
 export const isDiscoveryEvent = (event: GameEvent): event is DiscoveryEvent =>
-  event.type === "discovery";
-export const isBattleEvent = (event: GameEvent): event is BattleEvent =>
-  event.type === "battle";
+  event.type === 'discovery';
+export const isBattleEvent = (event: GameEvent): event is BattleEvent => event.type === 'battle';
 
 export const isResourceEffect = (
-  effect: GameEffect,
-): effect is Extract<GameEffect, { type: "resource" }> =>
-  effect.type === "resource";
+  effect: GameEffect
+): effect is Extract<GameEffect, { type: 'resource' }> => effect.type === 'resource';
 
 export const isCommanderIdle = (
-  state: CommanderState,
-): state is Extract<CommanderState, { status: "idle" }> =>
-  state.status === "idle";
+  state: CommanderState
+): state is Extract<CommanderState, { status: 'idle' }> => state.status === 'idle';
 
 export const isCommanderMoving = (
-  state: CommanderState,
-): state is Extract<CommanderState, { status: "moving" }> =>
-  state.status === "moving";
+  state: CommanderState
+): state is Extract<CommanderState, { status: 'moving' }> => state.status === 'moving';
 
 // Utility types for better API design
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
@@ -325,7 +292,7 @@ export type RequiredBy<T, K extends keyof T> = T & Required<Pick<T, K>>;
 
 // Configuration types
 export interface GameConfig {
-  balance: typeof import("../constants/gameBalance").gameBalance;
+  balance: typeof import('../constants/gameBalance').gameBalance;
   ui: {
     animationDuration: number;
     autoSaveInterval: number;
@@ -333,7 +300,7 @@ export interface GameConfig {
   };
   debug: {
     enabled: boolean;
-    logLevel: "error" | "warn" | "info" | "debug";
+    logLevel: 'error' | 'warn' | 'info' | 'debug';
     showPerformanceMetrics: boolean;
   };
 }

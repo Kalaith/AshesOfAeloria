@@ -3,11 +3,11 @@
  * Pure presentational component for showing game resources
  */
 
-import React from "react";
-import { Card } from "../ui/Card";
-import type { Resources } from "../../types/game";
+import React from 'react';
+import { Card } from '../ui/Card';
+import type { Resources } from '../../types/game';
 
-type Income = Pick<Resources, "gold" | "supplies" | "mana">;
+type Income = Pick<Resources, 'gold' | 'supplies' | 'mana'>;
 
 interface ResourceDisplayProps {
   resources: Resources;
@@ -36,14 +36,10 @@ const ResourceItem: React.FC<ResourceItemProps> = ({
   <div className="flex items-center justify-between py-2 px-3 bg-resource-item rounded-lg border border-bronze/40">
     <div className="flex items-center gap-2">
       <span className="text-lg">{icon}</span>
-      <span className="text-sm font-frontier font-bold text-dark-enhanced">
-        {label}
-      </span>
+      <span className="text-sm font-frontier font-bold text-dark-enhanced">{label}</span>
     </div>
     <div className="text-right">
-      <div
-        className={`text-lg font-frontier font-bold text-dark-enhanced ${color}`}
-      >
+      <div className={`text-lg font-frontier font-bold text-dark-enhanced ${color}`}>
         {value.toLocaleString()}
       </div>
       {showIncome && income !== undefined && income > 0 && (
@@ -59,42 +55,40 @@ export const ResourceDisplay: React.FC<ResourceDisplayProps> = ({
   resources,
   income,
   showIncome = false,
-  className = "",
+  className = '',
 }) => {
   const resourceItems = [
     {
-      key: "gold",
-      icon: "🪙",
-      label: "War Coffers",
+      key: 'gold',
+      icon: '🪙',
+      label: 'War Coffers',
       value: resources.gold,
       income: income?.gold,
-      color: "text-amber",
+      color: 'text-amber',
     },
     {
-      key: "supplies",
-      icon: "⚒",
-      label: "War Supplies",
+      key: 'supplies',
+      icon: '⚒',
+      label: 'War Supplies',
       value: resources.supplies,
       income: income?.supplies,
-      color: "text-forest",
+      color: 'text-forest',
     },
     {
-      key: "mana",
-      icon: "🔮",
-      label: "Arcane Power",
+      key: 'mana',
+      icon: '🔮',
+      label: 'Arcane Power',
       value: resources.mana,
       income: income?.mana,
-      color: "text-mana",
+      color: 'text-mana',
     },
   ];
 
   return (
     <Card className={`bg-card-enhanced p-4 ${className}`}>
-      <h3 className="text-lg font-frontier font-bold mb-3 text-battle-worn">
-        ⚖ Campaign Treasury
-      </h3>
+      <h3 className="text-lg font-frontier font-bold mb-3 text-battle-worn">⚖ Campaign Treasury</h3>
       <div className="space-y-2">
-        {resourceItems.map((item) => (
+        {resourceItems.map(item => (
           <ResourceItem
             key={item.key}
             icon={item.icon}

@@ -69,11 +69,11 @@ src/
 ```tsx
 // Old approach - mixed concerns in component
 const InfoPanel = () => {
-  const attackNode = useGameStore((state) => state.attackNode);
-  const canAttackNode = useGameStore((state) => state.canAttackNode);
+  const attackNode = useGameStore(state => state.attackNode);
+  const canAttackNode = useGameStore(state => state.canAttackNode);
   // ... lots of game logic in component
 
-  const handleAttack = (nodeId) => {
+  const handleAttack = nodeId => {
     if (selectedNode !== null && canAttackNode(nodeId)) {
       attackNode(nodeId);
       // Handle success/error inline
@@ -102,9 +102,9 @@ const useGameActions = () => {
       }
 
       attackNode(defenderNodeId);
-      return { success: true, message: "Attack initiated!" };
+      return { success: true, message: 'Attack initiated!' };
     },
-    [selectedNode, canAttackNode, attackNode],
+    [selectedNode, canAttackNode, attackNode]
   );
 
   return { initiateAttack };
@@ -115,7 +115,7 @@ const NodeInfo = ({ onAttack }) => {
   const { initiateAttack } = useGameActions();
   const { showSuccess, showError } = useGameContext();
 
-  const handleAttack = async (nodeId) => {
+  const handleAttack = async nodeId => {
     const result = initiateAttack(nodeId);
     if (result.success) {
       showSuccess(result.message);
@@ -171,9 +171,9 @@ export const GAME_CONFIG = {
 
 export const UI_CONFIG = {
   COLORS: {
-    PLAYER: "#22c55e",
-    ENEMY: "#ef4444",
-    NEUTRAL: "#6b7280",
+    PLAYER: '#22c55e',
+    ENEMY: '#ef4444',
+    NEUTRAL: '#6b7280',
   },
   MIN_TOUCH_TARGET: 44,
   // ... all UI constants
@@ -196,7 +196,7 @@ export const ResourceDisplay: React.FC<ResourceDisplayProps> = ({
   resources,
   income,
   showIncome = false,
-  className = "",
+  className = '',
 }) => {
   // Pure presentational component with configurable display
 };
@@ -229,9 +229,7 @@ export const GameStatus: React.FC<GameStatusProps> = ({
 **Game Provider**:
 
 ```tsx
-export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const {
     notifications,
     showSuccess,
@@ -252,9 +250,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
     clearAllNotifications,
   };
 
-  return (
-    <GameContext.Provider value={contextValue}>{children}</GameContext.Provider>
-  );
+  return <GameContext.Provider value={contextValue}>{children}</GameContext.Provider>;
 };
 ```
 
@@ -300,13 +296,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
 ### Using Enhanced Components
 
 ```tsx
-import {
-  Button,
-  Toast,
-  ResourceDisplay,
-  GameStatus,
-} from "@/components/features";
-import { useGameActions, useNotifications } from "@/hooks";
+import { Button, Toast, ResourceDisplay, GameStatus } from '@/components/features';
+import { useGameActions, useNotifications } from '@/hooks';
 
 const MyGameComponent = () => {
   const { resources, phase, turn, completeTurn } = useGameActions();
@@ -325,11 +316,7 @@ const MyGameComponent = () => {
 
       <GameStatus turn={turn} phase={phase} onEndTurn={handleEndTurn} />
 
-      <Button
-        variant="primary"
-        onClick={handleEndTurn}
-        disabled={phase !== "player"}
-      >
+      <Button variant="primary" onClick={handleEndTurn} disabled={phase !== 'player'}>
         End Turn
       </Button>
     </div>
@@ -360,10 +347,10 @@ const NewFeatureComponent: React.FC<NewFeatureProps> = ({ prop1, prop2 }) => {
 };
 
 // 2. Export from features index
-export { NewFeatureComponent } from "./NewFeatureComponent";
+export { NewFeatureComponent } from './NewFeatureComponent';
 
 // 3. Use in any parent component
-import { NewFeatureComponent } from "@/components/features";
+import { NewFeatureComponent } from '@/components/features';
 ```
 
 ## 🔄 Migration from Old Architecture

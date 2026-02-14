@@ -1,6 +1,6 @@
-import React from "react";
-import { Modal } from "../ui/Modal";
-import { Button } from "../ui/Button";
+import React from 'react';
+import { Modal } from '../ui/Modal';
+import { Button } from '../ui/Button';
 
 interface HelpModalProps {
   isOpen: boolean;
@@ -15,13 +15,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
   );
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Game Rules & Help"
-      size="large"
-      footer={footer}
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="Game Rules & Help" size="large" footer={footer}>
       <div className="help-content">
         <h3>Objective</h3>
         <p>Control 70% of strategic nodes to achieve victory!</p>
@@ -29,32 +23,26 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
         <h3>Node Types</h3>
         <ul>
           <li>
-            <strong>🏰 Cities:</strong> Generate gold and supplies, enable troop
-            recruitment
+            <strong>🏰 Cities:</strong> Generate gold and supplies, enable troop recruitment
           </li>
           <li>
-            <strong>⛏️ Resource Nodes:</strong> Provide valuable resources for
-            your empire
+            <strong>⛏️ Resource Nodes:</strong> Provide valuable resources for your empire
           </li>
           <li>
-            <strong>🛡️ Fortresses:</strong> Defensive strongholds with high
-            garrison value
+            <strong>🛡️ Fortresses:</strong> Defensive strongholds with high garrison value
           </li>
           <li>
-            <strong>✨ Shrines:</strong> Ancient sites that provide magical
-            power
+            <strong>✨ Shrines:</strong> Ancient sites that provide magical power
           </li>
           <li>
-            <strong>💀 Enemy Strongholds:</strong> Heavily fortified enemy
-            positions
+            <strong>💀 Enemy Strongholds:</strong> Heavily fortified enemy positions
           </li>
         </ul>
 
         <h3>Commander Classes</h3>
         <ul>
           <li>
-            <strong>⚔️ Knight:</strong> Tank unit with high defense and Shield
-            Wall ability
+            <strong>⚔️ Knight:</strong> Tank unit with high defense and Shield Wall ability
           </li>
           <li>
             <strong>🔮 Mage:</strong> AOE damage dealer with Fireball ability
@@ -87,8 +75,8 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
 
         <h3>Victory Conditions</h3>
         <p>
-          Achieve victory by controlling 70% of all nodes on the map. Each node
-          has different strategic value and resource generation capabilities.
+          Achieve victory by controlling 70% of all nodes on the map. Each node has different
+          strategic value and resource generation capabilities.
         </p>
       </div>
     </Modal>

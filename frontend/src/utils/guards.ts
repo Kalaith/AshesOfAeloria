@@ -14,7 +14,7 @@ export const safeArrayAccess = <T>(arr: T[] | undefined | null): T[] => {
 export const safeObjectAccess = <T, K extends keyof T>(
   obj: T | undefined | null,
   key: K,
-  fallback: T[K],
+  fallback: T[K]
 ): T[K] => {
   return obj?.[key] ?? fallback;
 };
@@ -30,22 +30,20 @@ export const isNotNullish = <T>(value: T | null | undefined): value is T => {
  * Type guard to check if string is not empty
  */
 export const isNonEmptyString = (value: unknown): value is string => {
-  return typeof value === "string" && value.length > 0;
+  return typeof value === 'string' && value.length > 0;
 };
 
 /**
  * Type guard to check if number is valid (not NaN, finite)
  */
 export const isValidNumber = (value: unknown): value is number => {
-  return typeof value === "number" && isFinite(value) && !isNaN(value);
+  return typeof value === 'number' && isFinite(value) && !isNaN(value);
 };
 
 /**
  * Type guard to check if array has items
  */
-export const hasItems = <T>(
-  arr: T[] | null | undefined,
-): arr is [T, ...T[]] => {
+export const hasItems = <T>(arr: T[] | null | undefined): arr is [T, ...T[]] => {
   return Array.isArray(arr) && arr.length > 0;
 };
 
@@ -53,13 +51,13 @@ export const hasItems = <T>(
  * Safely convert unknown value to string
  */
 export const safeStringify = (value: unknown): string => {
-  if (typeof value === "string") return value;
-  if (value === null || value === undefined) return "";
-  if (typeof value === "object") {
+  if (typeof value === 'string') return value;
+  if (value === null || value === undefined) return '';
+  if (typeof value === 'object') {
     try {
       return JSON.stringify(value);
     } catch {
-      return "[Object]";
+      return '[Object]';
     }
   }
   return String(value);
@@ -68,10 +66,7 @@ export const safeStringify = (value: unknown): string => {
 /**
  * Safely parse number from string
  */
-export const safeParseNumber = (
-  value: string | null | undefined,
-  fallback = 0,
-): number => {
+export const safeParseNumber = (value: string | null | undefined, fallback = 0): number => {
   if (!isNonEmptyString(value)) return fallback;
   const parsed = Number(value);
   return isValidNumber(parsed) ? parsed : fallback;
@@ -80,15 +75,11 @@ export const safeParseNumber = (
 /**
  * Safely access nested object properties
  */
-export const safeNestedAccess = <T>(
-  obj: unknown,
-  path: string[],
-  fallback: T,
-): T => {
+export const safeNestedAccess = <T>(obj: unknown, path: string[], fallback: T): T => {
   let current = obj;
 
   for (const key of path) {
-    if (current == null || typeof current !== "object") {
+    if (current == null || typeof current !== 'object') {
       return fallback;
     }
     current = (current as Record<string, unknown>)[key];
@@ -102,7 +93,7 @@ export const safeNestedAccess = <T>(
  */
 export const assertDefined = <T>(
   value: T | null | undefined,
-  message = "Value must be defined",
+  message = 'Value must be defined'
 ): T => {
   if (value == null) {
     throw new Error(message);
@@ -116,7 +107,7 @@ export const assertDefined = <T>(
 export const safeFunction = <TArgs extends unknown[], TReturn>(
   fn: (...args: TArgs) => TReturn,
   fallback: TReturn,
-  onError?: (error: Error) => void,
+  onError?: (error: Error) => void
 ) => {
   return (...args: TArgs): TReturn => {
     try {

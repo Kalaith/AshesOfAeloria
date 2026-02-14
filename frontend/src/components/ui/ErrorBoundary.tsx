@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 // Error Boundary Component for graceful error handling
-import React, { Component, ErrorInfo, ReactNode } from "react";
+import React, { Component, ErrorInfo, ReactNode } from 'react';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -21,14 +21,12 @@ const DefaultErrorFallback: React.FC<{
   <div className="min-h-[400px] flex items-center justify-center p-8">
     <div className="max-w-md w-full bg-red-50 border border-red-200 rounded-lg p-6 text-center">
       <div className="text-red-600 text-4xl mb-4">⚠️</div>
-      <h2 className="text-xl font-bold text-red-800 mb-2">
-        Something went wrong
-      </h2>
+      <h2 className="text-xl font-bold text-red-800 mb-2">Something went wrong</h2>
       <p className="text-red-700 mb-4">
         An unexpected error occurred while rendering this component.
       </p>
 
-      {process.env.NODE_ENV === "development" && error && (
+      {process.env.NODE_ENV === 'development' && error && (
         <details className="text-left mb-4">
           <summary className="text-sm font-medium text-red-800 cursor-pointer mb-2">
             Error Details (Development)
@@ -51,10 +49,7 @@ const DefaultErrorFallback: React.FC<{
   </div>
 );
 
-export class ErrorBoundary extends Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = {
@@ -72,7 +67,7 @@ export class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Error caught by ErrorBoundary:", error, errorInfo);
+    console.error('Error caught by ErrorBoundary:', error, errorInfo);
 
     this.setState({
       error,
@@ -85,7 +80,7 @@ export class ErrorBoundary extends Component<
     }
 
     // In production, you might want to send this to an error reporting service
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV === 'production') {
       // Example: Sentry.captureException(error, { extra: errorInfo });
     }
   }
@@ -104,12 +99,7 @@ export class ErrorBoundary extends Component<
         return this.props.fallback;
       }
 
-      return (
-        <DefaultErrorFallback
-          error={this.state.error}
-          onRetry={this.handleRetry}
-        />
-      );
+      return <DefaultErrorFallback error={this.state.error} onRetry={this.handleRetry} />;
     }
 
     return this.props.children;
@@ -120,7 +110,7 @@ export class ErrorBoundary extends Component<
 export const withErrorBoundary = <P extends object>(
   WrappedComponent: React.ComponentType<P>,
   fallback?: ReactNode,
-  onError?: (error: Error, errorInfo: ErrorInfo) => void,
+  onError?: (error: Error, errorInfo: ErrorInfo) => void
 ) => {
   const WithErrorBoundaryComponent = (props: P) => (
     <ErrorBoundary fallback={fallback} onError={onError}>
@@ -143,7 +133,7 @@ export const useErrorHandler = () => {
 
   const captureError = React.useCallback((error: Error) => {
     setError(error);
-    console.error("Captured error:", error);
+    console.error('Captured error:', error);
   }, []);
 
   React.useEffect(() => {

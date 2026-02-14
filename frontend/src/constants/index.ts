@@ -23,7 +23,7 @@ export const gameConfig = {
   EXPERIENCE_LOSS: 25,
 
   // Turn Phases
-  PHASES: ["player", "enemy", "upkeep"] as const,
+  PHASES: ['player', 'enemy', 'upkeep'] as const,
 
   // Node Star Levels
   MIN_STAR_LEVEL: 1,
@@ -52,11 +52,11 @@ export const uiConfig = {
 
   // Colors
   COLORS: {
-    PLAYER: "#22c55e", // green-500
-    ENEMY: "#ef4444", // red-500
-    NEUTRAL: "#6b7280", // gray-500
-    SELECTED: "#3b82f6", // blue-500
-    CONNECTION: "#d1d5db", // gray-300
+    PLAYER: '#22c55e', // green-500
+    ENEMY: '#ef4444', // red-500
+    NEUTRAL: '#6b7280', // gray-500
+    SELECTED: '#3b82f6', // blue-500
+    CONNECTION: '#d1d5db', // gray-300
   },
 
   // Animation Timings
@@ -77,29 +77,29 @@ export const uiConfig = {
 
 // Storage Keys
 export const storageKeys = {
-  GAME_STATE: "ashes-of-aeloria-game",
-  SETTINGS: "ashes-of-aeloria-settings",
-  TUTORIAL_COMPLETED: "ashes-of-aeloria-tutorial",
+  GAME_STATE: 'ashes-of-aeloria-game',
+  SETTINGS: 'ashes-of-aeloria-settings',
+  TUTORIAL_COMPLETED: 'ashes-of-aeloria-tutorial',
 } as const;
 
 // Error Messages
 export const errorMessages = {
-  INSUFFICIENT_RESOURCES: "Insufficient resources for this action",
-  NO_COMMANDER_SELECTED: "Please select a commander first",
-  NO_NODE_SELECTED: "Please select a node first",
-  INVALID_ATTACK_TARGET: "Cannot attack this target",
-  NODE_AT_CAPACITY: "Node is at maximum commander capacity",
-  COMMANDER_ALREADY_ASSIGNED: "Commander is already assigned to a node",
-  GAME_STATE_CORRUPTED: "Game state is corrupted, resetting to default",
+  INSUFFICIENT_RESOURCES: 'Insufficient resources for this action',
+  NO_COMMANDER_SELECTED: 'Please select a commander first',
+  NO_NODE_SELECTED: 'Please select a node first',
+  INVALID_ATTACK_TARGET: 'Cannot attack this target',
+  NODE_AT_CAPACITY: 'Node is at maximum commander capacity',
+  COMMANDER_ALREADY_ASSIGNED: 'Commander is already assigned to a node',
+  GAME_STATE_CORRUPTED: 'Game state is corrupted, resetting to default',
 } as const;
 
 // Success Messages
 export const successMessages = {
-  COMMANDER_RECRUITED: "Commander recruited successfully",
-  NODE_CAPTURED: "Node captured!",
-  NODE_UPGRADED: "Node upgraded successfully",
-  COMMANDER_ASSIGNED: "Commander assigned to node",
-  TURN_COMPLETED: "Turn completed",
+  COMMANDER_RECRUITED: 'Commander recruited successfully',
+  NODE_CAPTURED: 'Node captured!',
+  NODE_UPGRADED: 'Node upgraded successfully',
+  COMMANDER_ASSIGNED: 'Commander assigned to node',
+  TURN_COMPLETED: 'Turn completed',
 } as const;
 
 // Feature Flags
@@ -107,7 +107,7 @@ export const featureFlags = {
   ENABLE_ANIMATIONS: true,
   ENABLE_SOUND: false, // Will be implemented in Phase 2
   ENABLE_TUTORIAL: true,
-  ENABLE_DEBUG_MODE: process.env.NODE_ENV === "development",
+  ENABLE_DEBUG_MODE: process.env.NODE_ENV === 'development',
   ENABLE_ANALYTICS: false, // Will be implemented for production
 } as const;
 

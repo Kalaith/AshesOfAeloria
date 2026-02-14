@@ -1,10 +1,10 @@
-import React from "react";
-import { ResourceDisplay } from "../features/ResourceDisplay";
-import { GameStatus } from "../features/GameStatus";
-import { Button } from "../ui/EnhancedButton";
-import { useGameActions } from "../../hooks/useGameActions";
-import { useGameStore } from "../../stores/useGameStore";
-import { calculateIncome } from "../../utils/gameLogic";
+import React from 'react';
+import { ResourceDisplay } from '../features/ResourceDisplay';
+import { GameStatus } from '../features/GameStatus';
+import { Button } from '../ui/EnhancedButton';
+import { useGameActions } from '../../hooks/useGameActions';
+import { useGameStore } from '../../stores/useGameStore';
+import { calculateIncome } from '../../utils/gameLogic';
 
 interface EnhancedLeftPanelProps {
   onRecruitClick: () => void;
@@ -15,10 +15,9 @@ interface EnhancedLeftPanelProps {
 export const EnhancedLeftPanel: React.FC<EnhancedLeftPanelProps> = ({
   onRecruitClick,
   onHelpClick,
-  className = "",
+  className = '',
 }) => {
-  const { resources, phase, completeTurn, canPerformActions } =
-    useGameActions();
+  const { resources, phase, completeTurn, canPerformActions } = useGameActions();
 
   const { turn, nodes } = useGameStore();
 
@@ -26,11 +25,7 @@ export const EnhancedLeftPanel: React.FC<EnhancedLeftPanelProps> = ({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <ResourceDisplay
-        resources={resources}
-        income={income}
-        showIncome={true}
-      />
+      <ResourceDisplay resources={resources} income={income} showIncome={true} />
 
       <GameStatus
         turn={turn}

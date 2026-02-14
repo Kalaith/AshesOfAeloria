@@ -3,9 +3,9 @@
  * Provides toast notifications for actions and errors
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback } from 'react';
 
-export type NotificationType = "success" | "error" | "warning" | "info";
+export type NotificationType = 'success' | 'error' | 'warning' | 'info';
 
 export interface Notification {
   id: string;
@@ -18,7 +18,7 @@ export const useNotifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const removeNotification = useCallback((id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
+    setNotifications(prev => prev.filter(n => n.id !== id));
   }, []);
 
   const addNotification = useCallback(
@@ -26,7 +26,7 @@ export const useNotifications = () => {
       const id = Math.random().toString(36).substr(2, 9);
       const notification: Notification = { id, type, message, duration };
 
-      setNotifications((prev) => [...prev, notification]);
+      setNotifications(prev => [...prev, notification]);
 
       // Auto-remove notification after duration
       if (duration > 0) {
@@ -37,7 +37,7 @@ export const useNotifications = () => {
 
       return id;
     },
-    [removeNotification],
+    [removeNotification]
   );
 
   const clearAllNotifications = useCallback(() => {
@@ -47,30 +47,30 @@ export const useNotifications = () => {
   // Convenience methods
   const showSuccess = useCallback(
     (message: string, duration?: number) => {
-      return addNotification("success", message, duration);
+      return addNotification('success', message, duration);
     },
-    [addNotification],
+    [addNotification]
   );
 
   const showError = useCallback(
     (message: string, duration?: number) => {
-      return addNotification("error", message, duration);
+      return addNotification('error', message, duration);
     },
-    [addNotification],
+    [addNotification]
   );
 
   const showWarning = useCallback(
     (message: string, duration?: number) => {
-      return addNotification("warning", message, duration);
+      return addNotification('warning', message, duration);
     },
-    [addNotification],
+    [addNotification]
   );
 
   const showInfo = useCallback(
     (message: string, duration?: number) => {
-      return addNotification("info", message, duration);
+      return addNotification('info', message, duration);
     },
-    [addNotification],
+    [addNotification]
   );
 
   return {

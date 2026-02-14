@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Utility Classes for Frontier War Theme */
 .bg-iron {
@@ -272,16 +272,16 @@
 }
 
 .font-frontier {
-  font-family: "Cinzel Decorative", "Uncial Antiqua", serif;
+  font-family: 'Cinzel Decorative', 'Uncial Antiqua', serif;
 }
 .font-rugged {
-  font-family: "Pirata One", "Creepster", fantasy;
+  font-family: 'Pirata One', 'Creepster', fantasy;
 }
 .font-parchment {
-  font-family: "IM Fell English", "Libre Baskerville", serif;
+  font-family: 'IM Fell English', 'Libre Baskerville', serif;
 }
 .font-fantasy {
-  font-family: "Cinzel", serif;
+  font-family: 'Cinzel', serif;
 }
 
 .animate-ember-glow {
@@ -334,10 +334,8 @@
 /* Frontier War Campaign Theme - Custom CSS Variables and Effects */
 :root {
   /* Material texture shadows for depth */
-  --shadow-stone:
-    0 4px 8px rgba(43, 43, 44, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  --shadow-metal:
-    0 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  --shadow-stone: 0 4px 8px rgba(43, 43, 44, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --shadow-metal: 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   --shadow-ember: 0 0 20px rgba(230, 126, 34, 0.4);
   --shadow-blood: 0 0 15px rgba(169, 50, 38, 0.3);
 
@@ -350,12 +348,7 @@
     #1e1e20 75%,
     #2b2b2c 100%
   );
-  --texture-metal: linear-gradient(
-    180deg,
-    #6c6c6c 0%,
-    #2b2b2c 50%,
-    #1e1e20 100%
-  );
+  --texture-metal: linear-gradient(180deg, #6c6c6c 0%, #2b2b2c 50%, #1e1e20 100%);
   --texture-bronze: linear-gradient(
     45deg,
     #7b4f2e 0%,
@@ -424,80 +417,29 @@
 /* Weathered paper effect */
 .bg-parchment {
   background:
-    radial-gradient(
-      ellipse 800px 600px at 50% 40%,
-      rgba(237, 234, 222, 0.9) 0%,
-      transparent 40%
-    ),
-    radial-gradient(
-      ellipse 1000px 400px at 20% 80%,
-      rgba(199, 178, 153, 0.3) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      ellipse 600px 800px at 80% 20%,
-      rgba(215, 199, 160, 0.4) 0%,
-      transparent 40%
-    ),
-    linear-gradient(
-      135deg,
-      #d7c7a0 0%,
-      #edeade 25%,
-      #c7b299 50%,
-      #d7c7a0 75%,
-      #edeade 100%
-    );
+    radial-gradient(ellipse 800px 600px at 50% 40%, rgba(237, 234, 222, 0.9) 0%, transparent 40%),
+    radial-gradient(ellipse 1000px 400px at 20% 80%, rgba(199, 178, 153, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse 600px 800px at 80% 20%, rgba(215, 199, 160, 0.4) 0%, transparent 40%),
+    linear-gradient(135deg, #d7c7a0 0%, #edeade 25%, #c7b299 50%, #d7c7a0 75%, #edeade 100%);
   position: relative;
 }
 
 .bg-parchment::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background-image:
-    radial-gradient(
-      circle at 12% 23%,
-      rgba(123, 79, 46, 0.12) 1px,
-      transparent 2px
-    ),
-    radial-gradient(
-      circle at 87% 67%,
-      rgba(169, 50, 38, 0.08) 0.5px,
-      transparent 1.5px
-    ),
-    radial-gradient(
-      circle at 43% 89%,
-      rgba(30, 30, 32, 0.1) 1.2px,
-      transparent 2.5px
-    ),
-    radial-gradient(
-      circle at 78% 11%,
-      rgba(123, 79, 46, 0.06) 0.8px,
-      transparent 2px
-    ),
-    radial-gradient(
-      circle at 21% 71%,
-      rgba(199, 178, 153, 0.15) 0.7px,
-      transparent 1.8px
-    ),
-    radial-gradient(
-      circle at 56% 34%,
-      rgba(169, 50, 38, 0.05) 1.1px,
-      transparent 2.2px
-    ),
-    radial-gradient(
-      circle at 91% 45%,
-      rgba(30, 30, 32, 0.08) 0.9px,
-      transparent 1.9px
-    ),
-    radial-gradient(
-      circle at 33% 56%,
-      rgba(123, 79, 46, 0.09) 0.6px,
-      transparent 1.7px
-    );
+    radial-gradient(circle at 12% 23%, rgba(123, 79, 46, 0.12) 1px, transparent 2px),
+    radial-gradient(circle at 87% 67%, rgba(169, 50, 38, 0.08) 0.5px, transparent 1.5px),
+    radial-gradient(circle at 43% 89%, rgba(30, 30, 32, 0.1) 1.2px, transparent 2.5px),
+    radial-gradient(circle at 78% 11%, rgba(123, 79, 46, 0.06) 0.8px, transparent 2px),
+    radial-gradient(circle at 21% 71%, rgba(199, 178, 153, 0.15) 0.7px, transparent 1.8px),
+    radial-gradient(circle at 56% 34%, rgba(169, 50, 38, 0.05) 1.1px, transparent 2.2px),
+    radial-gradient(circle at 91% 45%, rgba(30, 30, 32, 0.08) 0.9px, transparent 1.9px),
+    radial-gradient(circle at 33% 56%, rgba(123, 79, 46, 0.09) 0.6px, transparent 1.7px);
   background-size:
     347px 423px,
     567px 389px,
@@ -512,25 +454,15 @@
 }
 
 .bg-parchment::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background:
-    linear-gradient(
-      45deg,
-      transparent 40%,
-      rgba(199, 178, 153, 0.05) 50%,
-      transparent 60%
-    ),
-    linear-gradient(
-      -45deg,
-      transparent 30%,
-      rgba(215, 199, 160, 0.08) 50%,
-      transparent 70%
-    );
+    linear-gradient(45deg, transparent 40%, rgba(199, 178, 153, 0.05) 50%, transparent 60%),
+    linear-gradient(-45deg, transparent 30%, rgba(215, 199, 160, 0.08) 50%, transparent 70%);
   pointer-events: none;
 }
 
@@ -562,18 +494,13 @@
 }
 
 .btn-frontier::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transition: left 0.5s;
 }
 

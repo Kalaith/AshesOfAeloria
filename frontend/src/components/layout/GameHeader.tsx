@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { useGameLogic } from "../../hooks/useGameLogic";
-import { useGameStore } from "../../stores/useGameStore";
-import { Button } from "../ui/Button";
-import { GameplayTestPanel } from "../testing/GameplayTestPanel";
+import React, { useState } from 'react';
+import { useGameLogic } from '../../hooks/useGameLogic';
+import { useGameStore } from '../../stores/useGameStore';
+import { Button } from '../ui/Button';
+import { GameplayTestPanel } from '../testing/GameplayTestPanel';
 
 interface GameHeaderProps {
   showMissionSelect?: boolean;
@@ -18,10 +18,8 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
   onRestartMission,
 }) => {
   const { turn } = useGameLogic();
-  const resetGame = useGameStore((state) => state.resetGame);
-  const repairMapConnections = useGameStore(
-    (state) => state.repairMapConnections,
-  );
+  const resetGame = useGameStore(state => state.resetGame);
+  const repairMapConnections = useGameStore(state => state.repairMapConnections);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showTestPanel, setShowTestPanel] = useState(false);
 
@@ -115,22 +113,14 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
               🔄 Reset Campaign
             </h2>
             <p className="mb-6 text-iron leading-normal text-sm lg:text-base font-parchment">
-              Are you sure you want to reset the campaign? All progress will be
-              lost and you will start from the first mission.
+              Are you sure you want to reset the campaign? All progress will be lost and you will
+              start from the first mission.
             </p>
             <div className="flex gap-3 justify-center">
-              <Button
-                variant="secondary"
-                onClick={handleCancelReset}
-                className="flex-1"
-              >
+              <Button variant="secondary" onClick={handleCancelReset} className="flex-1">
                 Cancel
               </Button>
-              <Button
-                variant="attack"
-                onClick={handleConfirmReset}
-                className="flex-1"
-              >
+              <Button variant="attack" onClick={handleConfirmReset} className="flex-1">
                 Reset
               </Button>
             </div>

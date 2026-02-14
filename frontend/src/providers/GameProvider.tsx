@@ -4,9 +4,9 @@
  * Provides global context and state management for the game
  */
 
-import React, { createContext, useContext } from "react";
-import { useNotifications } from "../hooks/useNotifications";
-import type { Notification } from "../hooks/useNotifications";
+import React, { createContext, useContext } from 'react';
+import { useNotifications } from '../hooks/useNotifications';
+import type { Notification } from '../hooks/useNotifications';
 
 interface GameContextType {
   // Notification system
@@ -24,7 +24,7 @@ const GameContext = createContext<GameContextType | undefined>(undefined);
 export const useGameContext = () => {
   const context = useContext(GameContext);
   if (!context) {
-    throw new Error("useGameContext must be used within a GameProvider");
+    throw new Error('useGameContext must be used within a GameProvider');
   }
   return context;
 };
@@ -54,7 +54,5 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
     clearAllNotifications,
   };
 
-  return (
-    <GameContext.Provider value={contextValue}>{children}</GameContext.Provider>
-  );
+  return <GameContext.Provider value={contextValue}>{children}</GameContext.Provider>;
 };

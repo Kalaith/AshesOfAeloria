@@ -3,12 +3,12 @@
  * Clean, modular implementation following frontend standards
  */
 
-import React from "react";
-import { NodeInfo } from "../features/NodeInfo";
-import { CommanderInfo } from "../features/CommanderInfo";
-import { Card } from "../ui/Card";
-import { useGameActions } from "../../hooks/useGameActions";
-import { useGameContext } from "../../providers/GameProvider";
+import React from 'react';
+import { NodeInfo } from '../features/NodeInfo';
+import { CommanderInfo } from '../features/CommanderInfo';
+import { Card } from '../ui/Card';
+import { useGameActions } from '../../hooks/useGameActions';
+import { useGameContext } from '../../providers/GameProvider';
 
 export const EnhancedInfoPanel: React.FC = () => {
   const {
@@ -26,7 +26,7 @@ export const EnhancedInfoPanel: React.FC = () => {
 
   const handleUpgrade = async () => {
     if (!canPerformActions) {
-      showError("Cannot perform actions during enemy turn");
+      showError('Cannot perform actions during enemy turn');
       return;
     }
 
@@ -40,7 +40,7 @@ export const EnhancedInfoPanel: React.FC = () => {
 
   const handleAttack = async (nodeId: number) => {
     if (!canPerformActions) {
-      showError("Cannot perform actions during enemy turn");
+      showError('Cannot perform actions during enemy turn');
       return;
     }
 
@@ -62,8 +62,7 @@ export const EnhancedInfoPanel: React.FC = () => {
         <div className="text-center py-8">
           <div className="text-4xl mb-4">🎯</div>
           <p className="text-parchment-dark text-sm font-parchment">
-            Choose a stronghold or war leader to view tactical details and
-            command options.
+            Choose a stronghold or war leader to view tactical details and command options.
           </p>
         </div>
       </Card>
@@ -87,10 +86,7 @@ export const EnhancedInfoPanel: React.FC = () => {
 
       {/* Commander Information */}
       {commanderInfo && (
-        <CommanderInfo
-          commander={commanderInfo}
-          canPerformActions={canPerformActions}
-        />
+        <CommanderInfo commander={commanderInfo} canPerformActions={canPerformActions} />
       )}
     </div>
   );

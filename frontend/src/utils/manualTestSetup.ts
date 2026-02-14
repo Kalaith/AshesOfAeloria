@@ -110,6 +110,4 @@ export const directTestCode = `
 })();
 `;
 
-console.log(
-  "Manual test setup code available. Check the console for copy-paste instructions.",
-);
+console.log('Manual test setup code available. Check the console for copy-paste instructions.');
