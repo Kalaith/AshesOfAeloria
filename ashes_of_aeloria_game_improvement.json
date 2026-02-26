@@ -1,0 +1,404 @@
+{
+    "metadata":  {
+                     "name":  "ashes_of_aeloria_game_improvement",
+                     "version":  "1.0.0",
+                     "generated_at":  "2026-02-22",
+                     "framework":  "WebHatchery Quest Board Planning Guide"
+                 },
+    "habitat":  {
+                    "slug":  "ashes_of_aeloria",
+                    "project_path":  "game_apps/ashes_of_aeloria/frontend/",
+                    "project_title":  "Ashes of Aeloria"
+                },
+    "season":  {
+                   "name":  "Season 1: Ember Reforged",
+                   "slug":  "season-1",
+                   "starts_at":  "2026-02-24",
+                   "ends_at":  "2026-04-03",
+                   "is_active":  true,
+                   "path_chosen":  "feature-depth"
+               },
+    "outcome_brief":  {
+                          "statement":  "Ashes gains a playable rebuild loop with branching story, settlement growth, and survival pressure.",
+                          "deadline":  "2026-04-03"
+                      },
+    "major_update":  {
+                         "slug":  "world-rebuilding-and-branching-narrative",
+                         "name":  "Major Update: World Rebuilding and Branching Narrative",
+                         "description":  "Ship the core rebuild fantasy with story consequences, settlement systems, and strategic survival decisions.",
+                         "outcome_statement":  "Ashes gains a playable rebuild loop with branching story, settlement growth, and survival pressure.",
+                         "deadline":  "2026-04-03"
+                     },
+    "quest_chains":  [
+                         {
+                             "slug":  "ashes-rebuild-core-loop",
+                             "name":  "Ashes of Aeloria: Rebuild Core Loop",
+                             "description":  "Deliver branching narrative, settlement growth, and resource pressure systems for the rebuild fantasy.",
+                             "labels":  [
+                                            "type:quest",
+                                            "chain:feature-depth"
+                                        ],
+                             "reward_xp":  180,
+                             "reward_badge_slug":  "ember-tactician",
+                             "reward_title":  "Tactician of Embers",
+                             "is_active":  true,
+                             "steps":  [
+                                           {
+                                               "id":  "AOA-Q1",
+                                               "type":  "Quest",
+                                               "title":  "Build Branching Narrative Framework",
+                                               "description":  "Implement multi-chapter consequence chains and background-based story branches.",
+                                               "rank_required":  "Iron",
+                                               "quest_level":  3,
+                                               "dependency_type":  "Independent",
+                                               "depends_on":  [
+
+                                                              ],
+                                               "unlock_condition":  "n/a",
+                                               "goal":  "Player choices create visible long-term story consequences.",
+                                               "player_steps":  [
+                                                                    "Define story flag schema for chapter and character consequences.",
+                                                                    "Implement branch resolver that reads player background and prior choices.",
+                                                                    "Author two complete branching chapter flows with automated validation."
+                                                                ],
+                                               "done_when":  [
+                                                                 "Two chapter branches resolve correctly from saved choices.",
+                                                                 "Character background changes available scenes and outcomes.",
+                                                                 "Narrative validation tests pass for all branch paths."
+                                                             ],
+                                               "due_date":  "2026-03-05",
+                                               "proof_required":  [
+                                                                      "proof:pr",
+                                                                      "proof:test-output",
+                                                                      "proof:metric-delta"
+                                                                  ],
+                                               "class_fantasy":  "Aether Smith",
+                                               "class":  "feature-smith",
+                                               "difficulty":  3,
+                                               "xp":  60,
+                                               "labels":  [
+                                                              "type:quest",
+                                                              "difficulty:3",
+                                                              "class:feature-smith",
+                                                              "xp:60",
+                                                              "chain:feature-depth"
+                                                          ]
+                                           },
+                                           {
+                                               "id":  "AOA-Q2",
+                                               "type":  "Quest",
+                                               "title":  "Ship Settlement Construction MVP",
+                                               "description":  "Add building placement and settlement management on top of ruined zones.",
+                                               "rank_required":  "Iron",
+                                               "quest_level":  4,
+                                               "dependency_type":  "Chained",
+                                               "depends_on":  [
+                                                                  "AOA-Q1"
+                                                              ],
+                                               "unlock_condition":  "AOA-Q1 complete.",
+                                               "goal":  "Players can place, upgrade, and monitor core settlement buildings.",
+                                               "player_steps":  [
+                                                                    "Implement grid-based placement for core building types.",
+                                                                    "Add build costs, build time, and upgrade states.",
+                                                                    "Create settlement panel for population, morale, and production output."
+                                                                ],
+                                               "done_when":  [
+                                                                 "Players can place and upgrade at least four building types.",
+                                                                 "Settlement panel updates from live building state.",
+                                                                 "Blocked placement and invalid actions show safe feedback."
+                                                             ],
+                                               "due_date":  "2026-03-14",
+                                               "proof_required":  [
+                                                                      "proof:pr",
+                                                                      "proof:test-output",
+                                                                      "proof:screenshot"
+                                                                  ],
+                                               "class_fantasy":  "Cogwheel Alchemist",
+                                               "class":  "ux-alchemist",
+                                               "difficulty":  4,
+                                               "xp":  80,
+                                               "labels":  [
+                                                              "type:quest",
+                                                              "difficulty:4",
+                                                              "class:ux-alchemist",
+                                                              "xp:80",
+                                                              "chain:feature-depth"
+                                                          ]
+                                           },
+                                           {
+                                               "id":  "AOA-Q3",
+                                               "type":  "Quest",
+                                               "title":  "Add Survival Pressure and Scarcity Events",
+                                               "description":  "Introduce environmental hazards, scarce resources, and event-driven survival decisions.",
+                                               "rank_required":  "Iron",
+                                               "quest_level":  3,
+                                               "dependency_type":  "Chained",
+                                               "depends_on":  [
+                                                                  "AOA-Q1",
+                                                                  "AOA-Q2"
+                                                              ],
+                                               "unlock_condition":  "AOA-Q1 and AOA-Q2 complete.",
+                                               "goal":  "Resource planning becomes a strategic pillar of the rebuild loop.",
+                                               "player_steps":  [
+                                                                    "Implement dynamic weather and hazard modifiers that affect gathering and travel.",
+                                                                    "Create scarcity events that reduce key resource yields temporarily.",
+                                                                    "Add response options with risk/reward outcomes and persistence."
+                                                                ],
+                                               "done_when":  [
+                                                                 "At least three hazard types and three scarcity events are live.",
+                                                                 "Event choices impact next-turn resource and morale outcomes.",
+                                                                 "No soft-lock occurs when scarce resources reach critical lows."
+                                                             ],
+                                               "due_date":  "2026-03-24",
+                                               "proof_required":  [
+                                                                      "proof:pr",
+                                                                      "proof:test-output",
+                                                                      "proof:metric-delta"
+                                                                  ],
+                                               "class_fantasy":  "Arcane Examiner",
+                                               "class":  "test-summoner",
+                                               "difficulty":  3,
+                                               "xp":  60,
+                                               "labels":  [
+                                                              "type:quest",
+                                                              "difficulty:3",
+                                                              "class:test-summoner",
+                                                              "xp:60",
+                                                              "chain:feature-depth"
+                                                          ]
+                                           },
+                                           {
+                                               "id":  "AOA-Q4",
+                                               "type":  "Quest",
+                                               "title":  "Implement NPC Recruitment and Relationship Layer",
+                                               "description":  "Add survivor recruitment, companion bonds, and faction attitude tracking.",
+                                               "rank_required":  "Iron",
+                                               "quest_level":  2,
+                                               "dependency_type":  "Chained",
+                                               "depends_on":  [
+                                                                  "AOA-Q2"
+                                                              ],
+                                               "unlock_condition":  "AOA-Q2 complete.",
+                                               "goal":  "Community composition and relationships materially affect settlement outcomes.",
+                                               "player_steps":  [
+                                                                    "Implement recruitment events with role-based survivor traits.",
+                                                                    "Add relationship states for companion trust, rivalry, and loyalty.",
+                                                                    "Tie relationship thresholds to story branch unlocks and penalties."
+                                                                ],
+                                               "done_when":  [
+                                                                 "Players can recruit and assign survivors to at least three roles.",
+                                                                 "Relationship changes are visible and persisted across sessions.",
+                                                                 "At least two story outcomes are gated by relationship state."
+                                                             ],
+                                               "due_date":  "2026-03-27",
+                                               "proof_required":  [
+                                                                      "proof:pr",
+                                                                      "proof:test-output",
+                                                                      "proof:screenshot"
+                                                                  ],
+                                               "class_fantasy":  "Cogwheel Alchemist",
+                                               "class":  "ux-alchemist",
+                                               "difficulty":  2,
+                                               "xp":  40,
+                                               "labels":  [
+                                                              "type:quest",
+                                                              "difficulty:2",
+                                                              "class:ux-alchemist",
+                                                              "xp:40",
+                                                              "chain:feature-depth"
+                                                          ]
+                                           },
+                                           {
+                                               "id":  "AOA-Q5",
+                                               "type":  "Quest",
+                                               "title":  "Ship Trade Routes and Inter-Settlement Diplomacy",
+                                               "description":  "Add trade network setup and diplomatic consequences between settlements.",
+                                               "rank_required":  "Iron",
+                                               "quest_level":  4,
+                                               "dependency_type":  "Chained",
+                                               "depends_on":  [
+                                                                  "AOA-Q3",
+                                                                  "AOA-Q4"
+                                                              ],
+                                               "unlock_condition":  "AOA-Q3 and AOA-Q4 complete.",
+                                               "goal":  "Players can stabilize growth through trade deals and diplomatic strategy.",
+                                               "player_steps":  [
+                                                                    "Implement route creation between discovered settlements with transport costs.",
+                                                                    "Add diplomacy states (allied, neutral, hostile) that modify trade viability.",
+                                                                    "Integrate trade and diplomacy outcomes into scarcity and morale systems."
+                                                                ],
+                                               "done_when":  [
+                                                                 "Players can create, pause, and reroute trade lines without errors.",
+                                                                 "Diplomatic state directly affects prices, access, or route safety.",
+                                                                 "End-to-end tests cover story, settlement, scarcity, and trade persistence."
+                                                             ],
+                                               "due_date":  "2026-04-01",
+                                               "proof_required":  [
+                                                                      "proof:pr",
+                                                                      "proof:test-output",
+                                                                      "proof:metric-delta"
+                                                                  ],
+                                               "class_fantasy":  "Iron Warden",
+                                               "class":  "ops-ranger",
+                                               "difficulty":  4,
+                                               "xp":  80,
+                                               "labels":  [
+                                                              "type:quest",
+                                                              "difficulty:4",
+                                                              "class:ops-ranger",
+                                                              "xp:80",
+                                                              "chain:feature-depth"
+                                                          ]
+                                           }
+                                       ]
+                         }
+                     ]
+,
+  "bosses": [
+    {
+      "id": "B1",
+      "name": "Ashfall Collapse Wyrm",
+      "description": "Main release risk where branching story, settlement state, and scarcity events desync under load.",
+      "threat_type": "state integrity",
+      "threat_level": 4,
+      "status": "active",
+      "deadline": "2026-04-02",
+      "risk_level": "high",
+      "rollback_plan": "Disable rebuild systems behind feature flags and restore the last stable save-compatible build.",
+      "labels": ["type:boss", "difficulty:4", "class:ops-ranger", "xp:80", "boss:active", "chain:feature-depth"],
+      "kill_criteria": [
+        "No save corruption across branching story + settlement state reload tests",
+        "No P1/P2 issues in 48h staging soak with scarcity and trade systems enabled"
+      ],
+      "hp_total": 8,
+      "hp_current": 8,
+      "hp_tasks": [
+        "HP1: Story-state schema freeze approved",
+        "HP2: Settlement snapshot validation enabled",
+        "HP3: Scarcity event queue integrity checks added",
+        "HP4: Trade and diplomacy persistence tests added",
+        "HP5: Relationship-state migration checks added",
+        "HP6: 24h long-run simulation pass complete",
+        "HP7: Save/load rollback drill completed",
+        "HP8: Final release readiness sign-off"
+      ],
+      "proof_required": ["proof:pr", "proof:test-output", "proof:metric-delta", "proof:postmortem"]
+    }
+  ],
+  "raids": [
+    {
+      "slug": "ashes-rebuild-launch-v1",
+      "name": "Raid: Ember Reforged Launch",
+      "description": "Team launch event to ship Ashes' rebuilding loop safely.",
+      "labels": ["type:raid", "difficulty:5", "chain:feature-depth", "raid:active"],
+      "rank_required": "Diamond",
+      "reward_xp": 250,
+      "reward_badge_slug": "ember-reforger",
+      "reward_title": "Ember Reforger",
+      "is_active": true,
+      "entry_criteria": [
+        "AOA-Q1 through AOA-Q5 complete",
+        "Boss B1 defeated",
+        "No unresolved P1/P2 blockers"
+      ],
+      "go_no_go_gates": [
+        "Branching narrative regression suite passing",
+        "Settlement + scarcity + trade integration suite passing",
+        "Save/load corruption rate at 0 in staged test run",
+        "Critical route error rate < 1% during observation"
+      ],
+      "steps": [
+        {
+          "id": "AOA-R1-P1",
+          "type": "Raid",
+          "title": "Phase 1: Final Rebuild Verification",
+          "description": "Run final cross-system checks and publish go/no-go decision.",
+          "rank_required": "Diamond",
+          "quest_level": 5,
+          "dependency_type": "Chained",
+          "depends_on": ["AOA-Q1", "AOA-Q2", "AOA-Q3", "AOA-Q4", "AOA-Q5"],
+          "unlock_condition": "Raid entry criteria met.",
+          "goal": "Confirm rebuild systems are coherent and release safe.",
+          "player_steps": [
+            "Run full regression for story, settlement, scarcity, and diplomacy flows.",
+            "Review gate metrics and unresolved incident list.",
+            "Publish go/no-go decision log."
+          ],
+          "done_when": [
+            "All go/no-go gates pass.",
+            "Decision record is published with evidence links.",
+            "Stakeholders are notified."
+          ],
+          "due_date": "2026-04-01",
+          "proof_required": ["proof:test-output", "proof:metric-delta"],
+          "class_fantasy": "Arcane Examiner",
+          "class": "test-summoner",
+          "difficulty": 5,
+          "xp": 80,
+          "labels": ["type:raid", "difficulty:5", "class:test-summoner", "xp:80", "raid:active"]
+        },
+        {
+          "id": "AOA-R1-P2",
+          "type": "Raid",
+          "title": "Phase 2: Staged Ember Rollout",
+          "description": "Deploy staged build and monitor stability for 24 hours.",
+          "rank_required": "Diamond",
+          "quest_level": 5,
+          "dependency_type": "Chained",
+          "depends_on": ["AOA-R1-P1"],
+          "unlock_condition": "Phase 1 complete.",
+          "goal": "Verify stable behavior under live-like progression patterns.",
+          "player_steps": [
+            "Deploy staged release candidate.",
+            "Monitor event queue health, save/load integrity, and route failures.",
+            "Resolve or rollback any critical incident."
+          ],
+          "done_when": [
+            "24h observation window completes.",
+            "No unresolved critical incident remains.",
+            "Telemetry report is attached."
+          ],
+          "due_date": "2026-04-02",
+          "proof_required": ["proof:test-output", "proof:metric-delta", "proof:screenshot"],
+          "class_fantasy": "Iron Warden",
+          "class": "ops-ranger",
+          "difficulty": 5,
+          "xp": 80,
+          "labels": ["type:raid", "difficulty:5", "class:ops-ranger", "xp:80", "raid:active"]
+        },
+        {
+          "id": "AOA-R1-P3",
+          "type": "Raid",
+          "title": "Phase 3: Ember Reforged Launch",
+          "description": "Launch to production and publish release report.",
+          "rank_required": "Diamond",
+          "quest_level": 5,
+          "dependency_type": "Chained",
+          "depends_on": ["AOA-R1-P2"],
+          "unlock_condition": "Phase 2 observation complete.",
+          "goal": "Complete launch with clear release evidence and rollback readiness.",
+          "player_steps": [
+            "Execute production launch checklist.",
+            "Publish release notes and version tag.",
+            "Share first-pass postmortem draft."
+          ],
+          "done_when": [
+            "Production release is live.",
+            "Release notes and tag are published.",
+            "Postmortem draft is shared."
+          ],
+          "due_date": "2026-04-03",
+          "proof_required": ["proof:release-tag", "proof:metric-delta", "proof:postmortem"],
+          "class_fantasy": "Rune Scribe",
+          "class": "doc-sage",
+          "difficulty": 5,
+          "xp": 80,
+          "labels": ["type:raid", "difficulty:5", "class:doc-sage", "xp:80", "raid:active"]
+        }
+      ]
+    }
+  ]
+}
+
+
+
