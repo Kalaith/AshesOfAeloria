@@ -4,9 +4,11 @@
  * Provides global context and state management for the game
  */
 
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import { useNotifications } from '../hooks/useNotifications';
 import type { Notification } from '../hooks/useNotifications';
+import { useAuthStore } from '../stores/authStore';
+import { useGameStore } from '../stores/useGameStore';
 
 interface GameContextType {
   // Notification system
@@ -53,6 +55,33 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
     removeNotification,
     clearAllNotifications,
   };
+
+  useEffect(() => {
+    void useAuthStore.getState().initializeSession();
+
+    let saveTimer: number | null = null;
+    const unsubscribe = useGameStore.subscribe(() => {
+      const auth = useAuthStore.getState();
+      if (!auth.isAuthenticated || auth.isLoading) {
+        return;
+      }
+
+      if (saveTimer !== null) {
+        window.clearTimeout(saveTimer);
+      }
+
+      saveTimer = window.setTimeout(() => {
+        void useAuthStore.getState().saveCurrentGame();
+      }, 1200);
+    });
+
+    return () => {
+      if (saveTimer !== null) {
+        window.clearTimeout(saveTimer);
+      }
+      unsubscribe();
+    };
+  }, []);
 
   return <GameContext.Provider value={contextValue}>{children}</GameContext.Provider>;
 };

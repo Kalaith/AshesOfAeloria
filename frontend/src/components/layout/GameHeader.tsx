@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useGameLogic } from '../../hooks/useGameLogic';
+import { useAuthStore } from '../../stores/authStore';
 import { useGameStore } from '../../stores/useGameStore';
 import { Button } from '../ui/Button';
 import { GameplayTestPanel } from '../testing/GameplayTestPanel';
@@ -20,6 +21,8 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
   const { turn } = useGameLogic();
   const resetGame = useGameStore(state => state.resetGame);
   const repairMapConnections = useGameStore(state => state.repairMapConnections);
+  const { isGuest, isSaving, user, saveCurrentGame, visitWebHatcheryLogin, logoutGuest } =
+    useAuthStore();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showTestPanel, setShowTestPanel] = useState(false);
 
@@ -49,6 +52,26 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
           </h1>
         </div>
         <div className="flex gap-3 lg:gap-6 items-center">
+          <span className="font-frontier font-bold px-3 lg:px-4 py-1.5 lg:py-2 bg-metal-texture text-light-enhanced rounded-md text-sm lg:text-base border-2 border-iron">
+            {isGuest ? 'Guest' : 'Account'}: {user?.display_name || user?.username || 'Unknown'}
+          </span>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => void saveCurrentGame()}
+            className="text-xs lg:text-sm"
+            title="Save campaign progress to the backend"
+          >
+            {isSaving ? 'Saving...' : 'Save'}
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={isGuest ? logoutGuest : () => void visitWebHatcheryLogin()}
+            className="text-xs lg:text-sm"
+          >
+            {isGuest ? 'Exit Guest' : 'Sign In'}
+          </Button>
           {showMissionSelect && onReturnToMissionSelect && (
             <Button
               variant="primary"

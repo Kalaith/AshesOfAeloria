@@ -69,7 +69,9 @@ import { gameData, gameConstants } from '../data/gameData';
 import { StoryEventSystem } from '../systems/StoryEventSystem';
 
 // Initial game state with comprehensive world rebuilding systems
-const getInitialState = (): GameState => {
+export type PersistedGameState = Partial<GameState>;
+
+export const getInitialState = (): GameState => {
   // Create initial player and enemy commanders
   const initialCommanders = [
     // Player starts with one commander
@@ -145,6 +147,47 @@ const getInitialState = (): GameState => {
     environmentalRestoration: generateInitialEnvironmentalRestoration(),
   };
 };
+
+export const serializeGameState = (state: GameState): PersistedGameState => ({
+  turn: state.turn,
+  phase: state.phase,
+  resources: state.resources,
+  commanders: state.commanders,
+  nodes: state.nodes,
+  selectedNode: state.selectedNode,
+  selectedCommander: state.selectedCommander,
+  gameOver: state.gameOver,
+  winner: state.winner,
+  currentMission: state.currentMission,
+  missionStarted: state.missionStarted,
+  battleLog: state.battleLog.slice(-100),
+  globalTechnologies: state.globalTechnologies,
+  worldState: state.worldState,
+  factions: state.factions,
+  diplomacy: state.diplomacy,
+  market: state.market,
+  calendar: state.calendar,
+  weather: state.weather,
+  events: state.events,
+  eventQueue: state.eventQueue,
+  narrativeState: state.narrativeState,
+  achievements: state.achievements,
+  statistics: state.statistics,
+  victoryProgress: state.victoryProgress,
+  legacyData: state.legacyData,
+  historicalRecords: state.historicalRecords.slice(-100),
+  culturalMovements: state.culturalMovements,
+  economicCycles: state.economicCycles,
+  research: state.research,
+  exploration: state.exploration,
+  magicalCorruption: state.magicalCorruption,
+  populationCenters: state.populationCenters,
+  tradeNetworks: state.tradeNetworks,
+  politicalSituation: state.politicalSituation,
+  militaryIntelligence: state.militaryIntelligence,
+  culturalRenaissance: state.culturalRenaissance,
+  environmentalRestoration: state.environmentalRestoration,
+});
 
 interface GameStore extends GameState {
   // Core Game Actions
@@ -1316,36 +1359,7 @@ export const useGameStore = create<GameStore>()(
       name: 'ashes-of-aeloria-game-state',
       version: 1, // Increment this when making breaking changes to the state structure
       storage: createJSONStorage(() => localStorage),
-      partialize: state => ({
-        turn: state.turn,
-        phase: state.phase,
-        resources: state.resources,
-        commanders: state.commanders,
-        nodes: state.nodes,
-        gameOver: state.gameOver,
-        winner: state.winner,
-        currentMission: state.currentMission,
-        missionStarted: state.missionStarted,
-        battleLog: state.battleLog.slice(-20),
-        globalTechnologies: state.globalTechnologies,
-        worldState: state.worldState,
-        factions: state.factions,
-        diplomacy: state.diplomacy,
-        market: state.market,
-        calendar: state.calendar,
-        weather: state.weather,
-        research: state.research,
-        exploration: state.exploration,
-        magicalCorruption: state.magicalCorruption,
-        populationCenters: state.populationCenters,
-        culturalRenaissance: state.culturalRenaissance,
-        environmentalRestoration: state.environmentalRestoration,
-        achievements: state.achievements,
-        statistics: state.statistics,
-        victoryProgress: state.victoryProgress,
-        legacyData: state.legacyData,
-        historicalRecords: state.historicalRecords.slice(-50), // Keep last 50 historical records
-      }),
+      partialize: state => serializeGameState(state),
       migrate: (persistedState: any, version: number) => {
         // Handle migration between versions if needed
         if (version === 0) {

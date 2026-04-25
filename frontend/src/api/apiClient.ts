@@ -1,7 +1,17 @@
 import axios from 'axios';
+import { getActiveAuthToken } from '../auth/session';
 
-// Determine the base URL from the environment or use a relative path
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+const requiredEnv = (key: keyof ImportMetaEnv): string => {
+    const value = import.meta.env[key];
+    if (typeof value !== 'string' || value.trim() === '') {
+        throw new Error(`Missing required environment variable: ${key}`);
+    }
+
+    return value;
+};
+
+const BASE_URL = requiredEnv('VITE_API_BASE_URL');
+const WEB_HATCHERY_LOGIN_URL = requiredEnv('VITE_WEB_HATCHERY_LOGIN_URL');
 
 /**
  * Standardized Web Hatchery Axios Instance
@@ -17,20 +27,9 @@ export const apiClient = axios.create({
 // Request Interceptor: Attach Auth Token
 apiClient.interceptors.request.use(
     (config) => {
-        // We intentionally interact directly with localStorage here to avoid
-        // reactivity issues or circular dependencies when initializing Axios outside of React.
-        try {
-            const authStorageStr = localStorage.getItem('auth-storage');
-            if (authStorageStr) {
-                const authData = JSON.parse(authStorageStr);
-                // Zustand persist wraps state in a `state` object
-                const token = authData?.state?.token;
-                if (token) {
-                    config.headers.Authorization = `Bearer ${token}`;
-                }
-            }
-        } catch (error) {
-            console.warn('Failed to parse auth token from local storage', error);
+        const token = getActiveAuthToken();
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
         }
 
         return config;
@@ -50,7 +49,7 @@ apiClient.interceptors.response.use(
         if (error.response?.status === 401) {
             const loginUrl =
                 error.response?.data?.login_url ||
-                import.meta.env.VITE_WEB_HATCHERY_LOGIN_URL;
+                WEB_HATCHERY_LOGIN_URL;
 
             if (loginUrl) {
                 try {

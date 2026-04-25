@@ -16,6 +16,7 @@ import { HelpModal } from '../components/game/HelpModal';
 import { StoryEventModal } from '../components/game/StoryEventModal';
 import { ToastContainer } from '../components/ui/Toast';
 import { useGameLogic } from '../hooks/useGameLogic';
+import { useAuthStore } from '../stores/authStore';
 import { useGameStore } from '../stores/useGameStore';
 import { useNotifications } from '../hooks/useNotifications';
 import { useModals } from '../hooks/useModals';
@@ -26,6 +27,7 @@ import { useModals } from '../hooks/useModals';
  */
 export const GamePage: React.FC = () => {
   const [gameMode, setGameMode] = useState<'mission-select' | 'active-mission'>('mission-select');
+  const [hasEnteredGame, setHasEnteredGame] = useState(false);
   const [storyEventModalOpen, setStoryEventModalOpen] = useState(false);
   const { gameOver, winner } = useGameLogic();
   const initializeMission = useGameStore(state => state.initializeMission);
@@ -36,6 +38,18 @@ export const GamePage: React.FC = () => {
   const respondToEvent = useGameStore(state => state.respondToEvent);
   const { notifications, removeNotification } = useNotifications();
   const { modals, openRecruitment, closeRecruitment, openHelp, closeHelp } = useModals();
+  const {
+    isAuthenticated,
+    isLoading,
+    isSaving,
+    isGuest,
+    hasMergeableGuestSession,
+    user,
+    error,
+    continueAsGuest,
+    mergeGuestSession,
+    visitWebHatcheryLogin,
+  } = useAuthStore();
 
   const handleMissionStart = (missionId: string) => {
     console.log('Starting mission:', missionId);
@@ -53,6 +67,17 @@ export const GamePage: React.FC = () => {
     if (currentMission) {
       initializeMission(currentMission);
     }
+  };
+
+  const handleContinueAsGuest = async () => {
+    await continueAsGuest();
+    if (useAuthStore.getState().isAuthenticated) {
+      setHasEnteredGame(true);
+    }
+  };
+
+  const handleContinueCampaign = () => {
+    setHasEnteredGame(true);
   };
 
   // Restore game mode based on persisted mission state
@@ -82,10 +107,58 @@ export const GamePage: React.FC = () => {
   };
 
   // Mission Selection Mode: Clean interface without battle UI
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-stone-texture px-6">
+        <div className="bg-metal-texture border-4 border-bronze rounded-lg p-8 text-center max-w-md">
+          <h1 className="text-2xl font-frontier font-bold text-ember-enhanced mb-3">
+            Ashes of Aeloria
+          </h1>
+          <p className="text-light-enhanced font-parchment">Loading saved campaign...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasEnteredGame) {
+    return (
+      <LandingPage
+        isAuthenticated={isAuthenticated}
+        isGuest={isGuest}
+        isSaving={isSaving}
+        hasMergeableGuestSession={hasMergeableGuestSession}
+        userName={user?.display_name || user?.username || null}
+        error={error}
+        onContinueCampaign={handleContinueCampaign}
+        onContinueAsGuest={() => void handleContinueAsGuest()}
+        onMergeGuestSession={() => void mergeGuestSession()}
+        onVisitLogin={() => void visitWebHatcheryLogin()}
+      />
+    );
+  }
+
   if (gameMode === 'mission-select') {
     return (
       <>
         <div className="h-screen flex flex-col">
+          {hasMergeableGuestSession ? (
+            <div className="bg-ember text-iron-dark px-4 py-2 flex items-center justify-center gap-3 font-frontier font-bold">
+              <span>Guest progress is available on this browser.</span>
+              <button
+                type="button"
+                onClick={() => void mergeGuestSession()}
+                disabled={isSaving}
+                className="rounded-md border-2 border-iron px-3 py-1 disabled:opacity-60"
+              >
+                {isSaving ? 'Merging...' : 'Merge Guest Progress'}
+              </button>
+            </div>
+          ) : null}
+          {isGuest ? (
+            <div className="bg-bronze text-light-enhanced px-4 py-2 text-center font-parchment">
+              Guest campaign: {user?.display_name || user?.username || 'Guest'}
+            </div>
+          ) : null}
           <GameHeader />
           <div className="flex-1 overflow-hidden">
             <MissionSelectionCanvas onMissionStart={handleMissionStart} />
@@ -132,5 +205,115 @@ export const GamePage: React.FC = () => {
       {/* Toast Notifications */}
       <ToastContainer notifications={notifications} onClose={removeNotification} />
     </>
+  );
+};
+
+interface LandingPageProps {
+  isAuthenticated: boolean;
+  isGuest: boolean;
+  isSaving: boolean;
+  hasMergeableGuestSession: boolean;
+  userName: string | null;
+  error: string | null;
+  onContinueCampaign: () => void;
+  onContinueAsGuest: () => void;
+  onMergeGuestSession: () => void;
+  onVisitLogin: () => void;
+}
+
+const LandingPage: React.FC<LandingPageProps> = ({
+  isAuthenticated,
+  isGuest,
+  isSaving,
+  hasMergeableGuestSession,
+  userName,
+  error,
+  onContinueCampaign,
+  onContinueAsGuest,
+  onMergeGuestSession,
+  onVisitLogin,
+}) => {
+  return (
+    <div className="min-h-screen bg-stone-texture px-4 py-8 text-light-enhanced overflow-y-auto">
+      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl items-center">
+        <div className="grid w-full gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <section className="border-4 border-bronze bg-metal-texture rounded-lg p-6 sm:p-8 shadow-2xl">
+            <p className="font-frontier text-sm uppercase tracking-wide text-amber-light mb-3">
+              Reconstruction command
+            </p>
+            <h1 className="text-4xl sm:text-5xl font-frontier font-bold text-ember-enhanced mb-4">
+              Ashes of Aeloria
+            </h1>
+            <p className="font-parchment text-lg text-light-enhanced leading-relaxed max-w-2xl">
+              Rebuild the fallen realm, choose your allegiance, and carry your campaign through Web
+              Hatchery saves or a guest session on this browser.
+            </p>
+          </section>
+
+          <section className="border-4 border-bronze bg-iron-dark/95 rounded-lg p-5 sm:p-6 shadow-2xl">
+            {isAuthenticated ? (
+              <div className="mb-5 rounded-md border-2 border-bronze bg-stone-900/70 px-4 py-3 font-parchment text-light-enhanced">
+                {isGuest ? 'Guest campaign' : 'Signed in'}
+                {userName ? ` as ${userName}` : ''}.
+              </div>
+            ) : null}
+
+            {error ? (
+              <p className="mb-4 rounded-md border-2 border-red-700 bg-red-950/50 px-3 py-2 text-red-100">
+                {error}
+              </p>
+            ) : null}
+
+            <div className="space-y-3">
+              {isAuthenticated ? (
+                <button
+                  type="button"
+                  onClick={onContinueCampaign}
+                  disabled={isSaving}
+                  className="w-full rounded-md bg-ember px-4 py-3 font-frontier font-bold text-iron-dark transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+                >
+                  Continue Campaign
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={onContinueAsGuest}
+                  disabled={isSaving}
+                  className="w-full rounded-md bg-ember px-4 py-3 font-frontier font-bold text-iron-dark transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+                >
+                  {isSaving ? 'Opening Guest Campaign...' : 'Continue as Guest'}
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={onVisitLogin}
+                disabled={isSaving}
+                className="w-full rounded-md border-2 border-bronze px-4 py-3 font-frontier font-bold text-light-enhanced transition hover:bg-bronze/30 disabled:cursor-wait disabled:opacity-60"
+              >
+                {isSaving ? 'Opening Login...' : 'Sign in with Web Hatchery'}
+              </button>
+
+              {hasMergeableGuestSession ? (
+                <button
+                  type="button"
+                  onClick={onMergeGuestSession}
+                  disabled={isSaving}
+                  className="w-full rounded-md border-2 border-amber-400 bg-amber-500/10 px-4 py-3 font-frontier font-bold text-amber-200 transition hover:bg-amber-500/20 disabled:cursor-wait disabled:opacity-60"
+                >
+                  {isSaving ? 'Merging Guest Progress...' : 'Merge Guest Progress'}
+                </button>
+              ) : null}
+            </div>
+
+            {isGuest ? (
+              <p className="mt-4 font-parchment text-sm text-light-enhanced/80">
+                Guest progress stays on this browser until it is linked to a Web Hatchery account.
+              </p>
+            ) : null}
+          </section>
+        </div>
+      </div>
+    </div>
   );
 };
