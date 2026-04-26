@@ -18,7 +18,7 @@ final class LoadGameAction
 
     public function execute(AuthUser $user): array
     {
-        $this->gameRepository->loadOrCreateState($user, $this->gameEngine->initialState());
-        return $this->gameRepository->loadGame($user);
+        $state = $this->gameRepository->loadOrCreateState($user, $this->gameEngine->initialState());
+        return $this->gameRepository->replaceGameState($user, $this->gameEngine->presentState($state));
     }
 }

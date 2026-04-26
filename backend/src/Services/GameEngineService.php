@@ -31,6 +31,20 @@ final class GameEngineService
         'stronghold' => ['gold' => 150, 'supplies' => 75, 'mana' => 50, 'capacity' => 5, 'name' => 'Enemy Stronghold'],
     ];
 
+    private const NODE_PRESENTATION = [
+        1 => ['display_name' => 'Silvermere', 'biome' => 'reclaimed', 'image_key' => 'city_silvermere', 'banner_key' => 'reclaimed_blue', 'chapter_gate' => 'chapter_1_awakening'],
+        2 => ['display_name' => 'Dawnbreak Mines', 'biome' => 'wilds', 'image_key' => 'mine_dawnbreak', 'banner_key' => 'neutral_bronze', 'chapter_gate' => 'chapter_1_awakening'],
+        3 => ['display_name' => 'Verdant Grove', 'biome' => 'reclaimed', 'image_key' => 'grove_verdant', 'banner_key' => 'neutral_green', 'chapter_gate' => 'chapter_1_awakening'],
+        4 => ['display_name' => 'Northridge Pass', 'biome' => 'wilds', 'image_key' => 'fortress_northridge', 'banner_key' => 'neutral_bronze', 'chapter_gate' => 'chapter_1_awakening'],
+        5 => ['display_name' => 'Ancient Shrine', 'biome' => 'arcane', 'image_key' => 'shrine_ancient', 'banner_key' => 'arcane_violet', 'chapter_gate' => 'chapter_1_awakening'],
+        6 => ['display_name' => 'Windsong Bridge', 'biome' => 'wilds', 'image_key' => 'bridge_windsong', 'banner_key' => 'neutral_bronze', 'chapter_gate' => 'chapter_1_awakening'],
+        7 => ['display_name' => 'Blackthorn Outpost', 'biome' => 'corrupted', 'image_key' => 'city_blackthorn', 'banner_key' => 'corrupted_red', 'chapter_gate' => 'chapter_1_awakening'],
+        8 => ['display_name' => 'Emberfall Ruins', 'biome' => 'corrupted', 'image_key' => 'fortress_emberfall', 'banner_key' => 'corrupted_red', 'chapter_gate' => 'chapter_1_awakening'],
+        9 => ['display_name' => 'Corrupted Bastion', 'biome' => 'corrupted', 'image_key' => 'stronghold_bastion', 'banner_key' => 'corrupted_red', 'chapter_gate' => 'chapter_1_awakening'],
+        10 => ['display_name' => 'Ash Crown Citadel', 'biome' => 'corrupted', 'image_key' => 'stronghold_ash_crown', 'banner_key' => 'corrupted_red', 'chapter_gate' => 'chapter_2_gathering_storms'],
+        11 => ['display_name' => 'Farwatch Tower', 'biome' => 'wilds', 'image_key' => 'tower_farwatch', 'banner_key' => 'neutral_bronze', 'chapter_gate' => 'chapter_1_awakening'],
+    ];
+
     public function initialState(): array
     {
         $nodes = $this->initialNodes();
@@ -117,13 +131,48 @@ final class GameEngineService
         };
     }
 
+    public function presentState(array $state): array
+    {
+        return $this->decorateState($this->normalizeState($state));
+    }
+
     private function normalizeState(array $state): array
     {
         if ($state === []) {
-            return $this->initialState();
+            return $this->decorateState($this->initialState());
         }
 
-        return array_replace_recursive($this->initialState(), $state);
+        return $this->decorateState(array_replace_recursive($this->initialState(), $state));
+    }
+
+    private function decorateState(array $state): array
+    {
+        $state['nodes'] = array_map(fn (array $node): array => $this->decorateNode($node), $state['nodes'] ?? []);
+        return $state;
+    }
+
+    private function decorateNode(array $node): array
+    {
+        $type = (string) ($node['type'] ?? 'resource');
+        $typeData = self::NODE_TYPES[$type] ?? self::NODE_TYPES['resource'];
+        $presentation = self::NODE_PRESENTATION[(int) ($node['id'] ?? 0)] ?? [];
+        $rewardPreview = [
+            ['resource' => 'gold', 'label' => 'War Coffers', 'amount' => $typeData['gold']],
+            ['resource' => 'supplies', 'label' => 'War Supplies', 'amount' => $typeData['supplies']],
+            ['resource' => 'mana', 'label' => 'Arcane Power', 'amount' => $typeData['mana']],
+        ];
+
+        $node['display_name'] = $presentation['display_name'] ?? $this->nodeName($node);
+        $node['name'] = $node['display_name'];
+        $node['biome'] = $presentation['biome'] ?? $this->biomeForNode($node);
+        $node['threat_level'] = $this->threatLevel($node);
+        $node['reward_preview'] = array_values(array_filter($rewardPreview, static fn (array $reward): bool => (int) $reward['amount'] > 0));
+        $node['image_key'] = $presentation['image_key'] ?? $type;
+        $node['banner_key'] = $presentation['banner_key'] ?? $this->bannerKey($node);
+        $node['chapter_gate'] = $presentation['chapter_gate'] ?? 'chapter_1_awakening';
+        $node['description'] = $node['description'] ?? $this->nodeDescription($type);
+
+        return $node;
     }
 
     private function startMission(array $payload): array
@@ -470,6 +519,54 @@ final class GameEngineService
             'chapter_4_purification' => 'The Purification begins! Cleanse the corruption and restore the land.',
             'chapter_5_ascension' => 'The final Ascension! Use all your power to rebuild Aeloria completely.',
             default => 'Started mission: ' . $missionId,
+        };
+    }
+
+    private function biomeForNode(array $node): string
+    {
+        if (($node['owner'] ?? null) === 'enemy') {
+            return 'corrupted';
+        }
+
+        return match ($node['type'] ?? 'resource') {
+            'city' => 'reclaimed',
+            'shrine' => 'arcane',
+            'stronghold' => 'corrupted',
+            default => 'wilds',
+        };
+    }
+
+    private function threatLevel(array $node): string
+    {
+        $garrison = (int) ($node['garrison'] ?? 0);
+        if (($node['owner'] ?? null) === 'enemy' && $garrison >= 180) {
+            return 'high';
+        }
+        if ($garrison >= 100) {
+            return 'medium';
+        }
+        return 'low';
+    }
+
+    private function bannerKey(array $node): string
+    {
+        return match ($node['owner'] ?? 'neutral') {
+            'player' => 'reclaimed_blue',
+            'enemy' => 'corrupted_red',
+            'faction' => 'faction_violet',
+            default => 'neutral_bronze',
+        };
+    }
+
+    private function nodeDescription(string $type): string
+    {
+        return match ($type) {
+            'city' => 'A settlement anchor for reclaiming the old realm.',
+            'resource' => 'A strategic supply site that can sustain further expansion.',
+            'fortress' => 'A hardpoint controlling nearby routes through hostile territory.',
+            'shrine' => 'An ancient arcane focus humming beneath the ash.',
+            'stronghold' => 'A fortified enemy position spreading corruption through the region.',
+            default => 'A contested landmark in the restoration campaign.',
         };
     }
 

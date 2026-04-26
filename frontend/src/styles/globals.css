@@ -1054,6 +1054,14 @@
   animation: campaign-node-pulse 1.8s ease-in-out infinite;
 }
 
+.campaign-node-biome-arcane .campaign-node-frame {
+  border-color: #9b6dff;
+}
+
+.campaign-node-biome-corrupted .campaign-node-art {
+  box-shadow: inset 0 0 28px rgba(169, 50, 38, 0.3);
+}
+
 .campaign-node-name {
   display: block;
   width: max-content;
@@ -1930,6 +1938,57 @@
 .campaign-node-intel-orders {
   display: grid;
   gap: 8px;
+}
+
+.campaign-node-relevance,
+.campaign-route-preview {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.campaign-node-relevance {
+  padding: 10px;
+  border: 1px solid rgba(123, 79, 46, 0.44);
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.campaign-node-relevance span,
+.campaign-route-preview > span {
+  color: #ffc107;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.campaign-node-relevance p {
+  margin: 0;
+  color: #d7c7a0;
+  font-family: 'IM Fell English', serif;
+  font-size: 13px;
+  line-height: 1.32;
+}
+
+.campaign-route-preview button {
+  display: grid;
+  gap: 3px;
+  padding: 8px 10px;
+  border: 1px solid rgba(123, 79, 46, 0.42);
+  background: rgba(0, 0, 0, 0.24);
+  text-align: left;
+}
+
+.campaign-route-preview button strong {
+  color: #fff4e6;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+}
+
+.campaign-route-preview button small {
+  color: #c7b299;
+  font-family: 'IM Fell English', serif;
+  font-size: 11px;
 }
 
 .campaign-objective-list {

@@ -25,7 +25,7 @@ final class GameIntentAction
             throw new DomainException('Action payload must be an object.');
         }
 
-        $nextState = $this->gameEngine->apply($state, $type, $payload);
+        $nextState = $this->gameEngine->presentState($this->gameEngine->apply($state, $type, $payload));
         return $this->gameRepository->replaceGameState($user, $nextState);
     }
 }

@@ -91,6 +91,14 @@ export type VictoryType =
   | 'economic'
   | 'population'
   | 'magical';
+export type NodeBiome = 'reclaimed' | 'wilds' | 'corrupted' | 'arcane';
+export type ThreatLevel = 'low' | 'medium' | 'high';
+
+export interface RewardPreview {
+  resource: string;
+  label: string;
+  amount: number;
+}
 
 export interface NodeTypeData {
   name: string;
@@ -198,6 +206,13 @@ export interface GameNode {
   starLevel: number;
   garrison: number;
   connections: number[];
+  display_name?: string;
+  biome?: NodeBiome;
+  threat_level?: ThreatLevel;
+  reward_preview?: RewardPreview[];
+  image_key?: string;
+  banner_key?: string;
+  chapter_gate?: string;
   name?: string;
   description?: string;
   population?: Population;

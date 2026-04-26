@@ -18,20 +18,6 @@ interface MapRoute {
   id: string;
 }
 
-const nodeTitleById: Record<number, string> = {
-  1: 'Silvermere',
-  2: 'Dawnbreak Mines',
-  3: 'Verdant Grove',
-  4: 'Northridge Pass',
-  5: 'Ancient Shrine',
-  6: 'Windsong Bridge',
-  7: 'Blackthorn Outpost',
-  8: 'Emberfall Ruins',
-  9: 'Corrupted Bastion',
-  10: 'Ash Crown Citadel',
-  11: 'Farwatch Tower',
-};
-
 export const CampaignMap: React.FC = () => {
   const nodes = useGameStore(state => state.nodes);
   const selectedNode = useGameStore(state => state.selectedNode);
@@ -139,7 +125,7 @@ const MapNodeBadge: React.FC<MapNodeBadgeProps> = ({
   onSelect,
 }) => {
   const nodeData = getNodeData(node.type);
-  const title = node.name || nodeTitleById[node.id] || nodeData.name;
+  const title = node.display_name || node.name || nodeData.name;
   const ownerLabel = getOwnerLabel(node.owner);
 
   return (
@@ -148,6 +134,7 @@ const MapNodeBadge: React.FC<MapNodeBadgeProps> = ({
       className={[
         'campaign-node',
         `campaign-node-${node.owner}`,
+        node.biome ? `campaign-node-biome-${node.biome}` : '',
         isSelected ? 'campaign-node-selected' : '',
         isReachable ? 'campaign-node-reachable' : '',
         isAttackable ? 'campaign-node-attackable' : '',

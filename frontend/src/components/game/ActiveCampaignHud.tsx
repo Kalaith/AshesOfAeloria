@@ -9,7 +9,16 @@ import { calculateEffectiveGarrison, calculateIncome } from '../../utils/gameLog
 import { useGameContext } from '../../providers/GameProvider';
 import { Button } from '../ui/EnhancedButton';
 import { GameCanvas } from './GameCanvas';
-import type { BattleLogEntry, Commander, GameNode, NodeType, Owner, Resources } from '../../types/game';
+import type {
+  Artifact,
+  BattleLogEntry,
+  Commander,
+  GameNode,
+  NodeType,
+  Owner,
+  PlayerChoice,
+  Resources,
+} from '../../types/game';
 
 interface ActiveCampaignHudProps {
   currentMission: string | null;
@@ -59,6 +68,8 @@ export const ActiveCampaignHud: React.FC<ActiveCampaignHudProps> = ({
     achievements,
     events,
     historicalRecords,
+    exploration,
+    narrativeState,
     selectNode,
     resetGame,
   } = useGameStore();
@@ -198,6 +209,8 @@ export const ActiveCampaignHud: React.FC<ActiveCampaignHudProps> = ({
           achievements={achievements}
           events={events}
           historicalRecords={historicalRecords}
+          artifacts={(exploration.ruins ?? []).flatMap(ruin => ruin.artifacts ?? [])}
+          playerChoices={narrativeState.playerChoices ?? []}
           currentChapter={currentChapter}
           onClose={() => setActiveRailPanel(null)}
           onRecruitClick={onRecruitClick}
@@ -247,6 +260,8 @@ interface RailDrawerProps {
   achievements: unknown[];
   events: unknown[];
   historicalRecords: unknown[];
+  artifacts: Artifact[];
+  playerChoices: PlayerChoice[];
   currentChapter: CampaignChapter | null;
   onClose: () => void;
   onRecruitClick: () => void;
@@ -264,6 +279,8 @@ const RailDrawer: React.FC<RailDrawerProps> = ({
   achievements,
   events,
   historicalRecords,
+  artifacts,
+  playerChoices,
   currentChapter,
   onClose,
   onRecruitClick,
@@ -301,10 +318,16 @@ const RailDrawer: React.FC<RailDrawerProps> = ({
           globalTechnologies={globalTechnologies}
           achievements={achievements}
           historicalRecords={historicalRecords}
+          artifacts={artifacts}
         />
       ) : null}
       {activePanel === 'journal' ? (
-        <JournalPanel currentChapter={currentChapter} events={events} battleLog={battleLog} />
+        <JournalPanel
+          currentChapter={currentChapter}
+          events={events}
+          battleLog={battleLog}
+          playerChoices={playerChoices}
+        />
       ) : null}
     </section>
   );
@@ -446,19 +469,37 @@ interface RelicsPanelProps {
   globalTechnologies: string[];
   achievements: unknown[];
   historicalRecords: unknown[];
+  artifacts: Artifact[];
 }
 
 const RelicsPanel: React.FC<RelicsPanelProps> = ({
   globalTechnologies,
   achievements,
   historicalRecords,
+  artifacts,
 }) => (
   <div className="campaign-rail-content">
     <div className="campaign-stat-grid">
       <DrawerStat label="Technologies" value={globalTechnologies.length} />
+      <DrawerStat label="Artifacts" value={artifacts.length} />
       <DrawerStat label="Achievements" value={achievements.length} />
       <DrawerStat label="Records" value={historicalRecords.length} />
     </div>
+    <DrawerSection title="Recovered Artifacts">
+      {artifacts.length > 0 ? (
+        artifacts.slice(0, 6).map(artifact => (
+          <div key={artifact.id} className="campaign-drawer-row">
+            <span>{artifact.name}</span>
+            <strong>{artifact.discovered ? `Power ${artifact.power}` : 'Unknown'}</strong>
+          </div>
+        ))
+      ) : (
+        <p className="campaign-drawer-copy">
+          No recovered artifacts yet. Shrines, ruins, and story choices can reveal relics as the
+          backend artifact systems come online.
+        </p>
+      )}
+    </DrawerSection>
     <DrawerSection title="Recovered Knowledge">
       {globalTechnologies.length > 0 ? (
         globalTechnologies.slice(0, 6).map(technology => (
@@ -480,9 +521,15 @@ interface JournalPanelProps {
   currentChapter: CampaignChapter | null;
   events: unknown[];
   battleLog: BattleLogEntry[];
+  playerChoices: PlayerChoice[];
 }
 
-const JournalPanel: React.FC<JournalPanelProps> = ({ currentChapter, events, battleLog }) => (
+const JournalPanel: React.FC<JournalPanelProps> = ({
+  currentChapter,
+  events,
+  battleLog,
+  playerChoices,
+}) => (
   <div className="campaign-rail-content">
     <DrawerSection title={currentChapter?.title ?? 'Campaign Journal'}>
       <p className="campaign-drawer-copy">
@@ -498,6 +545,12 @@ const JournalPanel: React.FC<JournalPanelProps> = ({ currentChapter, events, bat
       ))}
     </DrawerSection>
     <DrawerSection title={`Active Events (${events.length})`}>
+      {playerChoices.slice(-4).reverse().map(choice => (
+        <div key={`${choice.eventId}-${choice.choiceId}-${choice.turn}`} className="campaign-drawer-row">
+          <span>{formatIdentifier(choice.eventId)}</span>
+          <strong>Turn {choice.turn}</strong>
+        </div>
+      ))}
       {battleLog.slice(-5).reverse().map(entry => (
         <LogEntry key={`${entry.timestamp}-${entry.message}`} entry={entry} />
       ))}
@@ -693,12 +746,15 @@ const SelectedNodePanel: React.FC<SelectedNodePanelProps> = ({
     nodeInfo.commanderInfo.commanders
   );
   const threatLevel = getThreatLevel(nodeInfo.node);
-  const attackTargets = nodeInfo.node.owner === 'player' ? nodeInfo.attackableNodes : [];
+  const neighborNodes = nodeInfo.node.connections
+    .map(nodeId => useGameStore.getState().nodes.find(node => node.id === nodeId))
+    .filter((node): node is GameNode => node !== undefined);
+  const nodeActions = getNodeActions(nodeInfo, canPerformActions);
 
   return (
     <aside className={`campaign-node-intel campaign-node-intel-${nodeInfo.node.owner}`}>
       <div className="campaign-node-intel-kicker">{getOwnerLabel(nodeInfo.node.owner)}</div>
-      <h2>{nodeInfo.node.name || nodeData.name}</h2>
+      <h2>{nodeInfo.node.display_name || nodeInfo.node.name || nodeData.name}</h2>
       <p className="campaign-node-intel-type">{nodeData.name}</p>
 
       <div className="campaign-node-intel-art">
@@ -716,42 +772,170 @@ const SelectedNodePanel: React.FC<SelectedNodePanelProps> = ({
           label="Commanders"
           value={`${nodeInfo.commanderInfo.current}/${nodeInfo.commanderInfo.max}`}
         />
-        <NodeIntelStat label="Threat" value={threatLevel} />
+        <NodeIntelStat label="Threat" value={formatIdentifier(nodeInfo.node.threat_level || threatLevel)} />
       </div>
 
       <div className="campaign-node-intel-rewards">
         <span>Rewards</span>
         <div>
-          <RewardPill label="Gold" value={nodeData.goldGeneration} />
-          <RewardPill label="Supplies" value={nodeData.suppliesGeneration} />
-          <RewardPill label="Mana" value={nodeData.manaGeneration} />
+          {(nodeInfo.node.reward_preview && nodeInfo.node.reward_preview.length > 0
+            ? nodeInfo.node.reward_preview
+            : [
+                { label: 'Gold', amount: nodeData.goldGeneration },
+                { label: 'Supplies', amount: nodeData.suppliesGeneration },
+                { label: 'Mana', amount: nodeData.manaGeneration },
+              ]
+          ).map(reward => (
+            <RewardPill key={reward.label} label={reward.label} value={reward.amount} />
+          ))}
         </div>
       </div>
 
-      <div className="campaign-node-intel-orders">
-        {nodeInfo.node.owner === 'player' && nodeInfo.upgradeInfo.canUpgrade ? (
-          <Button variant="primary" fullWidth onClick={onUpgrade} disabled={!canPerformActions}>
-            Fortify Stronghold
-          </Button>
-        ) : null}
-        {attackTargets.map(target => (
-          <Button
-            key={target.id}
-            variant="danger"
-            fullWidth
-            onClick={() => onAttack(target.id)}
-            disabled={!canPerformActions}
-          >
-            Assault {target.name || getNodeData(target.type).name}
-          </Button>
+      <MissionRelevance node={nodeInfo.node} currentChapter={currentChapter} />
+
+      <div className="campaign-route-preview">
+        <span>Routes</span>
+        {neighborNodes.map(neighbor => (
+          <button key={neighbor.id} type="button" disabled>
+            <strong>{neighbor.display_name || neighbor.name || getNodeData(neighbor.type).name}</strong>
+            <small>
+              {getOwnerLabel(neighbor.owner)} - {formatIdentifier(neighbor.threat_level || getThreatLevel(neighbor))}
+            </small>
+          </button>
         ))}
-        {!nodeInfo.upgradeInfo.canUpgrade && attackTargets.length === 0 ? (
-          <div className="campaign-node-intel-note">No immediate orders available.</div>
-        ) : null}
+      </div>
+
+      <div className="campaign-node-intel-orders">
+        {nodeActions.map(action => {
+          if (action.kind === 'upgrade') {
+            return (
+              <div key={action.id}>
+                <Button variant="primary" fullWidth onClick={onUpgrade} disabled={action.disabled}>
+                  {action.label}
+                </Button>
+                {action.reason ? <div className="campaign-node-intel-note">{action.reason}</div> : null}
+              </div>
+            );
+          }
+
+          if (action.kind === 'attack' && action.targetId !== undefined) {
+            const targetId = action.targetId;
+            return (
+              <div key={action.id}>
+                <Button
+                  variant="danger"
+                  fullWidth
+                  onClick={() => onAttack(targetId)}
+                  disabled={action.disabled}
+                >
+                  {action.label}
+                </Button>
+                {action.reason ? <div className="campaign-node-intel-note">{action.reason}</div> : null}
+              </div>
+            );
+          }
+
+          return (
+            <div key={action.id} className="campaign-node-intel-note">
+              {action.label}: {action.reason}
+            </div>
+          );
+        })}
       </div>
     </aside>
   );
 };
+
+interface NodeActionView {
+  id: string;
+  kind: 'upgrade' | 'attack' | 'disabled';
+  label: string;
+  disabled: boolean;
+  reason?: string;
+  targetId?: number;
+}
+
+function getNodeActions(
+  nodeInfo: NonNullable<SelectedNodePanelProps['nodeInfo']>,
+  canPerformActions: boolean
+): NodeActionView[] {
+  const actions: NodeActionView[] = [];
+  if (!canPerformActions) {
+    actions.push({
+      id: 'phase_locked',
+      kind: 'disabled',
+      label: 'Orders locked',
+      disabled: true,
+      reason: 'Actions are available during the player phase.',
+    });
+    return actions;
+  }
+
+  if (nodeInfo.node.owner === 'player') {
+    actions.push({
+      id: 'upgrade',
+      kind: 'upgrade',
+      label: 'Fortify Stronghold',
+      disabled: !nodeInfo.upgradeInfo.canUpgrade,
+      reason: nodeInfo.upgradeInfo.canUpgrade
+        ? undefined
+        : `Requires ${nodeInfo.upgradeInfo.cost} war coffers and player ownership.`,
+    });
+
+    nodeInfo.attackableNodes.forEach(target => {
+      actions.push({
+        id: `attack_${target.id}`,
+        kind: 'attack',
+        label: `Assault ${target.display_name || target.name || getNodeData(target.type).name}`,
+        disabled: false,
+        targetId: target.id,
+      });
+    });
+  } else {
+    actions.push({
+      id: 'not_owned',
+      kind: 'disabled',
+      label: 'Orders unavailable',
+      disabled: true,
+      reason: 'Select a reclaimed stronghold to issue attack or fortification orders.',
+    });
+  }
+
+  return actions;
+}
+
+const MissionRelevance: React.FC<{ node: GameNode; currentChapter: CampaignChapter | null }> = ({
+  node,
+  currentChapter,
+}) => {
+  const relevance = getMissionRelevance(node, currentChapter);
+  return (
+    <div className="campaign-node-relevance">
+      <span>Why it matters</span>
+      <p>{relevance}</p>
+    </div>
+  );
+};
+
+function getMissionRelevance(node: GameNode, currentChapter: CampaignChapter | null): string {
+  if (!currentChapter) {
+    return 'This site affects your regional reach and future campaign options.';
+  }
+  const territoryObjective = currentChapter.victoryConditions.find(condition => condition.type === 'territory');
+  if (territoryObjective && node.owner !== 'player') {
+    return `Capturing this node contributes toward "${territoryObjective.description}".`;
+  }
+  if (node.type === 'shrine') {
+    return 'Shrines feed arcane power and unlock stronger magical choices in the restoration campaign.';
+  }
+  if (node.type === 'resource') {
+    return 'Resource sites improve campaign income and help sustain longer offensives.';
+  }
+  if (node.owner === 'enemy') {
+    return 'Enemy holdings reinforce corruption and create pressure along connected routes.';
+  }
+  return 'Holding this node strengthens your supply web and opens connected campaign routes.';
+}
 
 const NodeIntelStat: React.FC<{ label: string; value: string | number }> = ({ label, value }) => (
   <div>
