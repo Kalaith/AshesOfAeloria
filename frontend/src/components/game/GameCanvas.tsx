@@ -326,7 +326,7 @@ export const GameCanvas: React.FC = () => {
     canvas.height = canvasSize.height;
 
     // Clear canvas
-    ctx.fillStyle = '#1a1a1a';
+    ctx.fillStyle = '#151514';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Calculate scale to fit nodes in canvas
@@ -414,7 +414,7 @@ export const GameCanvas: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full bg-gray-900 rounded-lg overflow-hidden border border-gray-700"
+      className="relative w-full h-full frontier-map-frame rounded-md overflow-hidden"
     >
       <canvas
         ref={canvasRef}
@@ -427,29 +427,29 @@ export const GameCanvas: React.FC = () => {
       <div className="absolute bottom-4 right-4 flex flex-col gap-2 lg:flex-row lg:gap-2">
         <button
           onClick={handleZoomOut}
-          className="bg-black bg-opacity-70 text-white p-2 lg:p-3 rounded-full shadow-lg hover:bg-opacity-90 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center text-lg lg:text-xl"
+          className="frontier-button p-2 lg:p-3 min-h-[44px] min-w-[44px] flex items-center justify-center text-sm lg:text-base"
           aria-label="Zoom out"
         >
-          🔍-
+          -
         </button>
         <button
           onClick={handleResetZoom}
-          className="bg-black bg-opacity-70 text-white p-2 lg:p-3 rounded-full shadow-lg hover:bg-opacity-90 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center text-sm lg:text-base"
+          className="frontier-button p-2 lg:p-3 min-h-[44px] min-w-[44px] flex items-center justify-center text-sm lg:text-base"
           aria-label="Reset zoom"
         >
-          ⌂
+          1:1
         </button>
         <button
           onClick={handleZoomIn}
-          className="bg-black bg-opacity-70 text-white p-2 lg:p-3 rounded-full shadow-lg hover:bg-opacity-90 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center text-lg lg:text-xl"
+          className="frontier-button p-2 lg:p-3 min-h-[44px] min-w-[44px] flex items-center justify-center text-sm lg:text-base"
           aria-label="Zoom in"
         >
-          🔍+
+          +
         </button>
       </div>
 
       {/* Map legend for mobile */}
-      <div className="absolute top-4 left-4 bg-black bg-opacity-70 text-white p-3 rounded-lg shadow-lg lg:hidden">
+      <div className="absolute top-4 left-4 frontier-panel p-3 shadow-lg lg:hidden">
         <div className="text-xs space-y-1">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, prefer-const */
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 import type {
   GameState,
   Resources,
@@ -67,9 +66,7 @@ import {
 } from '../utils/gameLogic';
 import { gameData, gameConstants } from '../data/gameData';
 import { StoryEventSystem } from '../systems/StoryEventSystem';
-
-// Initial game state with comprehensive world rebuilding systems
-export type PersistedGameState = Partial<GameState>;
+import { gameApi, type GameActionType } from '../api/gameApi';
 
 export const getInitialState = (): GameState => {
   // Create initial player and enemy commanders
@@ -148,77 +145,36 @@ export const getInitialState = (): GameState => {
   };
 };
 
-export const serializeGameState = (state: GameState): PersistedGameState => ({
-  turn: state.turn,
-  phase: state.phase,
-  resources: state.resources,
-  commanders: state.commanders,
-  nodes: state.nodes,
-  selectedNode: state.selectedNode,
-  selectedCommander: state.selectedCommander,
-  gameOver: state.gameOver,
-  winner: state.winner,
-  currentMission: state.currentMission,
-  missionStarted: state.missionStarted,
-  battleLog: state.battleLog.slice(-100),
-  globalTechnologies: state.globalTechnologies,
-  worldState: state.worldState,
-  factions: state.factions,
-  diplomacy: state.diplomacy,
-  market: state.market,
-  calendar: state.calendar,
-  weather: state.weather,
-  events: state.events,
-  eventQueue: state.eventQueue,
-  narrativeState: state.narrativeState,
-  achievements: state.achievements,
-  statistics: state.statistics,
-  victoryProgress: state.victoryProgress,
-  legacyData: state.legacyData,
-  historicalRecords: state.historicalRecords.slice(-100),
-  culturalMovements: state.culturalMovements,
-  economicCycles: state.economicCycles,
-  research: state.research,
-  exploration: state.exploration,
-  magicalCorruption: state.magicalCorruption,
-  populationCenters: state.populationCenters,
-  tradeNetworks: state.tradeNetworks,
-  politicalSituation: state.politicalSituation,
-  militaryIntelligence: state.militaryIntelligence,
-  culturalRenaissance: state.culturalRenaissance,
-  environmentalRestoration: state.environmentalRestoration,
-});
-
 interface GameStore extends GameState {
   // Core Game Actions
   selectCommander: (id: number | null) => void;
   selectNode: (id: number | null) => void;
-  addCommander: (className: CommanderClass, race: Race) => boolean;
-  assignCommanderToNode: (commanderId: number, nodeId: number) => boolean;
-  unassignCommander: (commanderId: number) => void;
+  addCommander: (className: CommanderClass, race: Race) => Promise<boolean>;
+  assignCommanderToNode: (commanderId: number, nodeId: number) => Promise<boolean>;
+  unassignCommander: (commanderId: number) => Promise<void>;
   getNodeCommanderInfo: (nodeId: number) => {
     current: number;
     max: number;
     commanders: any[];
   };
-  upgradeNode: (nodeId: number) => boolean;
+  upgradeNode: (nodeId: number) => Promise<boolean>;
   getUpgradeCost: (nodeId: number) => number;
   canUpgradeNode: (nodeId: number) => boolean;
   updateResources: (resources: Partial<Resources>) => void;
   nextTurn: () => void;
-  endTurn: () => void;
+  endTurn: () => Promise<void>;
   processEnemyTurn: () => void;
   collectResources: () => void;
-  resetGame: () => void;
+  resetGame: () => Promise<void>;
   repairMapConnections: () => void;
-  attackNode: (nodeId: number) => void;
+  attackNode: (nodeId: number) => Promise<void>;
   canAttackNode: (nodeId: number) => boolean;
   addBattleLogEntry: (
     type: 'info' | 'combat' | 'victory' | 'defeat' | 'recruitment',
     message: string
   ) => void;
-  initializeMission: (campaignId: string) => void;
-  endMission: () => void;
+  initializeMission: (campaignId: string) => Promise<void>;
+  endMission: () => Promise<void>;
 
   // World Rebuilding Actions
   constructBuilding: (nodeId: number, buildingType: string) => boolean;
@@ -287,7 +243,7 @@ interface GameStore extends GameState {
   sabotage: (targetNodeId: number, agentId: number, target: string) => boolean;
 
   // Event Actions
-  respondToEvent: (eventId: string, choiceId: string) => void;
+  respondToEvent: (eventId: string, choiceId: string) => Promise<void>;
   triggerEvent: (eventType: string, conditions?: any) => boolean;
   processRandomEvents: () => void;
   processSeasonalEvents: () => void;
@@ -321,8 +277,45 @@ interface GameStore extends GameState {
 }
 
 export const useGameStore = create<GameStore>()(
-  persist(
-    (set, get) => ({
+    (set, get) => {
+      const applyServerAction = async (
+        type: GameActionType,
+        payload: Record<string, unknown> = {}
+      ): Promise<boolean> => {
+        try {
+          const result = await gameApi.runAction(type, payload);
+          set(state => ({ ...state, ...(result.game_state ?? {}) }));
+          return true;
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Backend action failed';
+          set(state => ({
+            battleLog: [
+              ...state.battleLog,
+              {
+                timestamp: Date.now(),
+                type: 'defeat' as const,
+                message,
+              },
+            ].slice(-100),
+          }));
+          return false;
+        }
+      };
+      const unsupportedAction = (label: string): false => {
+        set(state => ({
+          battleLog: [
+            ...state.battleLog,
+            {
+              timestamp: Date.now(),
+              type: 'defeat' as const,
+              message: `${label} is not available until its backend action is implemented.`,
+            },
+          ].slice(-100),
+        }));
+        return false;
+      };
+
+      return ({
       // Initial state - will be overridden by persisted data if available
       ...getInitialState(),
 
@@ -332,119 +325,33 @@ export const useGameStore = create<GameStore>()(
 
       // World Rebuilding Implementation
       constructBuilding: (nodeId, buildingType) => {
-        const state = get();
-        const node = state.nodes.find(n => n.id === nodeId);
-        if (!node || node.owner !== 'player') return false;
-
-        // Implementation for building construction
-        // This would check costs, prerequisites, etc.
-        return true;
+        return unsupportedAction('Building construction');
       },
 
       demolishBuilding: (nodeId, buildingId) => {
-        const state = get();
-        const node = state.nodes.find(n => n.id === nodeId);
-        if (!node || node.owner !== 'player') return false;
-
-        // Implementation for building demolition
-        return true;
+        return unsupportedAction('Building demolition');
       },
 
       upgradeBuilding: (nodeId, buildingId) => {
-        const state = get();
-        const node = state.nodes.find(n => n.id === nodeId);
-        if (!node || node.owner !== 'player') return false;
-
-        // Implementation for building upgrades
-        return true;
+        return unsupportedAction('Building upgrades');
       },
 
       managePopulation: (nodeId, action, amount = 0) => {
-        const state = get();
-        const node = state.nodes.find(n => n.id === nodeId);
-        if (!node || node.owner !== 'player') return false;
-
-        // Implementation for population management
-        return true;
+        return unsupportedAction('Population management');
       },
 
       resettlePopulation: (fromNodeId, toNodeId, amount) => {
-        const state = get();
-        const fromNode = state.nodes.find(n => n.id === fromNodeId);
-        const toNode = state.nodes.find(n => n.id === toNodeId);
-        if (!fromNode || !toNode || fromNode.owner !== 'player' || toNode.owner !== 'player')
-          return false;
-
-        // Implementation for population resettlement
-        return true;
+        return unsupportedAction('Population resettlement');
       },
 
       // Technology and Research Implementation
       startResearch: technology => {
-        const state = get();
-        if (state.research.completedTechnologies.includes(technology)) return false;
-        if (state.research.activeProjects.some(p => p.technology === technology)) return false;
-
-        const techInfo = gameData.technologies[technology];
-        if (!techInfo) return false;
-
-        // Check prerequisites
-        const hasPrerequisites = techInfo.prerequisites.every(prereq =>
-          state.research.completedTechnologies.includes(prereq)
-        );
-        if (!hasPrerequisites) return false;
-
-        // Check research cost
-        if (state.resources.knowledge < techInfo.researchCost) return false;
-
-        const newProject = {
-          id: `research_${Date.now()}`,
-          technology,
-          progress: 0,
-          totalRequired: techInfo.researchCost,
-          researchers: 1,
-          priority: 1,
-          startedTurn: state.turn,
-        };
-
-        set(state => ({
-          research: {
-            ...state.research,
-            activeProjects: [...state.research.activeProjects, newProject],
-          },
-          resources: {
-            ...state.resources,
-            knowledge: state.resources.knowledge - techInfo.researchCost,
-          },
-        }));
-
-        get().addBattleLogEntry('info', `Started research on ${techInfo.name}`);
+        void applyServerAction('start_research', { technology });
         return true;
       },
 
       cancelResearch: projectId => {
-        const state = get();
-        const project = state.research.activeProjects.find(p => p.id === projectId);
-        if (!project) return false;
-
-        const techInfo = gameData.technologies[project.technology];
-        const refund = Math.floor(techInfo.researchCost * 0.5); // 50% refund
-
-        set(state => ({
-          research: {
-            ...state.research,
-            activeProjects: state.research.activeProjects.filter(p => p.id !== projectId),
-          },
-          resources: {
-            ...state.resources,
-            knowledge: state.resources.knowledge + refund,
-          },
-        }));
-
-        get().addBattleLogEntry(
-          'info',
-          `Cancelled research on ${techInfo.name} (${refund} knowledge refunded)`
-        );
+        void applyServerAction('cancel_research', { project_id: projectId });
         return true;
       },
 
@@ -486,116 +393,92 @@ export const useGameStore = create<GameStore>()(
         return true;
       },
 
-      recoverAncientKnowledge: artifactId => {
-        // Implementation for recovering knowledge from artifacts
-        return true;
-      },
+      recoverAncientKnowledge: artifactId => unsupportedAction('Ancient knowledge recovery'),
 
-      shareKnowledge: (faction, technology) => {
-        // Implementation for knowledge sharing with factions
-        return true;
-      },
+      shareKnowledge: (faction, technology) => unsupportedAction('Knowledge sharing'),
 
       // Exploration Implementation (placeholder methods)
-      launchExpedition: (target, leaderId, members) => true,
-      exploreRuin: (ruinId, explorerId) => true,
-      studyArtifact: (artifactId, scholarId) => true,
-      contactHiddenSociety: (societyId, diplomatId) => true,
-      investigateMystery: (mysteryId, investigatorId) => true,
-      scoutNode: (nodeId, scoutId) => true,
+      launchExpedition: (target, leaderId, members) => unsupportedAction('Expeditions'),
+      exploreRuin: (ruinId, explorerId) => unsupportedAction('Ruin exploration'),
+      studyArtifact: (artifactId, scholarId) => unsupportedAction('Artifact study'),
+      contactHiddenSociety: (societyId, diplomatId) => unsupportedAction('Hidden society contact'),
+      investigateMystery: (mysteryId, investigatorId) => unsupportedAction('Mystery investigation'),
+      scoutNode: (nodeId, scoutId) => unsupportedAction('Scouting'),
 
       // Diplomatic Implementation (placeholder methods)
-      initiateDiplomacy: (faction, type) => true,
-      acceptProposal: (negotiationId, proposalId) => true,
-      rejectProposal: (negotiationId, proposalId) => true,
-      makeDiplomaticOffer: (faction, terms) => true,
-      declareWar: faction => true,
-      seekPeace: faction => true,
-      formAlliance: faction => true,
-      breakAlliance: faction => true,
+      initiateDiplomacy: (faction, type) => unsupportedAction('Diplomacy'),
+      acceptProposal: (negotiationId, proposalId) => unsupportedAction('Proposal acceptance'),
+      rejectProposal: (negotiationId, proposalId) => unsupportedAction('Proposal rejection'),
+      makeDiplomaticOffer: (faction, terms) => unsupportedAction('Diplomatic offers'),
+      declareWar: faction => unsupportedAction('War declarations'),
+      seekPeace: faction => unsupportedAction('Peace negotiations'),
+      formAlliance: faction => unsupportedAction('Alliances'),
+      breakAlliance: faction => unsupportedAction('Alliance breaks'),
 
       // Economic Implementation (placeholder methods)
-      establishTradeRoute: (fromNodeId, toNodeId, goods) => true,
-      cancelTradeRoute: routeId => true,
-      adjustTariffs: (routeId, tariff) => {},
-      investInMarket: (resource, amount) => true,
-      buyFromMarket: (resource, amount) => true,
-      sellToMarket: (resource, amount) => true,
-      recruitMerchant: (nodeId, specialization) => true,
+      establishTradeRoute: (fromNodeId, toNodeId, goods) => unsupportedAction('Trade routes'),
+      cancelTradeRoute: routeId => unsupportedAction('Trade route cancellation'),
+      adjustTariffs: (routeId, tariff) => {
+        unsupportedAction('Tariff adjustment');
+      },
+      investInMarket: (resource, amount) => unsupportedAction('Market investment'),
+      buyFromMarket: (resource, amount) => unsupportedAction('Market buying'),
+      sellToMarket: (resource, amount) => unsupportedAction('Market selling'),
+      recruitMerchant: (nodeId, specialization) => unsupportedAction('Merchant recruitment'),
 
       // Environmental Implementation (placeholder methods)
-      startRestorationProject: (type, nodeId) => true,
-      assignSpecialistsToRestoration: (projectId, specialists) => true,
-      cleanCorruption: (nodeId, method) => true,
-      plantForests: (nodeId, area) => true,
-      purifyWater: nodeId => true,
-      reintroduceSpecies: (nodeId, species) => true,
+      startRestorationProject: (type, nodeId) => unsupportedAction('Restoration projects'),
+      assignSpecialistsToRestoration: (projectId, specialists) => unsupportedAction('Restoration staffing'),
+      cleanCorruption: (nodeId, method) => unsupportedAction('Corruption cleansing'),
+      plantForests: (nodeId, area) => unsupportedAction('Forest planting'),
+      purifyWater: nodeId => unsupportedAction('Water purification'),
+      reintroduceSpecies: (nodeId, species) => unsupportedAction('Species reintroduction'),
 
       // Cultural Implementation (placeholder methods)
-      commissionArtwork: (nodeId, artistId, type) => true,
-      organizeFestival: (nodeId, festivalType) => true,
-      preserveTradition: traditionId => true,
-      promotePhilosophy: (schoolId, nodeId) => true,
-      buildMonument: (nodeId, type) => true,
-      establishLibrary: nodeId => true,
+      commissionArtwork: (nodeId, artistId, type) => unsupportedAction('Artwork commissions'),
+      organizeFestival: (nodeId, festivalType) => unsupportedAction('Festivals'),
+      preserveTradition: traditionId => unsupportedAction('Tradition preservation'),
+      promotePhilosophy: (schoolId, nodeId) => unsupportedAction('Philosophy promotion'),
+      buildMonument: (nodeId, type) => unsupportedAction('Monument construction'),
+      establishLibrary: nodeId => unsupportedAction('Library establishment'),
 
       // Military Implementation (placeholder methods)
-      recruitTroops: (nodeId, type, amount) => true,
-      disbandTroops: (commanderId, type, amount) => true,
-      trainTroops: (commanderId, trainingType) => true,
-      deploySpies: (targetFaction, spyId) => true,
-      gatherIntelligence: (targetNodeId, agentId) => true,
-      sabotage: (targetNodeId, agentId, target) => true,
+      recruitTroops: (nodeId, type, amount) => unsupportedAction('Troop recruitment'),
+      disbandTroops: (commanderId, type, amount) => unsupportedAction('Troop disbanding'),
+      trainTroops: (commanderId, trainingType) => unsupportedAction('Troop training'),
+      deploySpies: (targetFaction, spyId) => unsupportedAction('Spy deployment'),
+      gatherIntelligence: (targetNodeId, agentId) => unsupportedAction('Intelligence gathering'),
+      sabotage: (targetNodeId, agentId, target) => unsupportedAction('Sabotage'),
 
       // Event Implementation (placeholder methods)
-      respondToEvent: (eventId, choiceId) => {
-        set(state => {
-          const storyEventSystem = new StoryEventSystem(state);
-          storyEventSystem.processEventChoice(eventId, choiceId);
-
-          // Return the modified state (the StoryEventSystem modifies state in-place)
-          return { ...state };
-        });
+      respondToEvent: async (eventId, choiceId) => {
+        await applyServerAction('respond_to_event', { event_id: eventId, choice_id: choiceId });
       },
-      triggerEvent: (eventType, conditions) => true,
-      processRandomEvents: () => {},
-      processSeasonalEvents: () => {},
+      triggerEvent: (eventType, conditions) => unsupportedAction('Manual event triggering'),
+      processRandomEvents: () => {
+        unsupportedAction('Random event processing');
+      },
+      processSeasonalEvents: () => {
+        unsupportedAction('Seasonal event processing');
+      },
       processStoryEvents: () => {
-        const state = get();
-        const storyEventSystem = new StoryEventSystem(state);
-        const newEvents = storyEventSystem.processTurnEvents();
-
-        if (newEvents.length > 0) {
-          set(state => ({
-            events: [...state.events, ...newEvents],
-          }));
-        }
+        unsupportedAction('Story event processing');
       },
 
       // Quest Implementation (placeholder methods)
-      acceptQuest: questId => true,
-      completeQuest: questId => true,
-      abandonQuest: questId => true,
-      updateQuestProgress: (questId, objectiveId, progress) => {},
+      acceptQuest: questId => unsupportedAction('Quest acceptance'),
+      completeQuest: questId => unsupportedAction('Quest completion'),
+      abandonQuest: questId => unsupportedAction('Quest abandonment'),
+      updateQuestProgress: (questId, objectiveId, progress) => {
+        unsupportedAction('Quest progress updates');
+      },
 
       // Achievement Implementation
       checkAchievements: () => {
         // Implementation for checking and unlocking achievements
       },
 
-      unlockAchievement: achievementId => {
-        const state = get();
-        if (state.achievements.some(a => a.id === achievementId && a.completed)) return false;
-
-        set(state => ({
-          achievements: state.achievements.map(a =>
-            a.id === achievementId ? { ...a, completed: true, completionDate: Date.now() } : a
-          ),
-        }));
-
-        get().addBattleLogEntry('info', `Achievement unlocked: ${achievementId}`);
-        return true;
-      },
+      unlockAchievement: achievementId => unsupportedAction('Achievement unlocking'),
 
       // Victory Implementation
       checkVictoryConditions: () => {
@@ -604,12 +487,7 @@ export const useGameStore = create<GameStore>()(
       },
 
       declareVictory: victoryType => {
-        set(state => ({
-          gameOver: true,
-          winner: 'player',
-        }));
-
-        get().addBattleLogEntry('victory', `Victory achieved through ${victoryType}!`);
+        unsupportedAction('Victory declaration');
       },
 
       // Legacy Implementation
@@ -636,15 +514,7 @@ export const useGameStore = create<GameStore>()(
       },
 
       advanceCalendar: () => {
-        set(state => {
-          const newCalendar = { ...state.calendar };
-          newCalendar.currentDay++;
-          newCalendar.daysSinceStart++;
-
-          // Advance month/season logic would go here
-
-          return { calendar: newCalendar };
-        });
+        unsupportedAction('Calendar advancement');
       },
 
       updateStatistics: () => {
@@ -652,24 +522,7 @@ export const useGameStore = create<GameStore>()(
       },
 
       generateHistoricalRecord: (type, description, participants) => {
-        const state = get();
-        const record = {
-          id: `record_${Date.now()}`,
-          turn: state.turn,
-          type,
-          title: `${type} - Turn ${state.turn}`,
-          description,
-          participants,
-          location: [],
-          significance: 1,
-          consequences: [],
-          sources: ['Player Action'],
-          accuracy: 100,
-        };
-
-        set(state => ({
-          historicalRecords: [...state.historicalRecords, record],
-        }));
+        unsupportedAction('Historical record generation');
       },
 
       saveGameState: () => {
@@ -679,95 +532,12 @@ export const useGameStore = create<GameStore>()(
       loadGameState: saveData => {
         set(state => ({ ...state, ...saveData }));
       },
-      addCommander: (className, race) => {
-        const state = get();
-        if (canAffordCommander(state.resources, className)) {
-          const newId = Math.max(0, ...state.commanders.map(c => c.id)) + 1;
-          const commander = createCommander(newId, className, race, 'player'); // Specify player ownership
-          const cost = gameData.commanderClasses[className].cost;
-
-          set(state => ({
-            commanders: [...state.commanders, commander],
-            resources: {
-              ...state.resources,
-              gold: state.resources.gold - cost,
-            },
-            battleLog: [
-              ...state.battleLog,
-              {
-                timestamp: Date.now(),
-                type: 'recruitment',
-                message: `Recruited ${commander.name} for ${cost} gold`,
-              },
-            ],
-          }));
-
-          return true;
-        }
-        return false;
-      },
-      assignCommanderToNode: (commanderId, nodeId) => {
-        const state = get();
-        const commander = state.commanders.find(c => c.id === commanderId);
-        const node = state.nodes.find(n => n.id === nodeId);
-
-        if (!commander || !node) return false;
-        if (node.owner !== 'player') return false;
-
-        // Check commander capacity for this node type
-        const maxCapacity = gameConstants.COMMANDER_CAPACITIES[node.type];
-        const currentCommanders = state.commanders.filter(c => c.assignedNode === nodeId).length;
-
-        if (currentCommanders >= maxCapacity) {
-          // Add a message to battle log about capacity limit
-          set(state => ({
-            battleLog: [
-              ...state.battleLog,
-              {
-                timestamp: Date.now(),
-                type: 'info',
-                message: `Cannot assign ${commander.name}: ${gameData.nodeTypes[node.type].name} is at capacity (${maxCapacity} commanders)`,
-              },
-            ],
-          }));
-          return false;
-        }
-
-        set(state => ({
-          commanders: state.commanders.map(c =>
-            c.id === commanderId ? { ...c, assignedNode: nodeId } : c
-          ),
-          battleLog: [
-            ...state.battleLog,
-            {
-              timestamp: Date.now(),
-              type: 'info',
-              message: `${commander.name} assigned to defend the ${gameData.nodeTypes[node.type].name}`,
-            },
-          ],
-        }));
-
-        return true;
-      },
-      unassignCommander: commanderId => {
-        const state = get();
-        const commander = state.commanders.find(c => c.id === commanderId);
-
-        if (!commander || !commander.assignedNode) return;
-
-        set(state => ({
-          commanders: state.commanders.map(c =>
-            c.id === commanderId ? { ...c, assignedNode: null } : c
-          ),
-          battleLog: [
-            ...state.battleLog,
-            {
-              timestamp: Date.now(),
-              type: 'info',
-              message: `${commander.name} recalled from duty`,
-            },
-          ],
-        }));
+      addCommander: (className, race) =>
+        applyServerAction('recruit_commander', { class: className, race }),
+      assignCommanderToNode: (commanderId, nodeId) =>
+        applyServerAction('assign_commander', { commander_id: commanderId, node_id: nodeId }),
+      unassignCommander: async commanderId => {
+        await applyServerAction('unassign_commander', { commander_id: commanderId });
       },
       getNodeCommanderInfo: nodeId => {
         const state = get();
@@ -809,69 +579,20 @@ export const useGameStore = create<GameStore>()(
         const upgradeCost = get().getUpgradeCost(nodeId);
         return state.resources.gold >= upgradeCost;
       },
-      upgradeNode: nodeId => {
-        const state = get();
-        const node = state.nodes.find(n => n.id === nodeId);
-
-        if (!get().canUpgradeNode(nodeId) || !node) return false;
-
-        const upgradeCost = get().getUpgradeCost(nodeId);
-
-        set(state => ({
-          nodes: state.nodes.map(n =>
-            n.id === nodeId
-              ? {
-                  ...n,
-                  starLevel: n.starLevel + 1,
-                  garrison: n.garrison + 25, // Increase garrison with upgrade
-                }
-              : n
-          ),
-          resources: {
-            ...state.resources,
-            gold: state.resources.gold - upgradeCost,
-          },
-          battleLog: [
-            ...state.battleLog,
-            {
-              timestamp: Date.now(),
-              type: 'info',
-              message: `${gameData.nodeTypes[node.type].name} upgraded to ${node.starLevel + 1} stars for ${upgradeCost} gold!`,
-            },
-          ],
-        }));
-
-        return true;
+      upgradeNode: nodeId => applyServerAction('upgrade_node', { node_id: nodeId }),
+      updateResources: newResources => {
+        unsupportedAction('Direct resource updates');
       },
-      updateResources: newResources =>
-        set(state => {
-          const mergedResources: Resources = { ...state.resources };
-          (Object.entries(newResources) as Array<[keyof Resources, number | undefined]>).forEach(
-            ([key, value]) => {
-              if (typeof value === 'number') {
-                mergedResources[key] = value;
-              }
-            }
-          );
-          return { resources: mergedResources };
-        }),
       nextTurn: () => {
-        set(state => ({
-          turn: state.turn + 1,
-          phase: 'player' as const,
-        }));
-
-        // Process story events for the new turn
-        get().processStoryEvents();
+        unsupportedAction('Direct turn advancement');
       },
-      endTurn: () => {
+      endTurn: async () => {
         set({ phase: 'enemy' as const });
-        // Process enemy turn after a short delay for better UX
-        setTimeout(() => {
-          get().processEnemyTurn();
-        }, 500);
+        await applyServerAction('end_turn');
       },
       processEnemyTurn: () => {
+        unsupportedAction('Direct enemy turn processing');
+        return;
         const state = get();
 
         // 1. Enemy resource collection
@@ -913,11 +634,13 @@ export const useGameStore = create<GameStore>()(
         for (const enemyNode of enemyNodes) {
           for (const connectionId of enemyNode.connections) {
             const targetNode = state.nodes.find(n => n.id === connectionId);
-            if (targetNode && (targetNode.owner === 'player' || targetNode.owner === 'neutral')) {
+            if (!targetNode) continue;
+            const target = targetNode!;
+            if (target.owner === 'player' || target.owner === 'neutral') {
               attackableTargets.push({
                 attacker: enemyNode,
-                target: targetNode,
-                priority: targetNode.owner === 'player' ? 2 : 1, // Prefer player nodes
+                target,
+                priority: target.owner === 'player' ? 2 : 1, // Prefer player nodes
               });
             }
           }
@@ -1056,6 +779,8 @@ export const useGameStore = create<GameStore>()(
         }, 1000);
       },
       collectResources: () => {
+        unsupportedAction('Direct resource collection');
+        return;
         const state = get();
         const income = calculateIncome(state.nodes);
 
@@ -1096,104 +821,11 @@ export const useGameStore = create<GameStore>()(
           `Turn ${state.turn + 1}: Collected ${income.gold} gold, ${income.supplies} supplies, ${income.mana} mana. Garrisons reinforced!`
         );
       },
-      attackNode: nodeId => {
-        const state = get();
-        const attackerNode = state.nodes.find(n => n.id === state.selectedNode);
-        const defenderNode = state.nodes.find(n => n.id === nodeId);
-
-        if (!attackerNode || !defenderNode) {
-          get().addBattleLogEntry('defeat', 'Invalid attack: Could not find nodes');
-          return;
-        }
-
-        if (!gameLogicCanAttackNode(state.nodes, attackerNode.id, defenderNode.id)) {
-          get().addBattleLogEntry('defeat', 'Invalid attack: Cannot attack this node');
-          return;
-        }
-
-        // Get commanders at each node
-        const attackerCommanders = state.commanders.filter(c => c.assignedNode === attackerNode.id);
-        const defenderCommanders = state.commanders.filter(c => c.assignedNode === defenderNode.id);
-
-        // Calculate commander bonuses for battle log
-        const attackerBonus = calculateCommanderBonus(attackerCommanders);
-        const defenderBonus = calculateCommanderBonus(defenderCommanders);
-
-        // Resolve the battle with commander bonuses
-        const battleResult = resolveBattle(
-          attackerNode,
-          defenderNode,
-          attackerCommanders,
-          defenderCommanders
-        );
-
-        if (battleResult.victory) {
-          // Player wins - capture the node
-          const updatedDefenderNode = updateNodeAfterBattle(defenderNode, battleResult);
-
-          set(state => ({
-            nodes: state.nodes.map(n =>
-              n.id === nodeId
-                ? updatedDefenderNode
-                : n.id === attackerNode.id
-                  ? { ...n, garrison: Math.max(20, n.garrison - 10) } // Attacker loses some garrison
-                  : n
-            ),
-          }));
-
-          const commanderBonusText =
-            attackerBonus.attackBonus > 0
-              ? ` (Commander bonus: +${Math.floor(attackerBonus.attackBonus)})`
-              : '';
-
-          get().addBattleLogEntry(
-            'victory',
-            `Successfully captured ${gameData.nodeTypes[defenderNode.type].name}!${commanderBonusText}`
-          );
-
-          // Award experience to commanders at the attacking node
-          const attackingCommanders = state.commanders.filter(
-            c => c.assignedNode === attackerNode.id && c.owner === 'player'
-          );
-          if (attackingCommanders.length > 0) {
-            set(state => ({
-              commanders: state.commanders.map(c =>
-                attackingCommanders.some(ac => ac.id === c.id)
-                  ? {
-                      ...c,
-                      experience: c.experience + battleResult.experienceGained,
-                    }
-                  : c
-              ),
-            }));
-
-            get().addBattleLogEntry(
-              'info',
-              `Commanders gained ${battleResult.experienceGained} experience`
-            );
-          }
-        } else {
-          // Player loses - reduce both garrisons
-          set(state => ({
-            nodes: state.nodes.map(n =>
-              n.id === nodeId
-                ? { ...n, garrison: Math.max(10, n.garrison - 5) }
-                : n.id === attackerNode.id
-                  ? { ...n, garrison: Math.max(10, n.garrison - 15) } // Attacker loses more on defeat
-                  : n
-            ),
-          }));
-
-          const defenderBonusText =
-            defenderBonus.defenseBonus > 0
-              ? ` Enemy commanders provided +${Math.floor(defenderBonus.defenseBonus)} defense.`
-              : '';
-
-          get().addBattleLogEntry(
-            'defeat',
-            `Attack on ${gameData.nodeTypes[defenderNode.type].name} failed!${defenderBonusText}`
-          );
-        }
+      attackNode: async nodeId => {
+        await applyServerAction('attack_node', {
+          node_id: nodeId,
+          attacker_node_id: get().selectedNode,
+        });
       },
       canAttackNode: nodeId => {
         const state = get();
@@ -1213,23 +845,9 @@ export const useGameStore = create<GameStore>()(
           ],
         }));
       },
-      resetGame: () => {
-        const initialState = getInitialState();
-
-        // Clear localStorage to ensure a true reset
+      resetGame: async () => {
         localStorage.removeItem('ashes-of-aeloria-game-state');
-
-        set(() => ({
-          ...initialState,
-          battleLog: [
-            {
-              timestamp: Date.now(),
-              type: 'info',
-              message:
-                'Game reset! Welcome to Ashes of Aeloria! Begin your conquest by recruiting commanders and expanding your territory.',
-            },
-          ],
-        }));
+        await applyServerAction('reset_game');
       },
       repairMapConnections: () => {
         const state = get();
@@ -1256,181 +874,12 @@ export const useGameStore = create<GameStore>()(
           ],
         }));
       },
-      initializeMission: (campaignId: string) => {
-        // Reset to initial state for new mission
-        const initialState = getInitialState();
-
-        // Set campaign-specific modifications based on campaignId
-        let missionResources = { ...initialState.resources };
-        let missionMessage = `Mission started: ${campaignId}`;
-
-        // Apply campaign-specific starting conditions
-        switch (campaignId) {
-          case 'chapter_1_awakening':
-            missionResources = {
-              ...missionResources,
-              gold: 300,
-              supplies: 75,
-              mana: 25,
-            };
-            missionMessage = 'The Awakening begins! Rally the survivors and reclaim your homeland.';
-            break;
-          case 'chapter_2_reclamation':
-            missionResources = {
-              ...missionResources,
-              gold: 500,
-              supplies: 150,
-              mana: 75,
-              knowledge: 50,
-            };
-            missionMessage =
-              'The Reclamation starts! Use your growing knowledge to expand your territory.';
-            break;
-          case 'chapter_3_alliance':
-            missionResources = {
-              ...missionResources,
-              gold: 750,
-              supplies: 200,
-              mana: 100,
-              knowledge: 100,
-              influence: 25,
-            };
-            missionMessage = 'Forge alliances! Diplomacy and influence will be key to success.';
-            break;
-          case 'chapter_4_purification':
-            missionResources = {
-              ...missionResources,
-              gold: 1000,
-              supplies: 250,
-              mana: 150,
-              knowledge: 150,
-              culture: 50,
-              materials: 150,
-            };
-            missionMessage =
-              'The Purification begins! Cleanse the corruption and restore the land.';
-            break;
-          case 'chapter_5_ascension':
-            missionResources = {
-              ...missionResources,
-              gold: 1500,
-              supplies: 300,
-              mana: 200,
-              knowledge: 200,
-              culture: 100,
-              influence: 75,
-              materials: 200,
-              artifacts: 5,
-            };
-            missionMessage =
-              'The final Ascension! Use all your power to rebuild Aeloria completely.';
-            break;
-          default:
-            missionMessage = `Started mission: ${campaignId}`;
-        }
-
-        set(() => ({
-          ...initialState,
-          resources: missionResources,
-          currentMission: campaignId,
-          missionStarted: true,
-          battleLog: [
-            {
-              timestamp: Date.now(),
-              type: 'info',
-              message: missionMessage,
-            },
-          ],
-        }));
-
-        get().addBattleLogEntry(
-          'info',
-          'Campaign mission initialized! Build your forces and begin your conquest!'
-        );
+      initializeMission: async (campaignId: string) => {
+        await applyServerAction('start_mission', { mission_id: campaignId });
       },
-      endMission: () => {
-        set(state => ({
-          currentMission: null,
-          missionStarted: false,
-        }));
+      endMission: async () => {
+        await applyServerAction('return_to_mission_select');
       },
-    }),
-    {
-      name: 'ashes-of-aeloria-game-state',
-      version: 1, // Increment this when making breaking changes to the state structure
-      storage: createJSONStorage(() => localStorage),
-      partialize: state => serializeGameState(state),
-      migrate: (persistedState: any, version: number) => {
-        // Handle migration between versions if needed
-        if (version === 0) {
-          // Migrate from version 0 to 1 - regenerate map connections if corrupted
-          if (persistedState.nodes && Array.isArray(persistedState.nodes)) {
-            const validMap = generateInitialMap();
-            // Preserve node ownership and garrison changes but restore connections
-            persistedState.nodes = persistedState.nodes.map((node: any) => {
-              const originalNode = validMap.find((n: any) => n.id === node.id);
-              return originalNode
-                ? {
-                    ...originalNode,
-                    owner: node.owner || originalNode.owner,
-                    garrison: node.garrison || originalNode.garrison,
-                    starLevel: node.starLevel || originalNode.starLevel,
-                  }
-                : node;
-            });
-          }
-        }
-        return persistedState;
-      },
-      onRehydrateStorage: () => {
-        return (state, error) => {
-          if (!error && state) {
-            // Check if connections are broken and auto-repair
-            const originalMap = generateInitialMap();
-            let needsRepair = false;
-
-            if (state.nodes) {
-              for (const node of state.nodes) {
-                const originalNode = originalMap.find(n => n.id === node.id);
-                if (
-                  originalNode &&
-                  JSON.stringify(node.connections) !== JSON.stringify(originalNode.connections)
-                ) {
-                  needsRepair = true;
-                  break;
-                }
-              }
-
-              if (needsRepair) {
-                // Auto-repair connections
-                state.nodes = state.nodes.map(node => {
-                  const originalNode = originalMap.find(n => n.id === node.id);
-                  return originalNode
-                    ? {
-                        ...node,
-                        connections: originalNode.connections,
-                      }
-                    : node;
-                });
-
-                // Add a log entry about the repair
-                state.battleLog = [
-                  ...(state.battleLog || []),
-                  {
-                    timestamp: Date.now(),
-                    type: 'info' as const,
-                    message: 'Map connections automatically repaired after loading saved game.',
-                  },
-                ];
-
-                console.log('🔧 Auto-repaired map connections after loading from localStorage');
-              } else {
-                console.log('✅ Map connections are valid');
-              }
-            }
-          }
-        };
-      },
-    }
-  )
+    });
+  }
 );

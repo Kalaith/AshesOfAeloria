@@ -20,6 +20,9 @@ import { useAuthStore } from '../stores/authStore';
 import { useGameStore } from '../stores/useGameStore';
 import { useNotifications } from '../hooks/useNotifications';
 import { useModals } from '../hooks/useModals';
+import { getAuthDisplayName } from '../auth/session';
+
+const ENTERED_GAME_SESSION_KEY = 'ashes-of-aeloria-entered-game';
 
 /**
  * Game Page Component
@@ -27,7 +30,7 @@ import { useModals } from '../hooks/useModals';
  */
 export const GamePage: React.FC = () => {
   const [gameMode, setGameMode] = useState<'mission-select' | 'active-mission'>('mission-select');
-  const [hasEnteredGame, setHasEnteredGame] = useState(false);
+  const [hasEnteredGame, setHasEnteredGame] = useState(readEnteredGameSession);
   const [storyEventModalOpen, setStoryEventModalOpen] = useState(false);
   const { gameOver, winner } = useGameLogic();
   const initializeMission = useGameStore(state => state.initializeMission);
@@ -55,6 +58,7 @@ export const GamePage: React.FC = () => {
     console.log('Starting mission:', missionId);
     // Initialize the mission with campaign-specific parameters
     initializeMission(missionId);
+    rememberEnteredGame();
     setGameMode('active-mission');
   };
 
@@ -72,13 +76,23 @@ export const GamePage: React.FC = () => {
   const handleContinueAsGuest = async () => {
     await continueAsGuest();
     if (useAuthStore.getState().isAuthenticated) {
+      rememberEnteredGame();
       setHasEnteredGame(true);
     }
   };
 
   const handleContinueCampaign = () => {
+    rememberEnteredGame();
     setHasEnteredGame(true);
   };
+
+  useEffect(() => {
+    if (isAuthenticated && missionStarted && currentMission) {
+      rememberEnteredGame();
+      setHasEnteredGame(true);
+      setGameMode('active-mission');
+    }
+  }, [isAuthenticated, missionStarted, currentMission]);
 
   // Restore game mode based on persisted mission state
   useEffect(() => {
@@ -127,7 +141,7 @@ export const GamePage: React.FC = () => {
         isGuest={isGuest}
         isSaving={isSaving}
         hasMergeableGuestSession={hasMergeableGuestSession}
-        userName={user?.display_name || user?.username || null}
+        userName={user?.display_name || user?.username || getAuthDisplayName()}
         error={error}
         onContinueCampaign={handleContinueCampaign}
         onContinueAsGuest={() => void handleContinueAsGuest()}
@@ -208,6 +222,22 @@ export const GamePage: React.FC = () => {
   );
 };
 
+function readEnteredGameSession(): boolean {
+  try {
+    return sessionStorage.getItem(ENTERED_GAME_SESSION_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+function rememberEnteredGame(): void {
+  try {
+    sessionStorage.setItem(ENTERED_GAME_SESSION_KEY, 'true');
+  } catch {
+    // Session storage is only a refresh convenience; the backend remains authoritative.
+  }
+}
+
 interface LandingPageProps {
   isAuthenticated: boolean;
   isGuest: boolean;
@@ -285,14 +315,16 @@ const LandingPage: React.FC<LandingPageProps> = ({
                 </button>
               )}
 
-              <button
-                type="button"
-                onClick={onVisitLogin}
-                disabled={isSaving}
-                className="w-full rounded-md border-2 border-bronze px-4 py-3 font-frontier font-bold text-light-enhanced transition hover:bg-bronze/30 disabled:cursor-wait disabled:opacity-60"
-              >
-                {isSaving ? 'Opening Login...' : 'Sign in with Web Hatchery'}
-              </button>
+              {!isAuthenticated ? (
+                <button
+                  type="button"
+                  onClick={onVisitLogin}
+                  disabled={isSaving}
+                  className="w-full rounded-md border-2 border-bronze px-4 py-3 font-frontier font-bold text-light-enhanced transition hover:bg-bronze/30 disabled:cursor-wait disabled:opacity-60"
+                >
+                  {isSaving ? 'Opening Login...' : 'Sign in with Web Hatchery'}
+                </button>
+              ) : null}
 
               {hasMergeableGuestSession ? (
                 <button

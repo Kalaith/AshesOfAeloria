@@ -79,10 +79,36 @@ final class GameRepository
         ];
     }
 
+    public function loadOrCreateState(AuthUser $user, array $initialState): array
+    {
+        $this->upsertPlayer($user);
+        $save = $this->findSaveByUserId($user->id);
+        if ($save !== null) {
+            return $this->decodeState((string) $save['game_state_json']);
+        }
+
+        $this->persistState($user->id, $initialState);
+        return $initialState;
+    }
+
+    public function replaceGameState(AuthUser $user, array $gameState): array
+    {
+        $this->upsertPlayer($user);
+        $this->persistState($user->id, $gameState);
+
+        return $this->loadGame($user);
+    }
+
     public function saveGame(AuthUser $user, array $gameState): array
     {
         $this->upsertPlayer($user);
 
+        $this->persistState($user->id, $gameState);
+        return $this->loadGame($user);
+    }
+
+    private function persistState(string $authUserId, array $gameState): void
+    {
         $now = $this->now();
         $stmt = $this->db->prepare(
             'INSERT INTO game_saves (auth_user_id, game_state_json, created_at, updated_at)
@@ -93,13 +119,11 @@ final class GameRepository
         );
 
         $stmt->execute([
-            'auth_user_id' => $user->id,
+            'auth_user_id' => $authUserId,
             'game_state_json' => $this->json($gameState),
             'created_at' => $now,
             'updated_at' => $now,
         ]);
-
-        return $this->loadGame($user);
     }
 
     public function moveGuestSaveToUser(string $guestUserId, AuthUser $targetUser): array

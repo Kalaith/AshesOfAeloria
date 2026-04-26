@@ -21,14 +21,16 @@ export const GameLayout: React.FC<GameLayoutProps> = ({
   className = '',
 }) => {
   return (
-    <div className={`h-screen flex flex-col overflow-hidden ${className}`}>
+    <div className={`h-screen flex flex-col overflow-hidden frontier-shell ${className}`}>
       {/* Header */}
       <div className="flex-shrink-0">{header}</div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-4 p-2 lg:p-4 overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row gap-3 lg:gap-4 p-3 lg:p-4 overflow-hidden">
         {/* Left Panel - Full width on mobile, fixed width on desktop */}
-        <div className="w-full lg:w-80 order-2 lg:order-1 flex-shrink-0">{leftPanel}</div>
+        <div className="w-full lg:w-80 order-2 lg:order-1 flex-shrink-0 overflow-y-auto">
+          {leftPanel}
+        </div>
 
         {/* Main Content - Takes remaining space */}
         <div className="flex-1 order-1 lg:order-2 min-h-0">{mainContent}</div>

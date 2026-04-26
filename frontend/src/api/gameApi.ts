@@ -25,6 +25,21 @@ export interface GamePayload {
   updated_at: string | null;
 }
 
+export type GameActionType =
+  | 'start_mission'
+  | 'restart_mission'
+  | 'return_to_mission_select'
+  | 'reset_game'
+  | 'recruit_commander'
+  | 'assign_commander'
+  | 'unassign_commander'
+  | 'upgrade_node'
+  | 'attack_node'
+  | 'end_turn'
+  | 'start_research'
+  | 'cancel_research'
+  | 'respond_to_event';
+
 async function request<T>(method: HttpMethod, url: string, payload?: unknown): Promise<T> {
   try {
     const response =
@@ -63,6 +78,6 @@ export const gameApi = {
       { guest_token: guestToken }
     ),
   loadGame: () => request<GamePayload>('get', '/api/game'),
-  saveGame: (gameState: Partial<GameState>) =>
-    request<GamePayload>('post', '/api/game/save', { game_state: gameState }),
+  runAction: (type: GameActionType, payload: Record<string, unknown> = {}) =>
+    request<GamePayload>('post', `/api/game/action/${type}`, { payload }),
 };

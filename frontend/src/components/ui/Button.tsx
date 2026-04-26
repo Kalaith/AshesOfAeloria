@@ -20,14 +20,14 @@ export const Button: React.FC<ButtonProps> = ({
 
   const variantClasses = {
     primary:
-      'bg-mana text-light-enhanced border-mana hover:bg-mana-light hover:animate-ember-glow focus:ring-mana',
-    secondary: 'bg-iron text-light-enhanced border-iron hover:bg-iron-light focus:ring-iron',
+      'frontier-button frontier-button-primary hover:animate-ember-glow focus:ring-ember',
+    secondary: 'frontier-button focus:ring-bronze',
     outline:
-      'border-mana text-mana bg-transparent hover:bg-mana hover:text-light-enhanced focus:ring-mana',
+      'frontier-button bg-transparent text-bronze-light hover:text-light-enhanced focus:ring-bronze',
     attack:
-      'bg-blood text-light-enhanced border-blood hover:bg-blood-light hover:animate-battle-shake focus:ring-blood',
+      'frontier-button frontier-button-danger hover:animate-battle-shake focus:ring-blood',
     recruit:
-      'bg-forest text-light-enhanced border-forest hover:bg-forest-light hover:animate-forge-flicker focus:ring-forest',
+      'frontier-button frontier-button-primary hover:animate-forge-flicker focus:ring-ember',
   };
 
   const sizeClasses = {

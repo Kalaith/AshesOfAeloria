@@ -17,4 +17,5 @@ return static function (\App\Core\Router $router): void {
 
     $router->get('/api/game', [GameController::class, 'current'], $auth);
     $router->post('/api/game/save', [GameController::class, 'save'], $auth);
+    $router->post('/api/game/action/{action_type}', [GameController::class, 'action'], $auth);
 };

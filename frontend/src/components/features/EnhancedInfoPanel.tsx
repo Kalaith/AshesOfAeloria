@@ -30,7 +30,7 @@ export const EnhancedInfoPanel: React.FC = () => {
       return;
     }
 
-    const result = upgradeSelectedNode();
+    const result = await upgradeSelectedNode();
     if (result.success) {
       showSuccess(result.message);
     } else {
@@ -44,7 +44,7 @@ export const EnhancedInfoPanel: React.FC = () => {
       return;
     }
 
-    const result = initiateAttack(nodeId);
+    const result = await initiateAttack(nodeId);
     if (result.success) {
       showSuccess(result.message);
     } else {

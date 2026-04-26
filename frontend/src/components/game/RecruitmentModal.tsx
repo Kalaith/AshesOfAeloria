@@ -17,9 +17,9 @@ export const RecruitmentModal: React.FC<RecruitmentModalProps> = ({ isOpen, onCl
   const resources = useGameStore(state => state.resources);
   const addCommander = useGameStore(state => state.addCommander);
 
-  const handleConfirmRecruitment = () => {
+  const handleConfirmRecruitment = async () => {
     if (selectedClass && selectedRace) {
-      const success = addCommander(selectedClass, selectedRace);
+      const success = await addCommander(selectedClass, selectedRace);
       if (success) {
         setSelectedClass(null);
         setSelectedRace(null);

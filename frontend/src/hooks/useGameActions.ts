@@ -36,8 +36,8 @@ export const useGameActions = () => {
 
   // Commander Management
   const recruitCommander = useCallback(
-    (className: CommanderClass, race: Race): { success: boolean; message: string } => {
-      const success = addCommander(className, race);
+    async (className: CommanderClass, race: Race): Promise<{ success: boolean; message: string }> => {
+      const success = await addCommander(className, race);
       return {
         success,
         message: success
@@ -49,8 +49,8 @@ export const useGameActions = () => {
   );
 
   const assignCommander = useCallback(
-    (commanderId: number, nodeId: number): { success: boolean; message: string } => {
-      const success = assignCommanderToNode(commanderId, nodeId);
+    async (commanderId: number, nodeId: number): Promise<{ success: boolean; message: string }> => {
+      const success = await assignCommanderToNode(commanderId, nodeId);
       return {
         success,
         message: success ? successMessages.COMMANDER_ASSIGNED : errorMessages.NODE_AT_CAPACITY,
@@ -61,7 +61,7 @@ export const useGameActions = () => {
 
   const unassignCommanderAction = useCallback(
     (commanderId: number) => {
-      unassignCommander(commanderId);
+      void unassignCommander(commanderId);
     },
     [unassignCommander]
   );
@@ -83,7 +83,7 @@ export const useGameActions = () => {
 
   // Combat Actions
   const initiateAttack = useCallback(
-    (defenderNodeId: number): { success: boolean; message: string } => {
+    async (defenderNodeId: number): Promise<{ success: boolean; message: string }> => {
       if (selectedNode === null) {
         return { success: false, message: errorMessages.NO_NODE_SELECTED };
       }
@@ -93,7 +93,7 @@ export const useGameActions = () => {
       }
 
       // Note: attackNode currently returns void, will be enhanced in Phase 2
-      attackNode(defenderNodeId);
+      await attackNode(defenderNodeId);
       return {
         success: true, // Placeholder - will be based on actual battle result in Phase 2
         message: 'Attack initiated!', // Placeholder message
@@ -103,11 +103,11 @@ export const useGameActions = () => {
   );
 
   // Node Upgrades
-  const upgradeSelectedNode = useCallback((): {
+  const upgradeSelectedNode = useCallback(async (): Promise<{
     success: boolean;
     message: string;
     cost?: any;
-  } => {
+  }> => {
     if (selectedNode === null) {
       return { success: false, message: errorMessages.NO_NODE_SELECTED };
     }
@@ -123,7 +123,7 @@ export const useGameActions = () => {
       };
     }
 
-    const success = upgradeNode(selectedNode);
+    const success = await upgradeNode(selectedNode);
     return {
       success,
       message: success ? successMessages.NODE_UPGRADED : errorMessages.INSUFFICIENT_RESOURCES,
@@ -133,12 +133,12 @@ export const useGameActions = () => {
 
   // Turn Management
   const completeTurn = useCallback(() => {
-    endTurn();
+    void endTurn();
     return { success: true, message: successMessages.TURN_COMPLETED };
   }, [endTurn]);
 
   const restartGame = useCallback(() => {
-    resetGame();
+    void resetGame();
   }, [resetGame]);
 
   // Game State Queries

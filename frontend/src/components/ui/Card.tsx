@@ -9,13 +9,10 @@ interface CardProps {
 
 export const Card: React.FC<CardProps> = ({ children, className = '', title, onClick }) => {
   return (
-    <div
-      className={`bg-parchment border-2 border-bronze rounded-lg bg-metal-texture ${className}`}
-      onClick={onClick}
-    >
+    <div className={`frontier-panel ${className}`} onClick={onClick}>
       {title && (
-        <div className="px-4 lg:px-6 py-3 lg:py-4 border-b-2 border-bronze bg-bronze-texture">
-          <h3 className="text-base lg:text-lg font-frontier font-bold text-on-bronze">{title}</h3>
+        <div className="px-4 lg:px-6 py-3 lg:py-4 border-b border-bronze/70 bg-black/20">
+          <h3 className="text-base lg:text-lg frontier-panel-title">{title}</h3>
         </div>
       )}
       <div className="p-4 lg:p-6">{children}</div>

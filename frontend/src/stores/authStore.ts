@@ -10,7 +10,7 @@ import {
   readGuestSession,
   saveGuestSession,
 } from '../auth/session';
-import { serializeGameState, useGameStore } from './useGameStore';
+import { useGameStore } from './useGameStore';
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -55,11 +55,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
 
       const payload = await gameApi.loadGame();
-      if (payload.game_state) {
-        useGameStore.getState().loadGameState(payload.game_state);
-      } else {
-        await gameApi.saveGame(serializeGameState(useGameStore.getState()));
-      }
+      useGameStore.getState().loadGameState(payload.game_state ?? {});
 
       set({
         isAuthenticated: true,
@@ -141,7 +137,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     set({ isSaving: true });
     try {
-      await gameApi.saveGame(serializeGameState(useGameStore.getState()));
       set({ isSaving: false, error: null });
     } catch (error) {
       set({ isSaving: false, error: errorMessage(error) });

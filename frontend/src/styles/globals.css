@@ -361,7 +361,7 @@
 
 /* Battle-worn text effects - context-aware */
 .text-battle-worn {
-  color: #2b2b2c;
+  color: #fff4e6;
   font-weight: bold;
 }
 
@@ -561,45 +561,54 @@
 
 /* Card background enhancements for better text visibility */
 .bg-card-enhanced {
-  background: rgba(237, 234, 222, 0.95);
-  backdrop-filter: blur(2px);
-  border: 2px solid rgba(123, 79, 46, 0.6);
+  background:
+    linear-gradient(180deg, rgba(50, 50, 52, 0.98), rgba(25, 25, 27, 0.98)),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.025) 0 2px, transparent 2px 8px);
+  backdrop-filter: blur(1px);
+  border: 2px solid rgba(123, 79, 46, 0.8);
+  color: #edeade;
   box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    0 8px 18px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 24px rgba(0, 0, 0, 0.25);
 }
 
 .bg-resource-item {
-  background: rgba(255, 255, 255, 0.3);
-  border: 1px solid rgba(123, 79, 46, 0.5);
+  background: rgba(17, 17, 18, 0.42);
+  border: 1px solid rgba(184, 114, 63, 0.38);
   backdrop-filter: blur(1px);
 }
 
 /* Commander card improvements */
 .commander-card-enhanced {
-  background: rgba(255, 255, 255, 0.9);
-  border: 2px solid rgba(123, 79, 46, 0.5);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  background:
+    linear-gradient(180deg, rgba(43, 43, 44, 0.94), rgba(24, 24, 26, 0.94)),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 7px);
+  border: 1px solid rgba(184, 114, 63, 0.45);
+  color: #edeade;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .commander-card-enhanced.selected {
-  background: rgba(52, 152, 219, 0.15);
-  border-color: #3498db;
-  box-shadow: 0 0 12px rgba(52, 152, 219, 0.4);
+  background: linear-gradient(180deg, rgba(71, 43, 27, 0.98), rgba(28, 28, 30, 0.98));
+  border-color: #e67e22;
+  box-shadow:
+    0 0 12px rgba(230, 126, 34, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 /* Tab button improvements */
 .tab-button-enhanced {
-  background: rgba(255, 255, 255, 0.2);
-  color: #edeade;
+  background: rgba(18, 18, 20, 0.75);
+  color: #c7b299;
   font-weight: 600;
-  border: 1px solid rgba(123, 79, 46, 0.3);
+  border: 1px solid rgba(123, 79, 46, 0.5);
 }
 
 .tab-button-enhanced.active {
-  background: rgba(255, 255, 255, 0.9);
-  color: #1a1a1c;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(180deg, #7b4f2e, #4d301d);
+  color: #fff4e6;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 /* Text contrast fixes for bronze backgrounds */
@@ -616,4 +625,105 @@
 .text-bronze-contrast {
   color: #fff8dc;
   font-weight: 600;
+}
+
+.text-light-enhanced {
+  color: #edeade;
+}
+
+.text-dark-enhanced {
+  color: #edeade;
+}
+
+.text-iron-dark,
+.text-parchment-dark {
+  color: #c7b299;
+}
+
+.frontier-shell {
+  background:
+    linear-gradient(180deg, rgba(30, 30, 32, 0.96), rgba(14, 14, 16, 0.98)),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(90deg, rgba(123, 79, 46, 0.045) 0 1px, transparent 1px 58px);
+  color: #edeade;
+}
+
+.frontier-command-bar {
+  background:
+    linear-gradient(180deg, #303033 0%, #1e1e20 60%, #141416 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 10px);
+  border-bottom: 3px solid #7b4f2e;
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.42),
+    inset 0 -1px 0 rgba(184, 114, 63, 0.35);
+}
+
+.frontier-panel {
+  background:
+    linear-gradient(180deg, rgba(43, 43, 44, 0.98), rgba(22, 22, 24, 0.98)),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.024) 0 1px, transparent 1px 8px);
+  border: 2px solid rgba(123, 79, 46, 0.82);
+  border-radius: 6px;
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.44),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 28px rgba(0, 0, 0, 0.24);
+  color: #edeade;
+}
+
+.frontier-panel-title {
+  color: #fff4e6;
+  font-family: 'Cinzel Decorative', 'Uncial Antiqua', serif;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.frontier-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  border: 1px solid rgba(184, 114, 63, 0.62);
+  border-radius: 4px;
+  background: rgba(14, 14, 16, 0.68);
+  color: #edeade;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.frontier-button {
+  background: linear-gradient(180deg, #4a4a4c, #222224);
+  border: 1px solid rgba(184, 114, 63, 0.72);
+  border-radius: 4px;
+  color: #fff4e6;
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.frontier-button:hover:not(:disabled) {
+  background: linear-gradient(180deg, #684126, #252527);
+  box-shadow:
+    0 0 12px rgba(230, 126, 34, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.frontier-button-primary {
+  background: linear-gradient(180deg, #7b4f2e, #4a2d1a);
+  border-color: #b8723f;
+}
+
+.frontier-button-danger {
+  background: linear-gradient(180deg, #8b2d24, #3a1714);
+  border-color: #a93226;
+}
+
+.frontier-map-frame {
+  background:
+    linear-gradient(180deg, rgba(25, 25, 27, 0.96), rgba(12, 12, 14, 0.98)),
+    repeating-linear-gradient(45deg, rgba(123, 79, 46, 0.035) 0 2px, transparent 2px 16px);
+  border: 2px solid rgba(92, 92, 94, 0.72);
+  box-shadow:
+    inset 0 0 0 1px rgba(184, 114, 63, 0.26),
+    inset 0 0 64px rgba(0, 0, 0, 0.42),
+    0 12px 28px rgba(0, 0, 0, 0.38);
 }
