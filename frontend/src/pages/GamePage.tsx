@@ -4,12 +4,9 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { GameLayout } from '../components/layout/GameLayout';
 import { GameHeader } from '../components/layout/GameHeader';
 import { MissionSelectionCanvas } from '../components/game/MissionSelectionCanvas';
-import { GameCanvas } from '../components/game/GameCanvas';
-import { EnhancedLeftPanel } from '../components/features/EnhancedLeftPanel';
-import { EnhancedRightPanel } from '../components/features/EnhancedRightPanel';
+import { ActiveCampaignHud } from '../components/game/ActiveCampaignHud';
 import { GameOverModal } from '../components/features/GameOverModal';
 import { RecruitmentModal } from '../components/game/RecruitmentModal';
 import { HelpModal } from '../components/game/HelpModal';
@@ -188,18 +185,12 @@ export const GamePage: React.FC = () => {
   // Active Mission Mode: Full battle interface
   return (
     <>
-      <GameLayout
-        header={
-          <GameHeader
-            showMissionSelect={true}
-            onReturnToMissionSelect={handleReturnToMissionSelect}
-            currentMission={currentMission}
-            onRestartMission={handleRestartMission}
-          />
-        }
-        leftPanel={<EnhancedLeftPanel onRecruitClick={openRecruitment} onHelpClick={openHelp} />}
-        mainContent={<GameCanvas />}
-        rightPanel={<EnhancedRightPanel />}
+      <ActiveCampaignHud
+        currentMission={currentMission}
+        onReturnToMissionSelect={handleReturnToMissionSelect}
+        onRestartMission={handleRestartMission}
+        onRecruitClick={openRecruitment}
+        onHelpClick={openHelp}
       />
 
       {/* Modals */}

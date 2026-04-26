@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import { useGameLogic } from '../../hooks/useGameLogic';
 import { useAuthStore } from '../../stores/authStore';
 import { useGameStore } from '../../stores/useGameStore';
 import { getAuthDisplayName } from '../../auth/session';
 import { Button } from '../ui/Button';
-import { GameplayTestPanel } from '../testing/GameplayTestPanel';
+
+const GameplayTestPanel = lazy(() =>
+  import('../testing/GameplayTestPanel').then(module => ({
+    default: module.GameplayTestPanel,
+  }))
+);
 
 interface GameHeaderProps {
   showMissionSelect?: boolean;
@@ -161,7 +166,15 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
               </Button>
             </div>
             <div className="flex-1 overflow-hidden">
-              <GameplayTestPanel />
+              <Suspense
+                fallback={
+                  <div className="p-6 font-parchment text-parchment-light">
+                    Loading balance tools...
+                  </div>
+                }
+              >
+                <GameplayTestPanel />
+              </Suspense>
             </div>
           </div>
         </div>

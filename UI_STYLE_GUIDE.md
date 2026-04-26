@@ -142,6 +142,76 @@ backdrop-filter: blur(2px);
 
 ---
 
+## 🗺️ **Campaign Map Screen**
+
+The active campaign screen should read as a premium fantasy war map, not a dashboard around a grid.
+
+### **Target Composition**
+```
+┌──────────────────────────────────────────────────────────────┐
+│ Title / chapter            Resources             Utilities   │
+├──────┬──────────────────────────────────────────────┬────────┤
+│ Nav  │ Full-bleed illustrated campaign map          │ Node   │
+│ rail │ - region art                                 │ intel  │
+│      │ - glowing routes                             │ panel  │
+│      │ - framed stronghold nodes                    │        │
+├──────┴──────────────────────────────────────────────┴────────┤
+│ Commander/hero card      Chapter progression      Turn wheel │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### **Map Layering**
+Use layered presentation instead of drawing abstract circles on a blank grid:
+1. **Terrain layer**: illustrated or generated bitmap/vector map with reclaimed lands, wilds, mountains, rivers, and corrupted ashlands.
+2. **Region layer**: ownership/corruption overlays that tint broad zones.
+3. **Route layer**: SVG routes with faction-colored glow.
+4. **Node layer**: HTML/SVG stronghold badges anchored to map coordinates.
+5. **HUD layer**: selected-node details, chapter progress, commander status, and turn controls.
+
+### **Stronghold Node Badges**
+- Nodes are framed badges with banner tabs, not flat circles.
+- The frame color communicates ownership:
+  - Player/reclaimed: blue steel glow.
+  - Enemy/corrupted: blood red glow.
+  - Neutral/unclaimed: aged iron/bronze.
+  - Arcane/faction: purple or teal accent used sparingly.
+- Each badge must show:
+  - Node art or icon.
+  - Nameplate.
+  - Star level.
+  - Garrison or threat value.
+  - Commander count if present.
+  - Attackable state when reachable from a selected player node.
+
+### **Routes**
+- Routes should be visible strategic paths, not grid edges.
+- Player-linked routes glow blue.
+- Enemy-linked routes glow red.
+- Arcane routes glow purple.
+- Routes connected to the selected node use amber emphasis.
+
+### **Interaction States**
+- Hover: slight lift, brightness increase, route/node glow.
+- Selected: amber frame and highlighted connected routes.
+- Attackable: red pulse and clear action state.
+- Locked: dimmed node, lock marker, no hover lift.
+- Disabled actions must remain visibly disabled and should not imply interactivity.
+
+### **Milestone Implementation Notes**
+- The first production step is a `CampaignMap` component that replaces the old canvas grid with terrain, route, and node layers.
+- Existing backend node data can drive the first pass: `x`, `y`, `owner`, `type`, `starLevel`, `garrison`, and `connections`.
+- Longer term, backend map payloads should include presentation metadata such as display name, biome, threat level, reward preview, image key, and chapter gate.
+
+### **HUD Components**
+- **Top resource bar**: title/chapter identity, resource counters with per-turn income, account state, and only compact campaign controls.
+- **Left rail**: icon-first tool access for army, commanders, inventory, relics, and journal. Rail actions open contextual panels or existing modals.
+- **Node intel panel**: appears as the primary right-side context panel, showing selected stronghold art, owner, type, garrison, threat, rewards, and available orders.
+- **Commander summary**: compact bottom-left hero/commander status with portrait frame, level/class, and health bar.
+- **Chapter strip**: bottom campaign progression using roman chapter markers, current chapter emphasis, and locked/future state.
+- **Turn control**: bottom-right turn wheel/card with turn number, reclaimed-node progress, and a single end-turn action.
+
+---
+
 ## 🔲 **Button System**
 
 ### **Button Categories**

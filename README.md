@@ -1,125 +1,181 @@
 # Ashes of Aeloria
 
-A modern React TypeScript implementation of "Ashes of Aeloria," a strategy game featuring resource management, tactical battles, and immersive storytelling.
+Ashes of Aeloria is a turn-based fantasy strategy campaign about rebuilding a fallen realm after a magical catastrophe. Players move through story chapters, secure territory on a node map, recruit commanders, gather resources, and make campaign choices that shape the restoration of Aeloria.
 
-## Tech Stack
+The game is part of the WebHatchery game collection and uses shared Web Hatchery authentication for saved campaigns and guest play.
 
-### Core Framework
-- **React** - Modern React with hooks and functional components
-- **TypeScript** - Type safety and developer experience
-- **Vite** - Fast build tool and dev server
+## Gameplay Overview
 
-### State Management & Utilities
-- **Zustand** - Lightweight state management with persistence
-- **React Router DOM** - Client-side routing
+Ashes of Aeloria is organized around campaign missions. Each mission has a theme, estimated turn range, core challenge, victory objectives, story events, and rewards. The first chapter, "The Awakening," starts with survival and discovery; later chapters introduce broader rebuilding, diplomacy, research, and endgame victory paths.
 
-### Styling & Animations
-- **Tailwind CSS** - Utility-first CSS framework
-- **Framer Motion** - Production-ready motion library for React
+During a mission, the player manages a strategic map of strongholds and resource sites. Nodes can produce war coffers, war supplies, and arcane power, while commanders can be recruited, assigned, recalled, and used to push into hostile territory.
 
-### Development Tools
-- **ESLint** - Code linting and quality
-- **TypeScript ESLint** - TypeScript-specific linting rules
-- **@vitejs/plugin-react** - React support for Vite
+## Core Loop
 
-## Ashes of Aeloria Frontend
+1. Choose or continue a campaign mission.
+2. Review the map, treasury, commanders, and selected stronghold details.
+3. Spend resources to recruit commanders, fortify positions, or attack connected nodes.
+4. End the turn to let the backend resolve campaign progression.
+5. React to story events, enemy pressure, and changing objectives.
+6. Complete mission objectives to advance the restoration campaign.
 
-### Overview
-The frontend for "Ashes of Aeloria" is built using modern React and TypeScript principles, ensuring maintainability, scalability, and performance. It implements strategy game mechanics with resource management, tactical battles, and dynamic storytelling.
+## Campaign Missions
 
-### Features
-- **Resource Management**: Manage resources like gold, food, and materials to build and sustain your kingdom.
-- **Tactical Battles**: Engage in strategic battles with commanders and units.
-- **Dynamic Storytelling**: Experience branching narratives with interactive story events and meaningful choices.
-- **Commanders and Units**: Recruit and upgrade commanders and units to strengthen your army.
-- **Game Statistics**: Visual charts and progress tracking.
-- **Modern UI**: Beautiful animations with Framer Motion and Tailwind CSS.
-- **Interactive Canvas**: Grid-based game world with node exploration and mission selection.
-- **Story Event System**: Modal-based story events with consequence-driven choices.
-- **Testing Framework**: Built-in gameplay testing and balance analysis tools.
-- **Error Handling**: Comprehensive error boundaries for graceful failure recovery.
+Mission cards show the chapter title, subtitle, star rating, expected turn count, mission objectives, and current status.
 
-### Architecture Highlights
+Current campaign data includes:
+- Chapter objectives such as territory control, population growth, research, resources, alliances, buildings, and special story goals.
+- Story events that trigger by turn, territory, research, population, diplomacy, or random conditions.
+- Special mission rules that alter chapter behavior.
+- Rewards such as resources, commanders, research unlocks, buildings, and legacy bonuses.
 
-#### State Management
-- **Zustand**: Utilized for global game state, including resources, commanders, and battle status. Zustand stores are defined in `src/stores/` and provide reactive access to data. Persistence is handled via Zustand's built-in middleware, saving critical game state to `localStorage`.
+## Map And Strongholds
 
-#### Data Flow & Storage
-- **Game Data (`src/data/`)**: Static game configurations like unit stats, resource definitions, and story events are stored as immutable JavaScript objects/arrays.
-- **Client-Side State (`src/stores/`)**: Dynamic game state (player progress, current resources, active battles, etc.) is managed by Zustand stores.
-- **Local Storage**: Zustand stores are configured to persist key game state slices to `localStorage`.
+The battlefield is a connected-node campaign map. Each node has an owner, garrison, star level, type, and connections that define where attacks can happen.
 
-#### Data Presentation
-- **React Components (`src/components/`)**: Data from Zustand stores and static game data is consumed by React components. Components are designed to be modular and reusable, focusing on presenting specific pieces of information or interactive elements.
-- **Tailwind CSS**: Used for styling all UI elements. Components are built with utility classes for responsive layouts, consistent theming, and rapid prototyping.
-- **Framer Motion**: Applied to create smooth and engaging animations. Examples include:
-    - Transition effects for opening/closing modals and menus.
-    - Visual feedback for button clicks and upgrades.
-    - Progress bar animations for resource generation.
+Node types include:
+- City: produces gold and supplies and supports recruitment.
+- Resource Node: produces valuable campaign supplies.
+- Fortress: offers stronger defensive value.
+- Shrine: produces arcane power.
+- Enemy Stronghold: a heavily defended hostile position.
 
-#### Type Safety
-- **TypeScript**: Enforced throughout the codebase. Comprehensive type definitions (`src/types/`) are used for:
-    - **Game State**: Defining the structure of all Zustand stores.
-    - **Component Props**: Clearly defining the expected inputs for each React component.
-    - **Game Entities**: Strongly typing game objects like `Commander`, `Unit`, and `Resource`.
+Selecting a node opens tactical details such as owner, garrison, income, commander capacity, upgrade options, and available assault targets.
 
-### Project Structure
-```
-src/
-├── ai/                 # AI system components (GameplayTester, AIPlayer, strategy algorithms)
-├── api/                # API service definitions and types for backend interaction (if applicable)
-├── components/         # Reusable React components
-│   ├── ui/             # Generic UI components (Button, Modal, Card, ErrorBoundary, Toast)
-│   ├── game/           # Game-specific components (GameCanvas, StoryEventModal, ResourcePanel)
-│   ├── features/       # Enhanced feature components (NodeInfo, CommanderInfo, GameStatus)
-│   ├── layout/         # Layout components (GameHeader, GameLayout, panels)
-│   ├── campaign/       # Campaign-specific components (ChapterCard, CampaignPage)
-│   └── testing/        # Testing and debugging components (GameplayTestPanel)
-├── hooks/              # Custom React hooks for encapsulating logic (e.g., useGameLogic, useModals)
-├── stores/             # Zustand state management definitions (useGameStore with persistence)
-├── types/              # TypeScript type definitions for all data structures and interfaces
-├── data/               # Static game data (e.g., gameData.ts, commanders.ts, story events)
-├── utils/              # Utility functions and core game logic (e.g., calculations, data transformations)
-├── assets/             # Static assets like images, icons (if not in public/)
-└── styles/             # Global CSS, Tailwind configuration, and any custom styles
-```
+## Resources
 
-### Development
-1. Install dependencies: `npm install`
-2. Start development server: `npm run dev`
-3. Open [http://localhost:5173](http://localhost:5173) in your browser
+The visible campaign treasury focuses on:
+- War Coffers: the primary economic resource for upgrades and recruitment.
+- War Supplies: logistics and military support.
+- Arcane Power: magical capacity from shrines and other sources.
 
-### Scripts
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run lint` - Run ESLint
-- `npm run preview` - Preview production build
-- `npm run type-check` - Run TypeScript type checking
+Additional long-form campaign systems also model knowledge, culture, influence, materials, food, energy, artifacts, research, population, diplomacy, corruption, exploration, and legacy progress.
 
-### Deployment
-The project includes a PowerShell publishing script (`publish.ps1`) that supports:
-- **FTP Deployment**: Automatic production deployment to FTP servers
-- **File System Deployment**: Local deployment for testing
-- **Environment Configuration**: Separate preview and production settings
-- **Build Optimization**: Production builds with proper base paths
+## Commanders
 
-Usage:
+Commanders are the main force multipliers on the map. They can be recruited, selected, assigned to player-controlled nodes, recalled, and used to strengthen attacks or defense.
+
+Commander classes include:
+- Knight: defensive frontline commander with Shield Wall.
+- Mage: magical support commander with area damage.
+- Ranger: scout and skirmisher with mobility utility.
+- Warlord: army leader with campaign-wide combat bonuses.
+
+Commanders also have race traits, health, attack, defense, experience, army composition, and assignment status.
+
+## Story And Choices
+
+Story events represent crises, opportunities, faction moments, discoveries, and late-game victory path decisions. Events can have requirements and consequences, including resource changes, diplomatic shifts, narrative flags, unlocks, and victory progress.
+
+The campaign supports multiple restoration philosophies, including harmony, ascension, and dominion-oriented paths.
+
+## Saving And Accounts
+
+Ashes of Aeloria uses shared Web Hatchery authentication.
+
+- Signed-in players load and save through their Web Hatchery account.
+- Guest players can start a browser-local guest session.
+- Guest progress can be merged into a Web Hatchery account when both sessions are available.
+- The backend is authoritative for game state and gameplay actions.
+
+The frontend should display game data and submit player intent. Resource changes, turn advancement, mission state, combat, and save persistence belong on the server.
+
+## Running The Game
+
+Required environment variables must be set before running or building. Do not rely on fallback defaults.
+
+Frontend:
+- `VITE_API_BASE_URL`
+- `VITE_WEB_HATCHERY_LOGIN_URL`
+
+Backend configuration is PHP-based and should fail fast when required config is missing.
+
+### Frontend
+
 ```powershell
-# Deploy to FTP (production environment)
-.\publish.ps1 -ftp
+cd frontend
+npm install
+npm run dev
+```
 
-# Deploy to local file system (preview environment)
+Common scripts:
+- `npm run dev` - start the Vite development server.
+- `npm run build` - type-check and build production assets.
+- `npm run type-check` - run TypeScript checks.
+- `npm run lint` - run ESLint.
+- `npm run preview` - preview the built frontend.
+
+### Backend
+
+```powershell
+cd backend
+composer install
+composer start
+```
+
+Common scripts:
+- `composer test` - run backend tests.
+- `composer cs-check` - check PHP coding standards.
+- `composer cs-fix` - apply PHP coding standard fixes.
+
+## Project Structure
+
+```text
+ashes_of_aeloria/
+├── backend/                  # PHP API, actions, services, repositories, routing
+├── frontend/                 # React/TypeScript game client
+├── Ashes_of_Aeloria_Game_Design_Document.md
+├── UI_STYLE_GUIDE.md
+├── CODING_STANDARDS.md
+├── CODE_REVIEW.md
+└── README.md
+```
+
+Frontend highlights:
+
+```text
+frontend/src/
+├── api/          # Axios client and backend service calls
+├── auth/         # Web Hatchery and guest session helpers
+├── components/   # Game UI, layout, feature panels, modals
+├── data/         # Static campaign, story, and game definitions
+├── hooks/        # Game, campaign, modal, and notification hooks
+├── providers/    # Shared game context
+├── stores/       # Zustand stores for client presentation state
+├── types/        # TypeScript game types
+├── utils/        # Shared calculations and helpers
+└── styles/       # Global theme and frontier war UI styling
+```
+
+Backend highlights:
+
+```text
+backend/src/
+├── Actions/       # Gameplay and persistence use cases
+├── Controllers/   # Thin HTTP handlers
+├── Core/          # Routing, database, service factory
+├── Models/        # DTO-style models
+├── Repositories/  # PDO data access
+└── Services/      # Auth, game engine, and shared business services
+```
+
+## Development Notes
+
+- Keep gameplay rules server-authoritative.
+- Do not add default values for required environment variables.
+- Do not implement local login flows; use shared Web Hatchery Login.
+- Keep controllers thin and move business logic into actions or services.
+- Keep React components presentational where possible and route API calls through the centralized API layer.
+
+## Deployment
+
+The repository includes `publish.ps1` for deployment:
+
+```powershell
 .\publish.ps1
-
-# Clean deploy with verbose output
+.\publish.ps1 -ftp
 .\publish.ps1 -ftp -Clean -Verbose
 ```
 
-### Contributing
-Contributions are welcome! Please open an issue or submit a pull request for any enhancements or bug fixes.
+Production deployment must use explicit environment configuration. Missing required config should fail early instead of silently falling back.
 
-## License
-
-This project is licensed under the MIT License - see the individual component README files for details.
-
-Part of the WebHatchery game collection.
