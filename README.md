@@ -126,7 +126,6 @@ ashes_of_aeloria/
 ├── frontend/                 # React/TypeScript game client
 ├── Ashes_of_Aeloria_Game_Design_Document.md
 ├── UI_STYLE_GUIDE.md
-├── CODING_STANDARDS.md
 ├── CODE_REVIEW.md
 └── README.md
 ```
@@ -178,4 +177,3 @@ The repository includes `publish.ps1` for deployment:
 ```
 
 Production deployment must use explicit environment configuration. Missing required config should fail early instead of silently falling back.
-
